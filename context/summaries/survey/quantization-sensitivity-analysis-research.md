@@ -78,10 +78,13 @@
 
 ### 🟧 PyTorch / Open-source 工具
 
-#### 4. Intel LPOT (Model Compression Toolkit)
-*   支持数十种敏感度分析指标
-*   兼容 PyTorch/ONNX
-*   提供 per-layer sensitivity 报告
+#### 4. Intel Neural Compressor (formerly LPOT)
+*   **原名：** Intel Low Precision Optimization Tool (LPOT)
+*   **特点：** 
+    *   支持数十种敏感度分析指标
+    *   兼容 PyTorch/ONNX/TensorFlow
+    *   提供 per-layer sensitivity 报告
+    *   **Accuracy-Aware Tuning:** 自动混合精度搜索
 
 #### 5. Microsoft NN-Tool / Olive
 *   自动量化搜索

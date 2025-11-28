@@ -2,7 +2,7 @@
 authors = [{name = "igamenovoer", email = "igamenovoer@xx.com"}]
 dependencies = []
 name = "auto-quantize-model"
-requires-python = ">= 3.11"
+requires-python = ">= 3.11, < 3.13"
 version = "0.1.0"
 
 [build-system]
@@ -15,8 +15,31 @@ platforms = ["linux-64"]
 
 [tool.pixi.pypi-dependencies]
 auto_quantize_model = { path = ".", editable = true }
+ultralytics = "*"
+torch = "*"
+torchvision = "*"
+onnxruntime-gpu = "*"
+supervision = "*"
+scipy = "*"
+opencv-python = "*"
+imageio = "*"
+attrs = "*"
+omegaconf = "*"
+hydra-core = "*"
+mdutils = "*"
+mkdocs-material = "*"
+ruff = "*"
+mypy = "*"
+pytest = "*"
+click = "*"
+rich = "*"
+
+[tool.pixi.pypi-options]
+index-url = "https://pypi.org/simple"
+# Use official PyTorch wheels with CUDA 12.4 (<= 12.6 as requested)
+extra-index-urls = ["https://download.pytorch.org/whl/cu124"]
 
 [tool.pixi.tasks]
 
 [tool.pixi.dependencies]
-python = "3.13.*"
+python = "3.12.*"
