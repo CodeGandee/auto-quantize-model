@@ -158,6 +158,9 @@ datasets/
 .vscode/
 .idea/
 *.swp
+
+# Codex CLI metadata
+.codex/
 *.swo
 *~
 
@@ -166,3 +169,5 @@ datasets/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+/.codex
