@@ -44,6 +44,7 @@ services:
     - workspace:/hard/volume/workspace
     - home_me:/home/me
     - /data2/huangzhe/docker-works/pkg-cache:/pkg-cache
+    - /data2:/data2
   stage-1:
     image: auto-quantize:stage-1
     stdin_open: true

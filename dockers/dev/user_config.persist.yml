@@ -105,6 +105,10 @@ stage_2:
       type: host
       dst_path: /pkg-cache
       host_path: /data2/huangzhe/docker-works/pkg-cache
+    data2:
+      type: host
+      dst_path: /data2
+      host_path: /data2
 
   custom:
     # scripts run during build
