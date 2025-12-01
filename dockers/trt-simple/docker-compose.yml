@@ -1,0 +1,24 @@
+services:
+  trt-simple:
+    image: trt-simple:hz-dev
+    build:
+      context: ../..
+      dockerfile: dockers/trt-simple/Dockerfile
+      args:
+        # Forward host proxies to the build if they are set.
+        http_proxy: ${http_proxy-}
+        https_proxy: ${https_proxy-}
+        HTTP_PROXY: ${HTTP_PROXY-}
+        HTTPS_PROXY: ${HTTPS_PROXY-}
+        no_proxy: ${no_proxy-}
+        NO_PROXY: ${NO_PROXY-}
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+    working_dir: /workspace
+    volumes:
+      # Mount the repo into the container for development.
+      - ../..:/workspace
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # GPU access can be enabled when running, for example:
+    #   docker compose run --gpus all trt-simple
