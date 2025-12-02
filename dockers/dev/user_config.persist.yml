@@ -109,6 +109,10 @@ stage_2:
       type: host
       dst_path: /data2
       host_path: /data2
+    nfs_filesystem:
+      type: host
+      dst_path: /nfs
+      host_path: /nfs
 
   custom:
     # scripts run during build

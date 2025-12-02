@@ -26,7 +26,7 @@ Understand the ModelOpt ONNX quantization workflow (with a focus on CNN/ONNX usa
 
 Goal: Read the ModelOpt docs and examples (especially ONNX and CNN-related material) plus TensorRT best practices so we know the recommended way to run ONNX quantization for models like YOLO11, including any constraints or flags we should care about.
 
-- Subtask spec: context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md
+- Subtask spec and findings: context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md
 
 #### 1.2 Verify environment and YOLO11 repo wiring
 
@@ -42,7 +42,7 @@ Goal: Decide which YOLO11 checkpoint(s) we will use for experiments and write do
 
 ### TODOs
 
-- [ ] Job-001-101: Complete subtask 1.1: Study ModelOpt ONNX/CNN docs and TensorRT best practices, focusing on how to apply them to YOLO11.
+- [x] Job-001-101: Complete subtask 1.1: Study ModelOpt ONNX/CNN docs and TensorRT best practices, focusing on how to apply them to YOLO11 (see `context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md` for the summary).
 - [ ] Job-001-102: Complete subtask 1.2: Verify `pixi`/ModelOpt environment and review the `models/yolo11/` structure.
 - [ ] Job-001-103: Complete subtask 1.3: Select YOLO11 variant(s) and document success criteria for the quantization work.
 
