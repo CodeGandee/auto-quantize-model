@@ -1,0 +1,3900 @@
+{
+  "model_path": "models/yolo11/onnx/yolo11n-int8-qdq-proto.onnx",
+  "num_nodes": 700,
+  "counts": {
+    "int8": 202,
+    "fp32_fp16": 120
+  },
+  "nodes": [
+    {
+      "name": "images_cast_to_fp16",
+      "op_type": "Cast",
+      "precision": "int8",
+      "inputs": [
+        "images"
+      ],
+      "outputs": [
+        "images_cast_to_fp16"
+      ]
+    },
+    {
+      "name": "/model.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "images_DequantizeLinear_Output",
+        "model.0.conv.weight_DequantizeLinear_Output",
+        "model.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.0/conv/Conv_output_0",
+        "/model.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.1.conv.weight_DequantizeLinear_Output",
+        "model.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.1/conv/Conv_output_0",
+        "/model.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.2.cv1.conv.weight_DequantizeLinear_Output",
+        "model.2.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.2/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.2/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.2/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.2/cv1/conv/Conv_output_0",
+        "/model.2/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.2/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/cv1/act/Mul_output_0",
+        "onnx::Split_185"
+      ],
+      "outputs": [
+        "/model.2/Split_output_0",
+        "/model.2/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/Split_output_1_DequantizeLinear_Output",
+        "model.2.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.2.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.2/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.2/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.2/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/m.0/cv1/conv/Conv_output_0",
+        "/model.2/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.2/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.2.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.2.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.2/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.2/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.2/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/m.0/cv2/conv/Conv_output_0",
+        "/model.2/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.2/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/Split_output_1_DequantizeLinear_Output",
+        "/model.2/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.2/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/Split_output_0",
+        "/model.2/Split_output_1_DequantizeLinear_Output",
+        "/model.2/m.0/Add_output_0"
+      ],
+      "outputs": [
+        "/model.2/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/Concat_output_0_DequantizeLinear_Output",
+        "model.2.cv2.conv.weight_DequantizeLinear_Output",
+        "model.2.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.2/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.2/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.2/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.2/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/cv2/conv/Conv_output_0",
+        "/model.2/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.2/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.3/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.2/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.3.conv.weight_DequantizeLinear_Output",
+        "model.3.conv.bias"
+      ],
+      "outputs": [
+        "/model.3/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.3/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.3/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.3/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.3/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.3/conv/Conv_output_0",
+        "/model.3/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.3/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.3/act/Mul_output_0_DequantizeLinear_Output",
+        "model.4.cv1.conv.weight_DequantizeLinear_Output",
+        "model.4.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.4/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.4/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.4/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.4/cv1/conv/Conv_output_0",
+        "/model.4/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.4/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/cv1/act/Mul_output_0",
+        "onnx::Split_205_1"
+      ],
+      "outputs": [
+        "/model.4/Split_output_0",
+        "/model.4/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/Split_output_1_DequantizeLinear_Output",
+        "model.4.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.4.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.4/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.4/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.4/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/m.0/cv1/conv/Conv_output_0",
+        "/model.4/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.4/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.4.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.4.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.4/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.4/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.4/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/m.0/cv2/conv/Conv_output_0",
+        "/model.4/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.4/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/Split_output_1_DequantizeLinear_Output",
+        "/model.4/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.4/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/Split_output_0",
+        "/model.4/Split_output_1_DequantizeLinear_Output",
+        "/model.4/m.0/Add_output_0"
+      ],
+      "outputs": [
+        "/model.4/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/Concat_output_0_DequantizeLinear_Output",
+        "model.4.cv2.conv.weight_DequantizeLinear_Output",
+        "model.4.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.4/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.4/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.4/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.4/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/cv2/conv/Conv_output_0",
+        "/model.4/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.4/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.5/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.4/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.5.conv.weight_DequantizeLinear_Output",
+        "model.5.conv.bias"
+      ],
+      "outputs": [
+        "/model.5/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.5/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.5/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.5/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.5/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.5/conv/Conv_output_0",
+        "/model.5/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.5/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.5/act/Mul_output_0_DequantizeLinear_Output",
+        "model.6.cv1.conv.weight_DequantizeLinear_Output",
+        "model.6.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/cv1/conv/Conv_output_0",
+        "/model.6/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/cv1/act/Mul_output_0",
+        "onnx::Split_225_1"
+      ],
+      "outputs": [
+        "/model.6/Split_output_0",
+        "/model.6/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/Split_output_1_DequantizeLinear_Output",
+        "model.6.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/Split_output_1_DequantizeLinear_Output",
+        "model.6.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/cv1/conv/Conv_output_0",
+        "/model.6/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/cv2/conv/Conv_output_0",
+        "/model.6/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.6.m.0.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/m/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.0/cv1/conv/Conv_output_0",
+        "/model.6/m.0/m/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.6.m.0.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/m/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.0/cv2/conv/Conv_output_0",
+        "/model.6/m.0/m/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "/model.6/m.0/m/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "model.6.m.0.m.1.cv1.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.m.1.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/m/m.1/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.1/cv1/conv/Conv_output_0",
+        "/model.6/m.0/m/m.1/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.1/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.6.m.0.m.1.cv2.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.m.1.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/m/m.1/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.1/cv2/conv/Conv_output_0",
+        "/model.6/m.0/m/m.1/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/m/m.1/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "/model.6/m.0/m/m.1/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.6/m.0/m/m.1/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/m/m.1/Add_output_0",
+        "/model.6/m.0/cv2/act/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv3/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/m.0/Concat_output_0_DequantizeLinear_Output",
+        "model.6.m.0.cv3.conv.weight_DequantizeLinear_Output",
+        "model.6.m.0.cv3.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv3/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv3/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/cv3/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv3/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/m.0/cv3/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/m.0/cv3/conv/Conv_output_0",
+        "/model.6/m.0/cv3/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/m.0/cv3/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/Split_output_0",
+        "/model.6/Split_output_1_DequantizeLinear_Output",
+        "/model.6/m.0/cv3/act/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.6/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/Concat_output_0_DequantizeLinear_Output",
+        "model.6.cv2.conv.weight_DequantizeLinear_Output",
+        "model.6.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.6/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.6/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.6/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.6/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/cv2/conv/Conv_output_0",
+        "/model.6/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.6/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.7/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.6/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.7.conv.weight_DequantizeLinear_Output",
+        "model.7.conv.bias"
+      ],
+      "outputs": [
+        "/model.7/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.7/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.7/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.7/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.7/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.7/conv/Conv_output_0",
+        "/model.7/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.7/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.7/act/Mul_output_0_DequantizeLinear_Output",
+        "model.8.cv1.conv.weight_DequantizeLinear_Output",
+        "model.8.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/cv1/conv/Conv_output_0",
+        "/model.8/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/cv1/act/Mul_output_0",
+        "onnx::Split_262_1"
+      ],
+      "outputs": [
+        "/model.8/Split_output_0",
+        "/model.8/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/Split_output_1_DequantizeLinear_Output",
+        "model.8.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/Split_output_1_DequantizeLinear_Output",
+        "model.8.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/cv1/conv/Conv_output_0",
+        "/model.8/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/cv2/conv/Conv_output_0",
+        "/model.8/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.8.m.0.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/m/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.0/cv1/conv/Conv_output_0",
+        "/model.8/m.0/m/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.8.m.0.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/m/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.0/cv2/conv/Conv_output_0",
+        "/model.8/m.0/m/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "/model.8/m.0/m/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "model.8.m.0.m.1.cv1.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.m.1.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/m/m.1/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.1/cv1/conv/Conv_output_0",
+        "/model.8/m.0/m/m.1/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.1/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.8.m.0.m.1.cv2.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.m.1.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/m/m.1/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.1/cv2/conv/Conv_output_0",
+        "/model.8/m.0/m/m.1/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/m/m.1/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "/model.8/m.0/m/m.1/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.8/m.0/m/m.1/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/m/m.1/Add_output_0",
+        "/model.8/m.0/cv2/act/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv3/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/m.0/Concat_output_0_DequantizeLinear_Output",
+        "model.8.m.0.cv3.conv.weight_DequantizeLinear_Output",
+        "model.8.m.0.cv3.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv3/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv3/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/cv3/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv3/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/m.0/cv3/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/m.0/cv3/conv/Conv_output_0",
+        "/model.8/m.0/cv3/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/m.0/cv3/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/Split_output_0",
+        "/model.8/Split_output_1_DequantizeLinear_Output",
+        "/model.8/m.0/cv3/act/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.8/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/Concat_output_0_DequantizeLinear_Output",
+        "model.8.cv2.conv.weight_DequantizeLinear_Output",
+        "model.8.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.8/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.8/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.8/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.8/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/cv2/conv/Conv_output_0",
+        "/model.8/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.8/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.8/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.9.cv1.conv.weight_DequantizeLinear_Output",
+        "model.9.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.9/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.9/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.9/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/cv1/conv/Conv_output_0",
+        "/model.9/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.9/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/m/MaxPool",
+      "op_type": "MaxPool",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/cv1/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.9/m/MaxPool_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/m_1/MaxPool",
+      "op_type": "MaxPool",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/m/MaxPool_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.9/m_1/MaxPool_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/m_2/MaxPool",
+      "op_type": "MaxPool",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/m_1/MaxPool_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.9/m_2/MaxPool_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "/model.9/m/MaxPool_output_0_DequantizeLinear_Output",
+        "/model.9/m_1/MaxPool_output_0_DequantizeLinear_Output",
+        "/model.9/m_2/MaxPool_output_0"
+      ],
+      "outputs": [
+        "/model.9/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/Concat_output_0_DequantizeLinear_Output",
+        "model.9.cv2.conv.weight_DequantizeLinear_Output",
+        "model.9.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.9/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.9/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.9/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.9/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/cv2/conv/Conv_output_0",
+        "/model.9/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.9/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.9/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.10.cv1.conv.weight_DequantizeLinear_Output",
+        "model.10.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.10/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/cv1/conv/Conv_output_0",
+        "/model.10/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.10/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/cv1/act/Mul_output_0",
+        "onnx::Split_262_2"
+      ],
+      "outputs": [
+        "/model.10/Split_output_0",
+        "/model.10/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/qkv/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/Split_output_1_DequantizeLinear_Output",
+        "model.10.m.0.attn.qkv.conv.weight_DequantizeLinear_Output",
+        "model.10.m.0.attn.qkv.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/qkv/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Reshape",
+      "op_type": "Reshape",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/m/m.0/attn/qkv/conv/Conv_output_0",
+        "/model.10/m/m.0/attn/Constant_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Reshape_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Reshape_output_0",
+        "onnx::Split_326"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Split_output_0",
+        "/model.10/m/m.0/attn/Split_output_1",
+        "/model.10/m/m.0/attn/Split_output_2"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Transpose",
+      "op_type": "Transpose",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Split_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Transpose_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Reshape_2",
+      "op_type": "Reshape",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Split_output_2_DequantizeLinear_Output",
+        "/model.10/m/m.0/attn/Constant_3_output_0_1"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Reshape_2_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/MatMul",
+      "op_type": "MatMul",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Transpose_output_0_DequantizeLinear_Output",
+        "/model.10/m/m.0/attn/Split_output_1_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/MatMul_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/m/m.0/attn/MatMul_output_0",
+        "/model.10/m/m.0/attn/Constant_1_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Softmax",
+      "op_type": "Softmax",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/m/m.0/attn/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Softmax_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/pe/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Reshape_2_output_0_DequantizeLinear_Output",
+        "model.10.m.0.attn.pe.conv.weight_DequantizeLinear_Output",
+        "model.10.m.0.attn.pe.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/pe/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Transpose_1",
+      "op_type": "Transpose",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Softmax_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Transpose_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/MatMul_1",
+      "op_type": "MatMul",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Split_output_2_DequantizeLinear_Output",
+        "/model.10/m/m.0/attn/Transpose_1_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/MatMul_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Reshape_1",
+      "op_type": "Reshape",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/MatMul_1_output_0",
+        "/model.10/m/m.0/attn/Constant_3_output_0_2"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Reshape_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Reshape_1_output_0_DequantizeLinear_Output",
+        "/model.10/m/m.0/attn/pe/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/attn/proj/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/attn/Add_output_0_DequantizeLinear_Output",
+        "model.10.m.0.attn.proj.conv.weight_DequantizeLinear_Output",
+        "model.10.m.0.attn.proj.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/attn/proj/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/Split_output_1_DequantizeLinear_Output",
+        "/model.10/m/m.0/attn/proj/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/ffn/ffn.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "model.10.m.0.ffn.0.conv.weight_DequantizeLinear_Output",
+        "model.10.m.0.ffn.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/ffn/ffn.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/ffn/ffn.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/m/m.0/ffn/ffn.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/ffn/ffn.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/ffn/ffn.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/ffn/ffn.0/conv/Conv_output_0",
+        "/model.10/m/m.0/ffn/ffn.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/ffn/ffn.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/ffn/ffn.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/ffn/ffn.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.10.m.0.ffn.1.conv.weight_DequantizeLinear_Output",
+        "model.10.m.0.ffn.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/ffn/ffn.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/m/m.0/Add_1",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "/model.10/m/m.0/ffn/ffn.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.10/m/m.0/Add_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/Split_output_0",
+        "/model.10/m/m.0/Add_1_output_0"
+      ],
+      "outputs": [
+        "/model.10/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/Concat_output_0_DequantizeLinear_Output",
+        "model.10.cv2.conv.weight_DequantizeLinear_Output",
+        "model.10.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.10/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.10/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.10/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.10/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/cv2/conv/Conv_output_0",
+        "/model.10/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.10/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.11/Resize",
+      "op_type": "Resize",
+      "precision": "int8",
+      "inputs": [
+        "/model.10/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "/model.11/Constant_output_0_1"
+      ],
+      "outputs": [
+        "/model.11/Resize_output_0"
+      ]
+    },
+    {
+      "name": "/model.12/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.11/Resize_output_0",
+        "/model.6/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.12/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.12/Concat_output_0_DequantizeLinear_Output",
+        "model.13.cv1.conv.weight_DequantizeLinear_Output",
+        "model.13.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.13/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.13/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.13/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.13/cv1/conv/Conv_output_0",
+        "/model.13/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.13/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/cv1/act/Mul_output_0",
+        "onnx::Split_225_2"
+      ],
+      "outputs": [
+        "/model.13/Split_output_0",
+        "/model.13/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/Split_output_1_DequantizeLinear_Output",
+        "model.13.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.13.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.13/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.13/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.13/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/m.0/cv1/conv/Conv_output_0",
+        "/model.13/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.13/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.13.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.13.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.13/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.13/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.13/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/m.0/cv2/conv/Conv_output_0",
+        "/model.13/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.13/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/Split_output_1_DequantizeLinear_Output",
+        "/model.13/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.13/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/Split_output_0",
+        "/model.13/Split_output_1_DequantizeLinear_Output",
+        "/model.13/m.0/Add_output_0"
+      ],
+      "outputs": [
+        "/model.13/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/Concat_output_0_DequantizeLinear_Output",
+        "model.13.cv2.conv.weight_DequantizeLinear_Output",
+        "model.13.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.13/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.13/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.13/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.13/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/cv2/conv/Conv_output_0",
+        "/model.13/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.13/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.14/Resize",
+      "op_type": "Resize",
+      "precision": "int8",
+      "inputs": [
+        "/model.13/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "/model.11/Constant_output_0_2"
+      ],
+      "outputs": [
+        "/model.14/Resize_output_0"
+      ]
+    },
+    {
+      "name": "/model.15/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.14/Resize_output_0",
+        "/model.4/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.15/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.15/Concat_output_0_DequantizeLinear_Output",
+        "model.16.cv1.conv.weight_DequantizeLinear_Output",
+        "model.16.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.16/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.16/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.16/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.16/cv1/conv/Conv_output_0",
+        "/model.16/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.16/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/cv1/act/Mul_output_0",
+        "onnx::Split_205_2"
+      ],
+      "outputs": [
+        "/model.16/Split_output_0",
+        "/model.16/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/Split_output_1_DequantizeLinear_Output",
+        "model.16.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.16.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.16/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.16/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.16/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/m.0/cv1/conv/Conv_output_0",
+        "/model.16/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.16/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.16.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.16.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.16/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.16/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.16/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/m.0/cv2/conv/Conv_output_0",
+        "/model.16/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.16/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/Split_output_1_DequantizeLinear_Output",
+        "/model.16/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.16/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/Split_output_0",
+        "/model.16/Split_output_1_DequantizeLinear_Output",
+        "/model.16/m.0/Add_output_0"
+      ],
+      "outputs": [
+        "/model.16/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/Concat_output_0_DequantizeLinear_Output",
+        "model.16.cv2.conv.weight_DequantizeLinear_Output",
+        "model.16.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.16/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.16/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.16/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.16/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/cv2/conv/Conv_output_0",
+        "/model.16/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.16/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.17/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.17.conv.weight_DequantizeLinear_Output",
+        "model.17.conv.bias"
+      ],
+      "outputs": [
+        "/model.17/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.0.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv2.0.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.16/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.0.0.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.0.0.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.17/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.17/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.17/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.17/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.17/conv/Conv_output_0",
+        "/model.17/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.17/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.0/conv/Conv_output_0",
+        "/model.23/cv2.0/cv2.0.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/conv/Conv_output_0",
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.18/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.17/act/Mul_output_0",
+        "/model.13/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.18/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.0.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv2.0.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.0.0.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.0.0.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.18/Concat_output_0_DequantizeLinear_Output",
+        "model.19.cv1.conv.weight_DequantizeLinear_Output",
+        "model.19.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.19/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.19/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.19/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.1/conv/Conv_output_0",
+        "/model.23/cv2.0/cv2.0.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/conv/Conv_output_0",
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.19/cv1/conv/Conv_output_0",
+        "/model.19/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.19/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/cv1/act/Mul_output_0",
+        "onnx::Split_225_3"
+      ],
+      "outputs": [
+        "/model.19/Split_output_0",
+        "/model.19/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.0/cv2.0.2/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.0.2.weight_DequantizeLinear_Output",
+        "model.23.cv2.0.2.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.0/cv2.0.2/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.0/cv3.0.0.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.0.1.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.0.1.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/Split_output_1_DequantizeLinear_Output",
+        "model.19.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.19.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.19/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/conv/Conv_output_0",
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.19/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.19/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/m.0/cv1/conv/Conv_output_0",
+        "/model.19/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.19/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.0.1.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.0.1.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.19.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.19.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.19/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/conv/Conv_output_0",
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.19/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.19/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/m.0/cv2/conv/Conv_output_0",
+        "/model.19/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.19/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.0/cv3.0.2/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.0/cv3.0.1/cv3.0.1.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.0.2.weight_DequantizeLinear_Output",
+        "model.23.cv3.0.2.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.0/cv3.0.2/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Concat",
+      "op_type": "Concat",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.0/cv2.0.2/Conv_output_0",
+        "/model.23/cv3.0/cv3.0.2/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/Split_output_1_DequantizeLinear_Output",
+        "/model.19/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.19/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Reshape",
+      "op_type": "Reshape",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Concat_output_0",
+        "/model.23/Constant_output_0_1"
+      ],
+      "outputs": [
+        "/model.23/Reshape_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/Split_output_0",
+        "/model.19/Split_output_1_DequantizeLinear_Output",
+        "/model.19/m.0/Add_output_0"
+      ],
+      "outputs": [
+        "/model.19/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/Concat_output_0_DequantizeLinear_Output",
+        "model.19.cv2.conv.weight_DequantizeLinear_Output",
+        "model.19.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.19/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.19/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.19/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.19/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/cv2/conv/Conv_output_0",
+        "/model.19/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.19/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.20/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.20.conv.weight_DequantizeLinear_Output",
+        "model.20.conv.bias"
+      ],
+      "outputs": [
+        "/model.20/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.1.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv2.1.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.19/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.1.0.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.1.0.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.20/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.20/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.20/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.20/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.20/conv/Conv_output_0",
+        "/model.20/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.20/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.0/conv/Conv_output_0",
+        "/model.23/cv2.1/cv2.1.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/conv/Conv_output_0",
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.21/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.20/act/Mul_output_0",
+        "/model.10/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.21/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.1.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv2.1.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.1.0.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.1.0.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.21/Concat_output_0_DequantizeLinear_Output",
+        "model.22.cv1.conv.weight_DequantizeLinear_Output",
+        "model.22.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.1/conv/Conv_output_0",
+        "/model.23/cv2.1/cv2.1.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/conv/Conv_output_0",
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/cv1/conv/Conv_output_0",
+        "/model.22/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/Split",
+      "op_type": "Split",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/cv1/act/Mul_output_0",
+        "onnx::Split_262_3"
+      ],
+      "outputs": [
+        "/model.22/Split_output_0",
+        "/model.22/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.1/cv2.1.2/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.1.2.weight_DequantizeLinear_Output",
+        "model.23.cv2.1.2.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.1/cv2.1.2/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.0/cv3.1.0.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.1.1.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.1.1.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/Split_output_1_DequantizeLinear_Output",
+        "model.22.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/Split_output_1_DequantizeLinear_Output",
+        "model.22.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/conv/Conv_output_0",
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/cv1/conv/Conv_output_0",
+        "/model.22/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/cv2/conv/Conv_output_0",
+        "/model.22/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.1.1.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.1.1.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.22.m.0.m.0.cv1.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.m.0.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/conv/Conv_output_0",
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/m/m.0/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.0/cv1/conv/Conv_output_0",
+        "/model.22/m.0/m/m.0/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.1/cv3.1.2/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.1/cv3.1.1/cv3.1.1.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.1.2.weight_DequantizeLinear_Output",
+        "model.23.cv3.1.2.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.1/cv3.1.2/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Concat_1",
+      "op_type": "Concat",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.1/cv2.1.2/Conv_output_0",
+        "/model.23/cv3.1/cv3.1.2/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/Concat_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.22.m.0.m.0.cv2.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.m.0.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Reshape_1",
+      "op_type": "Reshape",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Concat_1_output_0",
+        "/model.23/Constant_output_0_2"
+      ],
+      "outputs": [
+        "/model.23/Reshape_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/m/m.0/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.0/cv2/conv/Conv_output_0",
+        "/model.22/m.0/m/m.0/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.0/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "/model.22/m.0/m/m.0/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.0/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/cv1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "model.22.m.0.m.1.cv1.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.m.1.cv1.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/cv1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/cv1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/m/m.1/cv1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/cv1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/cv1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.1/cv1/conv/Conv_output_0",
+        "/model.22/m.0/m/m.1/cv1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/cv1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.1/cv1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.22.m.0.m.1.cv2.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.m.1.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/m/m.1/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.1/cv2/conv/Conv_output_0",
+        "/model.22/m.0/m/m.1/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/m/m.1/Add",
+      "op_type": "Add",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.0/Add_output_0_DequantizeLinear_Output",
+        "/model.22/m.0/m/m.1/cv2/act/Mul_output_0_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.22/m.0/m/m.1/Add_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/m/m.1/Add_output_0",
+        "/model.22/m.0/cv2/act/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv3/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/m.0/Concat_output_0_DequantizeLinear_Output",
+        "model.22.m.0.cv3.conv.weight_DequantizeLinear_Output",
+        "model.22.m.0.cv3.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv3/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv3/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/cv3/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv3/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/m.0/cv3/act/Mul",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/m.0/cv3/conv/Conv_output_0",
+        "/model.22/m.0/cv3/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/m.0/cv3/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/Concat",
+      "op_type": "Concat",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/Split_output_0",
+        "/model.22/Split_output_1_DequantizeLinear_Output",
+        "/model.22/m.0/cv3/act/Mul_output_0"
+      ],
+      "outputs": [
+        "/model.22/Concat_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/cv2/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/Concat_output_0_DequantizeLinear_Output",
+        "model.22.cv2.conv.weight_DequantizeLinear_Output",
+        "model.22.cv2.conv.bias"
+      ],
+      "outputs": [
+        "/model.22/cv2/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/cv2/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.22/cv2/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.22/cv2/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.22/cv2/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/cv2/conv/Conv_output_0",
+        "/model.22/cv2/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.22/cv2/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.2.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv2.2.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.22/cv2/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.2.0.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.2.0.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.0/conv/Conv_output_0",
+        "/model.23/cv2.2/cv2.2.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/conv/Conv_output_0",
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.2.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv2.2.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.2.0.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.2.0.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.1/conv/Conv_output_0",
+        "/model.23/cv2.2/cv2.2.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/conv/Conv_output_0",
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv2.2/cv2.2.2/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv2.2.2.weight_DequantizeLinear_Output",
+        "model.23.cv2.2.2.bias"
+      ],
+      "outputs": [
+        "/model.23/cv2.2/cv2.2.2/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.0/cv3.2.0.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.2.1.0.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.2.1.0.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/conv/Conv_output_0",
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.2.1.1.conv.weight_DequantizeLinear_Output",
+        "model.23.cv3.2.1.1.conv.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/conv/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/act/Mul",
+      "op_type": "Mul",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/conv/Conv_output_0",
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/act/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/act/Mul_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/cv3.2/cv3.2.2/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/cv3.2/cv3.2.1/cv3.2.1.1/act/Mul_output_0_DequantizeLinear_Output",
+        "model.23.cv3.2.2.weight_DequantizeLinear_Output",
+        "model.23.cv3.2.2.bias"
+      ],
+      "outputs": [
+        "/model.23/cv3.2/cv3.2.2/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Concat_2",
+      "op_type": "Concat",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/cv2.2/cv2.2.2/Conv_output_0",
+        "/model.23/cv3.2/cv3.2.2/Conv_output_0"
+      ],
+      "outputs": [
+        "/model.23/Concat_2_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Reshape_2",
+      "op_type": "Reshape",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Concat_2_output_0",
+        "/model.23/Constant_output_0_3"
+      ],
+      "outputs": [
+        "/model.23/Reshape_2_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Concat_3",
+      "op_type": "Concat",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Reshape_output_0",
+        "/model.23/Reshape_1_output_0",
+        "/model.23/Reshape_2_output_0"
+      ],
+      "outputs": [
+        "/model.23/Concat_3_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Split",
+      "op_type": "Split",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Concat_3_output_0",
+        "onnx::Split_562"
+      ],
+      "outputs": [
+        "/model.23/Split_output_0",
+        "/model.23/Split_output_1"
+      ]
+    },
+    {
+      "name": "/model.23/dfl/Reshape",
+      "op_type": "Reshape",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Split_output_0",
+        "/model.23/dfl/Constant_output_0"
+      ],
+      "outputs": [
+        "/model.23/dfl/Reshape_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Sigmoid",
+      "op_type": "Sigmoid",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Split_output_1"
+      ],
+      "outputs": [
+        "/model.23/Sigmoid_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/dfl/Transpose",
+      "op_type": "Transpose",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/dfl/Reshape_output_0"
+      ],
+      "outputs": [
+        "/model.23/dfl/Transpose_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/dfl/Softmax",
+      "op_type": "Softmax",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/dfl/Transpose_output_0"
+      ],
+      "outputs": [
+        "/model.23/dfl/Softmax_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/dfl/conv/Conv",
+      "op_type": "Conv",
+      "precision": "int8",
+      "inputs": [
+        "/model.23/dfl/Softmax_output_0_DequantizeLinear_Output",
+        "model.23.dfl.conv.weight_DequantizeLinear_Output"
+      ],
+      "outputs": [
+        "/model.23/dfl/conv/Conv_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/dfl/Reshape_1",
+      "op_type": "Reshape",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/dfl/conv/Conv_output_0",
+        "/model.23/dfl/Constant_1_output_0"
+      ],
+      "outputs": [
+        "/model.23/dfl/Reshape_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Slice",
+      "op_type": "Slice",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/dfl/Reshape_1_output_0",
+        "/model.23/Constant_4_output_0",
+        "/model.23/Mul_output_0_1",
+        "/model.23/Constant_3_output_0_1"
+      ],
+      "outputs": [
+        "/model.23/Slice_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Slice_1",
+      "op_type": "Slice",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/dfl/Reshape_1_output_0",
+        "/model.23/Mul_output_0_2",
+        "/model.23/Mul_1_output_0",
+        "/model.23/Constant_3_output_0_2"
+      ],
+      "outputs": [
+        "/model.23/Slice_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Sub",
+      "op_type": "Sub",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Constant_9_output_0",
+        "/model.23/Slice_output_0"
+      ],
+      "outputs": [
+        "/model.23/Sub_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Add_1",
+      "op_type": "Add",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Constant_10_output_0",
+        "/model.23/Slice_1_output_0"
+      ],
+      "outputs": [
+        "/model.23/Add_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Add_2",
+      "op_type": "Add",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Sub_output_0",
+        "/model.23/Add_1_output_0"
+      ],
+      "outputs": [
+        "/model.23/Add_2_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Sub_1",
+      "op_type": "Sub",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Add_1_output_0",
+        "/model.23/Sub_output_0"
+      ],
+      "outputs": [
+        "/model.23/Sub_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Div_1",
+      "op_type": "Div",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Add_2_output_0",
+        "/model.23/Constant_11_output_0"
+      ],
+      "outputs": [
+        "/model.23/Div_1_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Concat_4",
+      "op_type": "Concat",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Div_1_output_0",
+        "/model.23/Sub_1_output_0"
+      ],
+      "outputs": [
+        "/model.23/Concat_4_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Mul_2",
+      "op_type": "Mul",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Concat_4_output_0",
+        "/model.23/Constant_12_output_0"
+      ],
+      "outputs": [
+        "/model.23/Mul_2_output_0"
+      ]
+    },
+    {
+      "name": "/model.23/Concat_5",
+      "op_type": "Concat",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "/model.23/Mul_2_output_0",
+        "/model.23/Sigmoid_output_0"
+      ],
+      "outputs": [
+        "output0_pre_cast"
+      ]
+    },
+    {
+      "name": "output0_cast_to_fp32",
+      "op_type": "Cast",
+      "precision": "fp32_fp16",
+      "inputs": [
+        "output0_pre_cast"
+      ],
+      "outputs": [
+        "output0"
+      ]
+    }
+  ]
+}

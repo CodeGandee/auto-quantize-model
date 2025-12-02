@@ -1,6 +1,6 @@
 [project]
 authors = [{name = "igamenovoer", email = "igamenovoer@xx.com"}]
-dependencies = ["onnx>=1.19.1,<2", "neural-compressor>=2.4.1,<3", "nvidia-modelopt>=0.39.0,<0.40"]
+dependencies = ["onnx>=1.19.1,<2", "neural-compressor>=2.4.1,<3", "nvidia-modelopt>=0.39.0,<0.40", "onnx-graphsurgeon>=0.5.8,<0.6", "mdutils>=1.8.1,<2", "imageio>=2.37.2,<3"]
 name = "auto-quantize-model"
 requires-python = ">= 3.11, < 3.13"
 version = "0.1.0"
@@ -19,6 +19,7 @@ ultralytics = "*"
 torch = "*"
 torchvision = "*"
 onnxruntime-gpu = "*"
+cupy-cuda12x = "*"
 pip = "*"
 supervision = "*"
 scipy = "*"
@@ -42,6 +43,9 @@ py-cpuinfo = "*"
 index-url = "https://pypi.org/simple"
 # Use official PyTorch wheels with CUDA 12.4 (<= 12.6 as requested)
 extra-index-urls = ["https://download.pytorch.org/whl/cu124"]
+
+[tool.pixi.activation.env]
+LD_LIBRARY_PATH = "/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
 
 [tool.pixi.tasks]
 setup-tensorrt = "env NVIDIA_TENSORRT_DISABLE_INTERNAL_PIP=0 python -m pip install tensorrt==10.7.0 --extra-index-url https://pypi.nvidia.com"

@@ -1,0 +1,27 @@
+{
+  "model": "models/yolo11/checkpoints/yolo11n.pt",
+  "data_root": "datasets/coco2017/source-data",
+  "instances": "datasets/coco2017/source-data/annotations/instances_val2017.json",
+  "images_dir": "datasets/coco2017/source-data/val2017",
+  "device": "0",
+  "precision": "fp16",
+  "imgsz": 640,
+  "max_images": 100,
+  "conf": 0.001,
+  "metrics": {
+    "mAP_50_95": 0.4761918679525048,
+    "mAP_50": 0.6313102295570405,
+    "mAP_75": 0.5239913131739177,
+    "mAP_small": 0.2961704542149063,
+    "mAP_medium": 0.5042954004976826,
+    "mAP_large": 0.7384639329952359,
+    "num_images": 100,
+    "num_detections": 13734
+  },
+  "latency": {
+    "mean_ms": 106.74054895993322,
+    "median_ms": 69.05021658167243,
+    "p90_ms": 193.0224705487491,
+    "throughput_fps": 9.368510933697427
+  }
+}
