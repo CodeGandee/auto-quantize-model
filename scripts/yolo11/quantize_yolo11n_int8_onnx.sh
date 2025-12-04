@@ -29,6 +29,22 @@ set -euo pipefail
 #
 # Usage:
 #   pixi run bash scripts/yolo11/quantize_yolo11n_int8_onnx.sh
+#
+# Next step (TensorRT engine from QDQ ONNX):
+#   For pre-quantized QDQ models, TensorRT should obey the Q/DQ-defined
+#   precisions when building INT8 or mixed-precision engines. When
+#   converting the resulting ONNX to TensorRT with `trtexec`, prefer:
+#
+#   pixi run trtexec \
+#     --onnx=models/yolo11/onnx/yolo11n-int8-qdq-proto.onnx \
+#     --saveEngine=models/yolo11/onnx/yolo11n-int8-qdq-proto-obey.plan \
+#     --int8 \
+#     --fp16 \
+#     --precisionConstraints=obey
+#
+# Using `--precisionConstraints=obey` ensures the engine honors the
+# ModelOpt QDQ quantization scheme instead of silently ignoring it,
+# which is critical to avoid accuracy collapse in some networks.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"

@@ -136,6 +136,38 @@ quantize(
 
 You can parameterize this in a helper script (e.g., `models/yolo11/helpers/quantize_with_modelopt.py`) and wire it into `pixi run` later.
 
+### 3.4 Caveats: Default Layer Exclusions and “Extreme INT8”
+
+**Important**: By default, ModelOpt **excludes** several operation types from INT8 quantization to preserve accuracy. This includes:
+
+- `Softmax`, `Sigmoid`, `Tanh` (activations often sensitive to quantization)
+- `Concat`, `Slice`, `Reshape`, `Transpose` (structural ops)
+- `Add`, `Sub`, `Mul`, `Div` (element-wise arithmetic, unless fused)
+
+This means a "default" INT8 quantization run will result in a mixed-precision graph where these ops remain in FP32/FP16. For example, in YOLO11:
+- The attention mechanism (Softmax in PSA blocks) will remain in FP32/FP16.
+- The detection head's final arithmetic (decoding boxes) will remain in FP32/FP16.
+
+If you require **full** INT8 coverage (e.g., for specific NPU constraints or maximum throughput benchmarking), you must explicitly force these ops to be quantized using the `op_types_to_quantize` parameter. However, be aware that forcing sensitive ops like Softmax or Sigmoid to INT8 often degrades accuracy significantly.
+
+In this repository we experimented with an “extreme INT8” configuration that:
+
+- Included a very broad set of op types in `op_types_to_quantize` (Conv, MatMul, MaxPool, Mul, Add, Concat, Sigmoid, Softmax, Split, Transpose, Reshape, Slice, Resize, Sub, Div, etc.).
+- Used the same COCO-based calibration tensor as the “normal” YOLO11n PTQ runs.
+
+Empirical observations from that extreme configuration:
+
+- At the ONNX Runtime level (QDQ ONNX evaluated directly), COCO2017 mAP dropped from ≈0.42 (FP32) to ≈0.12 (extreme INT8) on a 500-image slice — a **very large** accuracy collapse.
+- The resulting “extreme” QDQ ONNX model also triggered internal errors when attempting to build a TensorRT engine in explicit quantization mode (assertion failures inside TensorRT’s builder on some heavily quantized paths).
+
+Implications for future users:
+
+- Treat “extreme INT8 everywhere” as a **diagnostic or stress test only**, not a realistic deployment configuration.
+- For detectors like YOLO11, safer practice is:
+  - Let ModelOpt’s defaults exclude sensitive ops (Softmax, some elementwise ops, structural ops).
+  - Optionally, **selectively** expand `op_types_to_quantize` after measuring per-layer sensitivity, rather than enabling “quantize everything” in one go.
+  - Always verify both ONNX-level accuracy and TensorRT engine build stability before committing to a more aggressive INT8 scheme.
+
 ## 4. Build TensorRT engines for mixed FP16/INT8
 
 ModelOpt ONNX quantization creates explicit Q/DQ ONNX graphs that are compatible with TensorRT’s **explicit quantization** path.
@@ -196,4 +228,3 @@ With both engines, run your YOLO11 evaluation script to compute:
 - This repo’s task context:
   - `context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md` (detailed notes and findings)
   - `context/tasks/working/task-quantize-yolo11-by-modelopt.md` (overall plan and follow-up subtasks)
-
