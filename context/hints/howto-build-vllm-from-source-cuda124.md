@@ -185,3 +185,155 @@ If vLLM complains about mismatched quantization methods:
 - vLLM ModelOpt quantization (`modelopt`, `modelopt_fp4`): https://docs.vllm.ai/en/stable/api/vllm/model_executor/layers/quantization/modelopt.html
 - NVIDIA ModelOpt HF checkpoints (examples): https://huggingface.co/collections/nvidia/inference-optimized-checkpoints-with-model-optimizer
 - vLLM GitHub repo: https://github.com/vllm-project/vllm
+
+## 9. Speeding up vLLM source builds (CUDA 12.4)
+
+Building vLLM from source can easily take several minutes, especially on the first build. The options below come from the vLLM docs and build system in `extern/vllm` (`setup.py`, `vllm/envs.py`, `docs/getting_started/installation/gpu/cuda.inc.md`, `docs/contributing/incremental_build.md`).
+
+### 9.1 Use precompiled kernels when you only change Python
+
+If you are not touching C++/CUDA kernels, you can avoid compiling them entirely and still get an editable install by using precompiled wheels:
+
+```bash
+git clone https://github.com/vllm-project/vllm.git
+cd vllm
+VLLM_USE_PRECOMPILED=1 uv pip install --editable .
+```
+
+This does:
+
+- Locates the base commit for your current branch.
+- Downloads the matching pre-built wheel (or a wheel from `VLLM_PRECOMPILED_WHEEL_LOCATION` if set).
+- Reuses the wheel’s compiled `.so` libraries inside your editable install.
+
+Good use cases:
+
+- Early experimentation where you only edit Python code.
+- Preparing an editable environment before switching to the incremental CMake workflow (Section 9.5).
+
+If you later modify kernels, switch back to a full source build (Section 4) or the incremental workflow; otherwise you will eventually hit import/ABI errors.
+
+### 9.2 Enable ccache / sccache for repeated builds
+
+`extern/vllm/setup.py` automatically wires in `sccache` or `ccache` if they are on `PATH`:
+
+- If `sccache` is found, it sets `CMAKE_*_COMPILER_LAUNCHER=sccache`.
+- Else if `ccache` is found, it sets `CMAKE_*_COMPILER_LAUNCHER=ccache`.
+
+Practical recipe:
+
+```bash
+# One-time setup
+sudo apt-get install -y ccache    # or: conda install ccache
+
+# Verify
+which ccache
+```
+
+For pip-based editable builds, follow the pattern recommended in the vLLM docs so `ccache` can actually hit:
+
+```bash
+CCACHE_NOHASHDIR=true pip install --no-build-isolation -e .
+```
+
+Notes:
+
+- `CCACHE_NOHASHDIR=true` prevents the random temporary build dirs created by pip from defeating the cache.
+- `sccache` works similarly but can use remote storage; configure via `SCCACHE_BUCKET`, `SCCACHE_REGION`, `SCCACHE_S3_NO_CREDENTIALS`, etc., if you want shared caches.
+
+On large CUDA projects, once the cache is warm, rebuilds typically drop from minutes to seconds.
+
+### 9.3 Tune parallelism with MAX_JOBS and NVCC_THREADS
+
+The vLLM build exposes two installation-time env vars in `vllm/envs.py` and uses them in `setup.py`:
+
+- `MAX_JOBS`: maximum number of compilation jobs (if unset, defaults to detected CPU core count).
+- `NVCC_THREADS`: number of threads to use per `nvcc` compilation; when set, the build logic reduces `MAX_JOBS` to avoid oversubscribing the machine.
+
+Example on a 32-core workstation with enough RAM:
+
+```bash
+export MAX_JOBS=32        # cap jobs at core count (or slightly below)
+export NVCC_THREADS=4     # let nvcc use 4 threads per compilation
+pip install -e .
+```
+
+Guidelines:
+
+- On strong machines where CPU cores are underutilized by default, setting `MAX_JOBS` explicitly can speed up builds.
+- On memory-constrained machines, you may want a *lower* `MAX_JOBS` (for example `MAX_JOBS=6`–`8`) to avoid swapping; faster builds are about keeping all cores busy *without* thrashing memory.
+- For CUDA ≥ 11.2, `NVCC_THREADS` controls internal nvcc threading and is also passed via `-DNVCC_THREADS` into CMake, which appends `--threads=<NVCC_THREADS>` to nvcc’s flags.
+
+### 9.4 Restrict CUDA architectures with TORCH_CUDA_ARCH_LIST
+
+By default, PyTorch/vLLM may compile kernels for multiple SM architectures (e.g., 7.5, 8.0, 8.9, 9.0, etc.). Limiting this list to just the architectures you actually run on can significantly reduce compile time and binary size.
+
+1. Find your GPU’s compute capability:
+
+```bash
+python -c "import torch; print(torch.cuda.get_device_capability())"
+# e.g. (8, 0) for A100, (8, 9) for L40S
+```
+
+2. Set `TORCH_CUDA_ARCH_LIST` accordingly before building:
+
+```bash
+# A100 (sm_80)
+export TORCH_CUDA_ARCH_LIST="8.0"
+
+# L40S (sm_89), example for a single dev GPU
+# export TORCH_CUDA_ARCH_LIST="8.9"
+
+pip install -e .
+```
+
+Make sure **all** GPUs you plan to serve on are covered; otherwise the resulting wheel may not contain kernels for those devices.
+
+The same principle applies if you build via `uv` or through this repo’s tooling; just ensure `TORCH_CUDA_ARCH_LIST` is exported in the environment before the build command runs.
+
+### 9.5 Use the incremental CMake workflow for kernel development
+
+For frequent C++/CUDA kernel changes (everything under `extern/vllm/csrc/`), using the incremental CMake workflow from `docs/contributing/incremental_build.md` is much faster than repeatedly running `pip install -e .`.
+
+High-level flow:
+
+1. One-time editable install (ideally with precompiled kernels to keep the first step quick):
+
+    ```bash
+    uv venv --python 3.12 --seed
+    source .venv/bin/activate
+
+    # Python-only editable install that reuses precompiled kernels
+    VLLM_USE_PRECOMPILED=1 uv pip install -U -e . --torch-backend=auto
+
+    # Build-time tools: cmake, ninja, etc.
+    uv pip install -r requirements/build.txt --torch-backend=auto
+    ```
+
+2. Generate CMake presets using vLLM’s helper:
+
+    ```bash
+    python tools/generate_cmake_presets.py
+    ```
+
+    This script:
+
+    - Detects `nvcc` and your Python executable.
+    - Chooses reasonable `NVCC_THREADS` and CMake `jobs` based on CPU cores.
+    - Enables `sccache`/`ccache` automatically if available.
+    - Emits `CMakeUserPresets.json` (for example with `generator: "Ninja"`).
+
+3. Configure and build once:
+
+    ```bash
+    cmake --preset release
+    cmake --build --preset release --target install
+    ```
+
+After that, kernel edits only require re-running:
+
+```bash
+cmake --build --preset release --target install
+```
+
+CMake/Ninja will recompile only the affected translation units and reinstall the updated `.so` files into your editable `vllm` tree, making inner-loop kernel development much faster than full re-installs.
