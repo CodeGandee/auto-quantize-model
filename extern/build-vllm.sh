@@ -143,18 +143,18 @@ except Exception as exc:
 EOF
 
 if [ "${MODE}" = "editable" ]; then
-  echo "[build-vllm] Installing vLLM in editable mode (no deps, verbose pip)..."
-  echo "[build-vllm]   Command: ${PYTHON_BIN} -m pip install -v -e . --no-deps"
+  echo "[build-vllm] Installing vLLM in editable mode (no deps, no build isolation, verbose pip)..."
+  echo "[build-vllm]   Command: ${PYTHON_BIN} -m pip install -v -e . --no-deps --no-build-isolation"
   set -x
-  "${PYTHON_BIN}" -m pip install -v -e . --no-deps
+  "${PYTHON_BIN}" -m pip install -v -e . --no-deps --no-build-isolation
   set +x
   echo "[build-vllm] Editable install complete."
 else
-  echo "[build-vllm] Building vLLM wheel (no install, verbose pip)..."
-  echo "[build-vllm]   Command: ${PYTHON_BIN} -m pip wheel -v . -w \"${BUILD_DIR}\" --no-deps"
+  echo "[build-vllm] Building vLLM wheel (no install, no build isolation, verbose pip)..."
+  echo "[build-vllm]   Command: ${PYTHON_BIN} -m pip wheel -v . -w \"${BUILD_DIR}\" --no-deps --no-build-isolation"
 
   set -x
-  "${PYTHON_BIN}" -m pip wheel -v . -w "${BUILD_DIR}" --no-deps
+  "${PYTHON_BIN}" -m pip wheel -v . -w "${BUILD_DIR}" --no-deps --no-build-isolation
   set +x
 
   echo "[build-vllm] Build complete. Wheels in: ${BUILD_DIR}"
