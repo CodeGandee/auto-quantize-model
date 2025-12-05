@@ -1,0 +1,6 @@
+device_indices: [0, 1, 2, 3, 4, 5, 6, 7]
+distributed:
+  world_size: 8
+  backend: nccl
+  dtype: bf16
+
