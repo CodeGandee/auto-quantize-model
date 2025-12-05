@@ -1,0 +1,3 @@
+name: quantize_calib_yolo11n
+root: ${hydra:runtime.cwd}/datasets/quantize-calib
+subset_filelist: quant100.txt

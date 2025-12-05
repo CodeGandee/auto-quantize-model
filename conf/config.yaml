@@ -1,0 +1,17 @@
+defaults:
+  - dataset: quantize_calib_yolo11n
+  - dataset/sampling@dataset.sampling: default
+  - model/yolo11n/arch@model: yolo11n.default
+  - model/yolo11n/infer@infer: yolo11n.default
+  - inference_runtime@runtime: onnxruntime
+  - hardware: single_gpu
+  - _self_
+
+experiment: dev
+
+hydra:
+  run:
+    dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    name: ${experiment}
+    chdir: true

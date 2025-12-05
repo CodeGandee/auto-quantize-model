@@ -1,0 +1,7 @@
+name: yolo11n
+family: yolo
+variant: n
+format: onnx
+path: ${hydra:runtime.cwd}/models/yolo11
+input_size: [640, 640]
+num_classes: 80
