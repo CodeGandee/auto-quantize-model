@@ -106,7 +106,7 @@ done
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-VLLM_TAG="${VLLM_TAG:-v0.10.1}"
+VLLM_TAG="${VLLM_TAG:-v0.8.5}"
 PYTHON_BIN="${PYTHON:-python}"
 VLLM_DIR="${SCRIPT_DIR}/vllm"
 
