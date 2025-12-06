@@ -40,6 +40,7 @@ onnxruntime-gpu = "*"
 cupy-cuda12x = "*"
 pip = "*"
 setuptools-scm = "*"
+cmake = ">=3.26.1"
 supervision = "*"
 scipy = "*"
 opencv-python = "*"
@@ -71,6 +72,7 @@ PATH = "/opt/tensorrt/bin:${PATH}"
 [tool.pixi.tasks]
 setup-tensorrt = "env NVIDIA_TENSORRT_DISABLE_INTERNAL_PIP=0 python -m pip install tensorrt==10.7.0 --extra-index-url https://pypi.nvidia.com"
 install-vllm-local = "python -m pip install --force-reinstall /data2/huangzhe/source-built/vllm-0.10.1+cu126-cp312-cp312-linux_x86_64.whl"
+build-vllm-wheel = "bash extern/build-vllm.sh -o tmp/vllm-build"
 
 [tool.pixi.dependencies]
 python = "3.12.*"

@@ -36,14 +36,15 @@ services:
         ENABLE_GLOBAL_PROXY: true
         REMOVE_GLOBAL_PROXY_AFTER_BUILD: false
     ports:
-    - '13444:22'
+    - '40001:22'
     environment: {}
     volumes:
     - app:/hard/volume/app
     - data:/hard/volume/data
-    - /workspace:/hard/volume/workspace
+    - workspace:/hard/volume/workspace
     - home_me:/home/me
-    - /workspace/pkg-cache:/pkg-cache
+    - /pkg-cache:/pkg-cache
+    - /workspace:/workspace
   stage-1:
     image: auto-quantize:stage-1
     stdin_open: true
@@ -88,9 +89,10 @@ services:
         PEI_STAGE_DIR_1: /pei-from-host/stage-1
         ROOT_PASSWORD: ''
     ports:
-    - '13444:22'
+    - '40001:22'
     volumes: []
 volumes:
   app: {}
   data: {}
+  workspace: {}
   home_me: {}
