@@ -143,38 +143,7 @@ pixi run bash -lc '
 
 If necessary, you can also point `NVTOOLSEXT_PATH` at the Python NVTX package (as we do in `[tool.pixi.activation.env]`) so `FindCUDAToolkit` has another hint path.
 
-## 6. Avoiding OOM during the CUDA build
-
-Even with the correct toolchain, building vLLM’s CUDA extensions is heavy. With many SM90+ kernels (Marlin, FlashAttn, Machete, etc.), parallel compilation can easily exhaust system memory (16–32 GiB is often not enough at high parallelism).
-
-We configure parallelism in two layers:
-
-1. vLLM’s `setup.py` / CMake layer:
-   - Uses `MAX_JOBS` (total parallel build jobs).
-   - Uses `NVCC_THREADS` (threads per `nvcc` invocation).
-
-2. Our build script wrapper (`extern/build-vllm.sh`):
-
-   - If `MAX_JOBS` is unset, we auto-select a value based on RAM and CPU, which might still be too aggressive on smaller machines.
-
-To avoid OOM on constrained hosts, explicitly set conservative values before running the build:
-
-```bash
-pixi run bash -lc '
-  export VLLM_PYTHON_EXECUTABLE="$CONDA_PREFIX/bin/python"
-  export MAX_JOBS=4          # or even 2 on low-RAM machines
-  export NVCC_THREADS=1      # keep per-nvcc memory usage low
-  bash extern/build-vllm.sh
-'
-```
-
-If you still see OOM or `ninja` aborts, try:
-
-- Lowering `MAX_JOBS` to 2 or 1.
-- Ensuring swap is enabled on the host.
-- Building on a machine with more RAM (e.g., ≥ 64 GiB for comfortable SM90+ builds).
-
-## 7. End-to-end summary
+## 6. End-to-end summary
 
 To build vLLM 0.8.5 inside this repo’s Pixi CUDA 12.4 env:
 
@@ -194,13 +163,11 @@ To build vLLM 0.8.5 inside this repo’s Pixi CUDA 12.4 env:
    ```bash
    VLLM_TAG="${VLLM_TAG:-v0.8.5}"
    ```
-5. Build with conservative parallelism:
+5. Build (optionally with conservative parallelism):
    ```bash
    pixi run bash -lc '
      export VLLM_PYTHON_EXECUTABLE="$CONDA_PREFIX/bin/python"
-     export MAX_JOBS=4
-     export NVCC_THREADS=1
-     bash extern/build-vllm.sh
+     bash extern/build-vllm.sh -j 4 --nvcc-threads 1
    '
    ```
 
@@ -208,4 +175,3 @@ If the build still fails, inspect the latest log in `build-vllm/vllm-build-*.log
 
 - NVTX-related CMake issues (missing `CUDA::nvToolsExt`).
 - OOM or `ninja` errors (reduce parallelism or increase RAM).
-

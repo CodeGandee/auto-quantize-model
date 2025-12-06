@@ -22,14 +22,15 @@ trap 'trap - SIGINT SIGTERM; echo "[build-vllm] Interrupted. Killing all process
 #   PYTHON          Python executable to use (default: python)
 #   VLLM_BUILD_DIR  Output directory for wheels (wheel mode only)
 #                   (default: \$PWD/build-vllm; overridden by -o/--output-dir)
-#   MAX_JOBS        Upper bound on parallel build jobs. If unset and
-#                   --max-jobs is not provided, this script auto-selects a
-#                   value based on CPU cores and RAM size.
-#   NVCC_THREADS    Threads per nvcc invocation (default: 1 if unset).
+#   MAX_JOBS        Upper bound on parallel build jobs passed through to vLLM's
+#                   build system. If unset, the underlying build system decides.
+#   NVCC_THREADS    Threads per nvcc invocation. If unset, the underlying build
+#                   system decides.
 
 MODE="wheel"
 OUTPUT_DIR=""
 CLI_MAX_JOBS=""
+CLI_NVCC_THREADS=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -52,10 +53,14 @@ Modes:
 Options:
   -o, --output-dir DIR
               Wheel output dir in wheel mode. Overrides VLLM_BUILD_DIR.
-  --max-jobs N
+  -j, --jobs N
               Maximum parallel build jobs passed through to vLLM's build
-              system (sets MAX_JOBS=N). Defaults to an auto-selected value
-              based on CPU cores and RAM if not provided.
+              system (sets MAX_JOBS=N). If not provided, the underlying build
+              system decides.
+  --nvcc-threads N
+              Threads per nvcc invocation passed through to vLLM's build
+              system (sets NVCC_THREADS=N). If not provided, the underlying
+              build system decides.
 
 Environment:
   VLLM_TAG        vLLM git tag to build (default: v0.10.1)
@@ -76,20 +81,20 @@ EOF
       OUTPUT_DIR="$2"
       shift 2
       ;;
-    --max-jobs)
+    -j|--jobs)
       if [[ $# -lt 2 ]]; then
-        echo "[build-vllm] ERROR: --max-jobs requires a numeric argument." >&2
+        echo "[build-vllm] ERROR: -j/--jobs requires a numeric argument." >&2
         exit 1
       fi
       CLI_MAX_JOBS="$2"
       shift 2
       ;;
-    -j)
+    --nvcc-threads)
       if [[ $# -lt 2 ]]; then
-        echo "[build-vllm] ERROR: -j requires a numeric argument." >&2
+        echo "[build-vllm] ERROR: --nvcc-threads requires a numeric argument." >&2
         exit 1
       fi
-      CLI_MAX_JOBS="$2"
+      CLI_NVCC_THREADS="$2"
       shift 2
       ;;
     --)
@@ -124,11 +129,16 @@ echo "[build-vllm] vLLM source dir: ${VLLM_DIR}"
 echo "[build-vllm] Wheel output dir: ${BUILD_DIR}"
 echo "[build-vllm] Mode: ${MODE}"
 
-# If --max-jobs was provided, respect it by setting MAX_JOBS before the
-# auto-parallelism logic runs.
+# If --jobs was provided, respect it by setting MAX_JOBS before the build.
 if [ -n "${CLI_MAX_JOBS}" ]; then
   export MAX_JOBS="${CLI_MAX_JOBS}"
   echo "[build-vllm] CLI requested MAX_JOBS=${MAX_JOBS}."
+fi
+
+# If --nvcc-threads was provided, respect it by setting NVCC_THREADS.
+if [ -n "${CLI_NVCC_THREADS}" ]; then
+  export NVCC_THREADS="${CLI_NVCC_THREADS}"
+  echo "[build-vllm] CLI requested NVCC_THREADS=${NVCC_THREADS}."
 fi
 
 # Detect CUDA arch list from the current GPU (RTX 3090 and up), while
@@ -231,62 +241,6 @@ detect_cuda_arch_list() {
   echo "${selected}"
 }
 
-# Configure build parallelism so we don't OOM during heavy CUDA builds.
-# We auto-select MAX_JOBS based on CPU cores and ~90% of system RAM,
-# assuming ~3.5 GiB peak usage per heavy CUDA compilation job.
-configure_build_parallelism() {
-  local cores
-  if command -v nproc >/dev/null 2>&1; then
-    cores="$(nproc --all)"
-  else
-    cores=8
-  fi
-
-  if [ -z "${MAX_JOBS:-}" ]; then
-    local mem_kb mem90_kb per_job_kb jobs_from_mem max_jobs
-    if [ -r /proc/meminfo ]; then
-      mem_kb="$(awk '/MemTotal:/ {print $2}' /proc/meminfo || echo "")"
-    else
-      mem_kb=""
-    fi
-
-    if [ -n "${mem_kb:-}" ]; then
-      # Use 90% of total memory.
-      mem90_kb=$((mem_kb * 9 / 10))
-      # Approximate 8 GiB per heavy CUDA job: 8 * 1024 * 1024 ≈ 8388608 KiB.
-      per_job_kb=8388608
-      jobs_from_mem=$((mem90_kb / per_job_kb))
-      if [ "${jobs_from_mem}" -lt 1 ]; then
-        jobs_from_mem=1
-      fi
-      # Start from the minimum of what memory and cores allow.
-      if [ "${jobs_from_mem}" -gt "${cores}" ]; then
-        max_jobs="${cores}"
-      else
-        max_jobs="${jobs_from_mem}"
-      fi
-    else
-      # Fallback: conservative half of cores (at least 1).
-      max_jobs=$((cores / 2))
-      if [ "${max_jobs}" -lt 1 ]; then
-        max_jobs=1
-      fi
-    fi
-
-    export MAX_JOBS="${max_jobs}"
-    echo "[build-vllm] MAX_JOBS not set; auto-selected ${MAX_JOBS} (cores=${cores}, mem_kb=${mem_kb:-unknown})."
-  else
-    echo "[build-vllm] MAX_JOBS already set to '${MAX_JOBS}'."
-  fi
-
-  if [ -z "${NVCC_THREADS:-}" ]; then
-    export NVCC_THREADS=1
-    echo "[build-vllm] NVCC_THREADS not set; defaulting to ${NVCC_THREADS}."
-  else
-    echo "[build-vllm] NVCC_THREADS already set to '${NVCC_THREADS}'."
-  fi
-}
-
 if [ -z "${TORCH_CUDA_ARCH_LIST:-}" ]; then
   detected_arch="$(detect_cuda_arch_list)"
   export TORCH_CUDA_ARCH_LIST="${detected_arch}"
@@ -294,9 +248,6 @@ if [ -z "${TORCH_CUDA_ARCH_LIST:-}" ]; then
 else
   echo "[build-vllm] TORCH_CUDA_ARCH_LIST already set to '${TORCH_CUDA_ARCH_LIST}'."
 fi
-
-# Apply parallelism limits before starting any heavy build work.
-configure_build_parallelism
 
 mkdir -p "${BUILD_DIR}"
 
