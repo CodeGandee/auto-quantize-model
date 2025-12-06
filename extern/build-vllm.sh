@@ -22,9 +22,14 @@ trap 'trap - SIGINT SIGTERM; echo "[build-vllm] Interrupted. Killing all process
 #   PYTHON          Python executable to use (default: python)
 #   VLLM_BUILD_DIR  Output directory for wheels (wheel mode only)
 #                   (default: \$PWD/build-vllm; overridden by -o/--output-dir)
+#   MAX_JOBS        Upper bound on parallel build jobs. If unset and
+#                   --max-jobs is not provided, this script auto-selects a
+#                   value based on CPU cores and RAM size.
+#   NVCC_THREADS    Threads per nvcc invocation (default: 1 if unset).
 
 MODE="wheel"
 OUTPUT_DIR=""
+CLI_MAX_JOBS=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -47,6 +52,10 @@ Modes:
 Options:
   -o, --output-dir DIR
               Wheel output dir in wheel mode. Overrides VLLM_BUILD_DIR.
+  --max-jobs N
+              Maximum parallel build jobs passed through to vLLM's build
+              system (sets MAX_JOBS=N). Defaults to an auto-selected value
+              based on CPU cores and RAM if not provided.
 
 Environment:
   VLLM_TAG        vLLM git tag to build (default: v0.10.1)
@@ -65,6 +74,22 @@ EOF
         exit 1
       fi
       OUTPUT_DIR="$2"
+      shift 2
+      ;;
+    --max-jobs)
+      if [[ $# -lt 2 ]]; then
+        echo "[build-vllm] ERROR: --max-jobs requires a numeric argument." >&2
+        exit 1
+      fi
+      CLI_MAX_JOBS="$2"
+      shift 2
+      ;;
+    -j)
+      if [[ $# -lt 2 ]]; then
+        echo "[build-vllm] ERROR: -j requires a numeric argument." >&2
+        exit 1
+      fi
+      CLI_MAX_JOBS="$2"
       shift 2
       ;;
     --)
@@ -98,6 +123,13 @@ echo "[build-vllm] vLLM tag: ${VLLM_TAG}"
 echo "[build-vllm] vLLM source dir: ${VLLM_DIR}"
 echo "[build-vllm] Wheel output dir: ${BUILD_DIR}"
 echo "[build-vllm] Mode: ${MODE}"
+
+# If --max-jobs was provided, respect it by setting MAX_JOBS before the
+# auto-parallelism logic runs.
+if [ -n "${CLI_MAX_JOBS}" ]; then
+  export MAX_JOBS="${CLI_MAX_JOBS}"
+  echo "[build-vllm] CLI requested MAX_JOBS=${MAX_JOBS}."
+fi
 
 # Detect CUDA arch list from the current GPU (RTX 3090 and up), while
 # respecting the maximum architecture supported by the local CUDA toolkit
@@ -221,12 +253,13 @@ configure_build_parallelism() {
     if [ -n "${mem_kb:-}" ]; then
       # Use 90% of total memory.
       mem90_kb=$((mem_kb * 9 / 10))
-      # Approximate 3.5 GiB per heavy CUDA job: 3.5 * 1024 * 1024 ≈ 3670016 KiB.
-      per_job_kb=3670016
+      # Approximate 8 GiB per heavy CUDA job: 8 * 1024 * 1024 ≈ 8388608 KiB.
+      per_job_kb=8388608
       jobs_from_mem=$((mem90_kb / per_job_kb))
       if [ "${jobs_from_mem}" -lt 1 ]; then
         jobs_from_mem=1
       fi
+      # Start from the minimum of what memory and cores allow.
       if [ "${jobs_from_mem}" -gt "${cores}" ]; then
         max_jobs="${cores}"
       else
