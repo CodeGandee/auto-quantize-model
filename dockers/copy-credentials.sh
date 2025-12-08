@@ -67,38 +67,39 @@ fi
 
 # 4. Extract and copy Claude/Codex aliases
 echo "[4/6] Copying Claude/Codex aliases..."
-ALIASES_FILE="/tmp/claude_codex_aliases_$$.txt"
-cat > "$ALIASES_FILE" << 'EOF'
-
-# Codex and Claude aliases
-alias codex-skip-all='codex --dangerously-bypass-approvals-and-sandbox'
-
-alias claude-yunwu='\
-    ANTHROPIC_BASE_URL="${YUNWU_API_URL}" \
-    ANTHROPIC_API_KEY="${YUNWU_API_KEY}" \
-    claude --dangerously-skip-permissions'
-
-alias claude-yunwu-adv='\
-    ANTHROPIC_BASE_URL="${YUNWU_API_URL}" \
-    ANTHROPIC_API_KEY="${YUNWU_API_KEY_ADV}" \
-    claude --dangerously-skip-permissions'
-
-alias claude-taobao='\
-    ANTHROPIC_API_KEY="${TAOBAO_CC_API_KEY}" \
-    ANTHROPIC_BASE_URL="${TAOBAO_CC_BASE_URL}" \
-    claude --dangerously-skip-permissions'
-
-alias claude-qwen='\
-    ANTHROPIC_BASE_URL="${SILICONFLOW_API_URL}" \
-    ANTHROPIC_API_KEY="${SILICONFLOW_API_KEY}" \
-    ANTHROPIC_MODEL="${SILICONFLOW_MODEL}" \
-    claude --dangerously-skip-permissions'
-EOF
-
-docker cp "$ALIASES_FILE" "$CONTAINER:/tmp/"
-docker exec -u "$TARGET_USER" "$CONTAINER" bash -c "cat /tmp/$(basename $ALIASES_FILE) >> /home/$TARGET_USER/.bashrc"
-rm -f "$ALIASES_FILE"
-echo "  ✓ Aliases copied"
+if [ -f ~/.bashrc ]; then
+    ALIASES_FILE="/tmp/claude_codex_aliases_$$.txt"
+    
+    # Extract aliases matching claude-* and codex-* patterns
+    grep -E "^alias (claude-|codex-)" ~/.bashrc > "$ALIASES_FILE" 2>/dev/null || true
+    
+    # Also capture multi-line aliases (lines that end with backslash continuation)
+    awk '/^alias (claude-|codex-)/ {
+        print
+        while (getline > 0) {
+            print
+            if (!/\\$/) break
+        }
+    }' ~/.bashrc > "$ALIASES_FILE" 2>/dev/null || true
+    
+    if [ -s "$ALIASES_FILE" ]; then
+        # Add header
+        sed -i '1i\n# Codex and Claude aliases' "$ALIASES_FILE"
+        
+        docker cp "$ALIASES_FILE" "$CONTAINER:/tmp/"
+        docker exec -u "$TARGET_USER" "$CONTAINER" bash -c "cat /tmp/$(basename $ALIASES_FILE) >> /home/$TARGET_USER/.bashrc"
+        rm -f "$ALIASES_FILE"
+        
+        # Count aliases
+        ALIAS_COUNT=$(grep -c "^alias" "$ALIASES_FILE" 2>/dev/null || echo "0")
+        echo "  ✓ Aliases copied ($ALIAS_COUNT found)"
+    else
+        echo "  ⚠ No claude-* or codex-* aliases found in ~/.bashrc"
+        rm -f "$ALIASES_FILE"
+    fi
+else
+    echo "  ⚠ ~/.bashrc not found, skipping aliases"
+fi
 
 # 5. Extract and copy environment variables (without exposing values)
 echo "[5/6] Copying environment variables..."
