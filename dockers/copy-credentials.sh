@@ -142,7 +142,11 @@ if [ -f ~/.bashrc ]; then
     if [ -s "$ENVVARS_FILE" ]; then
         ENVVAR_COUNT=$(wc -l < "$ENVVARS_FILE")
         echo "  Found $ENVVAR_COUNT environment variables in ~/.bashrc:"
-        sed 's/=.*/=***/' "$ENVVARS_FILE" | sed 's/^/    /'
+        if [ "$DRY_RUN" = true ]; then
+            sed 's/^/    /' "$ENVVARS_FILE"
+        else
+            sed 's/=.*/=***/' "$ENVVARS_FILE" | sed 's/^/    /'
+        fi
         echo "  TO: $CONTAINER:/home/$TARGET_USER/.bashrc (appended)"
         
         if [ "$DRY_RUN" = false ]; then
