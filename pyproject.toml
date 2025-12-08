@@ -75,7 +75,8 @@ NVTOOLSEXT_PATH = "${CONDA_PREFIX}/lib/python3.12/site-packages/nvidia/nvtx"
 
 [tool.pixi.tasks]
 setup-tensorrt = "env NVIDIA_TENSORRT_DISABLE_INTERNAL_PIP=0 python -m pip install tensorrt==10.7.0 --extra-index-url https://pypi.nvidia.com"
-build-vllm-wheel = "bash extern/build-vllm.sh -o tmp/vllm-build --max-jobs 8"
+build-vllm-wheel = "bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
+install-vllm-wheel = "bash custom-build/bootstrap.sh --yes && python -m pip install --no-deps custom-build/vllm-*.whl"
 
 [tool.pixi.dependencies]
 python = "3.12.*"

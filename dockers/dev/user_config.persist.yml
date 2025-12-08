@@ -40,6 +40,7 @@ stage_1:
     address: host.docker.internal # default value, this will map to the host machine
     port: 7890 # if address==host.docker.internal, this will be the proxy port on host machine
     enable_globally: true # enable proxy for all shell commands during build and run?
+    remove_after_build: true # remove global proxy after build?
 
   device:
     type: gpu

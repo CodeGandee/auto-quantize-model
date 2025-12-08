@@ -110,16 +110,29 @@ done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+CALLER_PWD="$(pwd)"
 
 VLLM_TAG="${VLLM_TAG:-v0.8.5}"
 PYTHON_BIN="${PYTHON:-python}"
 VLLM_DIR="${SCRIPT_DIR}/vllm"
 
 if [ -n "${OUTPUT_DIR}" ]; then
-  BUILD_DIR="${OUTPUT_DIR}"
+  if [[ "${OUTPUT_DIR}" = /* ]]; then
+    BUILD_DIR="${OUTPUT_DIR}"
+  else
+    BUILD_DIR="${CALLER_PWD}/${OUTPUT_DIR}"
+  fi
 else
-  # Default to caller's current directory so wheels are easy to find.
-  BUILD_DIR="${VLLM_BUILD_DIR:-$(pwd)/build-vllm}"
+  if [ -n "${VLLM_BUILD_DIR:-}" ]; then
+    if [[ "${VLLM_BUILD_DIR}" = /* ]]; then
+      BUILD_DIR="${VLLM_BUILD_DIR}"
+    else
+      BUILD_DIR="${CALLER_PWD}/${VLLM_BUILD_DIR}"
+    fi
+  else
+    # Default to caller's current directory so wheels are easy to find.
+    BUILD_DIR="${CALLER_PWD}/build-vllm"
+  fi
 fi
 
 echo "[build-vllm] Repo root: ${ROOT_DIR}"
