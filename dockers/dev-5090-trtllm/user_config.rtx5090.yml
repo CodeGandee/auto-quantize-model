@@ -7,7 +7,12 @@ stage_1:
   # input/output image settings
   image:
     # base: nvcr.io/nvidia/tensorrt:24.12-py3
-    base: nvcr.io/nvidia/tensorrt-llm/release:1.0.0
+    # base: nvcr.io/nvidia/tensorrt-llm/release:1.0.0
+
+    # Flattened version of nvcr.io/nvidia/tensorrt-llm/release:1.0.0
+    # Built with: uvx docker-squash -f 188 -t tensorrt-llm:1.0.0-packed nvcr.io/nvidia/tensorrt-llm/release:1.0.0
+    # Reduces 188 layers to 1 layer, size decreased from 47.9GB to 36.5GB (23.57% reduction)
+    base: tensorrt-llm:1.0.0-packed
     output: auto-quantize-trtllm:stage-1
 
   # ssh settings
@@ -18,7 +23,7 @@ stage_1:
     port: 22
 
     # mapped port on host machine, if given, this port will be mapped to the container SSH port
-    host_port: 40001
+    host_port: 40002
 
     # ssh users, the key is user name, value is user info
     users:
@@ -71,7 +76,7 @@ stage_1:
     - 'stage-1/custom/install-dev-tools.sh'
 
     # vision-specific development tools
-    - 'stage-1/system/vision-dev/install-vision-dev.bash' # install vision development tools
+    # - 'stage-1/system/vision-dev/install-vision-dev.bash' # install vision development tools
 
 stage_2:
 

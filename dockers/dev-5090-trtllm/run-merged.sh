@@ -26,7 +26,7 @@ RM=$(normalize_bool "${RUN_REMOVE:-1}")
 TTY=$(normalize_bool "${RUN_TTY:-1}")
 GPU_MODE="${RUN_GPU:-auto}"
 DEVICE_TYPE="${RUN_DEVICE_TYPE:-cpu}"
-IMG="${STAGE2_IMAGE_NAME:-auto-quantize:stage-2}"
+IMG="${STAGE2_IMAGE_NAME:-auto-quantize-trtllm:stage-2}"
 
 CLI_PORTS=()
 CLI_VOLS=()

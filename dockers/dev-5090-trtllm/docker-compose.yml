@@ -1,6 +1,6 @@
 services:
   stage-2:
-    image: auto-quantize:stage-2
+    image: auto-quantize-trtllm:stage-2
     stdin_open: true
     tty: true
     command: /bin/bash
@@ -20,7 +20,7 @@ services:
       extra_hosts:
       - host.docker.internal:host-gateway
       args:
-        BASE_IMAGE: auto-quantize:stage-1
+        BASE_IMAGE: auto-quantize-trtllm:stage-1
         WITH_ESSENTIAL_APPS: true
         PEI_STAGE_HOST_DIR_2: ./installation/stage-2
         PEI_STAGE_DIR_2: /pei-from-host/stage-2
@@ -34,9 +34,9 @@ services:
         PEI_HTTP_PROXY_2: http://host.docker.internal:7890
         PEI_HTTPS_PROXY_2: http://host.docker.internal:7890
         ENABLE_GLOBAL_PROXY: true
-        REMOVE_GLOBAL_PROXY_AFTER_BUILD: false
+        REMOVE_GLOBAL_PROXY_AFTER_BUILD: true
     ports:
-    - '40001:22'
+    - '40002:22'
     environment: {}
     volumes:
     - app:/hard/volume/app
@@ -46,7 +46,7 @@ services:
     - /pkg-cache:/pkg-cache
     - /workspace:/workspace
   stage-1:
-    image: auto-quantize:stage-1
+    image: auto-quantize-trtllm:stage-1
     stdin_open: true
     tty: true
     command: /bin/bash
@@ -67,7 +67,7 @@ services:
       extra_hosts:
       - host.docker.internal:host-gateway
       args:
-        BASE_IMAGE: nvcr.io/nvidia/tensorrt:24.12-py3
+        BASE_IMAGE: tensorrt-llm:1.0.0-packed
         WITH_ESSENTIAL_APPS: true
         WITH_SSH: true
         SSH_USER_NAME: me,root
@@ -84,12 +84,12 @@ services:
         PEI_HTTP_PROXY_1: http://host.docker.internal:7890
         PEI_HTTPS_PROXY_1: http://host.docker.internal:7890
         ENABLE_GLOBAL_PROXY: true
-        REMOVE_GLOBAL_PROXY_AFTER_BUILD: false
+        REMOVE_GLOBAL_PROXY_AFTER_BUILD: true
         PEI_STAGE_HOST_DIR_1: ./installation/stage-1
         PEI_STAGE_DIR_1: /pei-from-host/stage-1
         ROOT_PASSWORD: ''
     ports:
-    - '40001:22'
+    - '40002:22'
     volumes: []
 volumes:
   app: {}

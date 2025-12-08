@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 PROJECT_DIR=$(cd "$(dirname "$0")" && pwd)
-STAGE2_IMAGE_NAME='auto-quantize:stage-2'
+STAGE2_IMAGE_NAME='auto-quantize-trtllm:stage-2'
 FORWARD=()
 usage() {
   cat <<'USAGE'
