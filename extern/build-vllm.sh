@@ -290,6 +290,9 @@ git checkout "${VLLM_TAG}"
 echo "[build-vllm] Updating submodules..."
 git submodule update --init --recursive
 
+echo "[build-vllm] Cleaning previous build artifacts (build/, dist/, *.egg-info)..."
+rm -rf build dist .eggs *.egg-info
+
 echo "[build-vllm] Python version in this env:"
 "${PYTHON_BIN}" -V
 

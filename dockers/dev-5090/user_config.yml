@@ -40,6 +40,7 @@ stage_1:
     address: host.docker.internal # default value, this will map to the host machine
     port: 7890 # if address==host.docker.internal, this will be the proxy port on host machine
     enable_globally: true # enable proxy for all shell commands during build and run?
+    remove_after_build: true # remove global proxy after build?
 
   device:
     type: gpu
@@ -115,10 +116,10 @@ stage_2:
     # Scripts can include parameters: 'script.sh --param1=value1 --param2="value with spaces"'
     on_build:
     # install pixi, a lightweight python package manager
-    - 'stage-2/system/pixi/install-pixi.bash --pypi-repo tuna --conda-repo tuna --user me --cache-dir=/pkg-cache/pixi'
+    - 'stage-2/system/pixi/install-pixi.bash --pypi-repo aliyun --user me --cache-dir=/pkg-cache/pixi'
 
     # install uv
-    - 'stage-1/system/uv/install-uv.sh --pypi-repo tuna --user me'
+    - 'stage-1/system/uv/install-uv.sh --pypi-repo aliyun --user me'
 
     # install nodejs for codex and claude code
     - 'stage-2/system/nodejs/install-nvm-nodejs.sh --with-cn-mirror --user me'

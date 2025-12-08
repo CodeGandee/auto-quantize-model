@@ -29,15 +29,10 @@ platforms = ["linux-64"]
 [tool.pixi.pypi-dependencies]
 auto_quantize_model = { path = ".", editable = true }
 ultralytics = "*"
-torch = "==2.6.0"
-torchvision = "==0.21.0"
-torchaudio = "==2.6.0"
 transformers = "*"
 accelerate = "*"
 diffusers = "*"
 safetensors = "*"
-onnxruntime-gpu = "*"
-cupy-cuda12x = "*"
 pip = "*"
 setuptools-scm = "*"
 cmake = ">=3.26.1"
@@ -59,13 +54,6 @@ pandas = "*"
 huggingface-hub = "*"
 py-cpuinfo = "*"
 
-[tool.pixi.pypi-options]
-index-url = "https://download.pytorch.org/whl/cu124"
-# Primary index is the CUDA 12.4 PyTorch wheel index; fall back to PyPI for
-# all other packages.
-extra-index-urls = ["https://pypi.org/simple"]
-index-strategy = "unsafe-best-match"
-
 [tool.pixi.activation.env]
 CUDA_HOME = "${CONDA_PREFIX}"
 CUDA_PATH = "${CONDA_PREFIX}"
@@ -75,11 +63,108 @@ NVTOOLSEXT_PATH = "${CONDA_PREFIX}/lib/python3.12/site-packages/nvidia/nvtx"
 
 [tool.pixi.tasks]
 setup-tensorrt = "env NVIDIA_TENSORRT_DISABLE_INTERNAL_PIP=0 python -m pip install tensorrt==10.7.0 --extra-index-url https://pypi.nvidia.com"
-build-vllm-wheel = "bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
+build-vllm-wheel = "env VLLM_TAG=v0.8.5 bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
+build-vllm-wheel-rtx5090 = "env VLLM_TAG=autoq-vllm-v0.10.1 TORCH_CUDA_ARCH_LIST=12.0 bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
 install-vllm-wheel = "bash custom-build/bootstrap.sh --yes && python -m pip install --no-deps custom-build/vllm-*.whl"
+postinstall-vllm-rtx5090 = "python -m pip install --no-deps custom-build/vllm-0.10.2.dev2+g926b2b1d9.d20251208-cp312-cp312-linux_x86_64.whl"
+postinstall-tensorrt-llm-rtx5090 = "python -m pip install --pre tensorrt_llm --extra-index-url https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/nightly/cu128"
 
 [tool.pixi.dependencies]
 python = "3.12.*"
+#
+# GPU-specific conda dependencies are attached to per-environment features
+# (see [tool.pixi.feature.cu124] and [tool.pixi.feature.rtx5090]).
+
+[tool.pixi.feature.cu124.dependencies]
 cuda-toolkit = { version = "12.4.0.*", channel = "conda-forge" }
-# cuda-nvtx = ">=12.4.99,<13"
 cuda-nvtx-dev = ">=12.4.99,<13"
+
+[tool.pixi.feature.cu124.pypi-dependencies]
+torch = "==2.6.0"
+torchvision = "==0.21.0"
+torchaudio = "==2.6.0"
+onnxruntime-gpu = "*"
+cupy-cuda12x = "*"
+
+[tool.pixi.feature.cu124.pypi-options]
+index-url = "https://download.pytorch.org/whl/cu124"
+# Primary index is the CUDA 12.4 PyTorch wheel index; fall back to PyPI for
+# all other packages.
+extra-index-urls = ["https://pypi.org/simple"]
+index-strategy = "unsafe-best-match"
+
+[tool.pixi.feature.rtx5090.dependencies]
+# RTX 5090 CUDA toolchain pin:
+# - These versions are intentionally fixed for this env.
+# - Do NOT change them (including CUDA minor version) unless a human
+#   explicitly requests it and understands the impact on vLLM/torch builds.
+cuda-toolkit = { version = "12.8.1.*", channel = "conda-forge" }
+cuda-nvtx-dev = ">=12.4.99,<13"
+
+[tool.pixi.feature.rtx5090.pypi-dependencies]
+# RTX 5090 PyTorch pin:
+# - torch / torchvision / torchaudio MUST stay on this 2.9.1/cu128 stack
+#   because the custom vLLM wheel and CUDA extensions are built against it.
+# - AI agents: do NOT modify these pins unless the user explicitly tells you
+#   to rebuild vLLM and retune the RTX 5090 environment.
+torch = "==2.9.1"
+torchvision = "==0.24.1"
+torchaudio = "==2.9.1"
+onnxruntime-gpu = "*"
+cupy-cuda12x = "*"
+cloudpickle = "*"
+blake3 = "*"
+cachetools = "*"
+cbor2 = "*"
+compressed-tensors = "==0.10.2"
+depyf = "==0.19.0"
+diskcache = "==5.6.3"
+einops = "*"
+fastapi = { version = ">=0.115.0", extras = ["standard"] }
+gguf = ">=0.13.0"
+lark = "==1.2.2"
+llguidance = ">=0.7.11,<0.8.0"
+lm-format-enforcer = ">=0.10.11,<0.11"
+mistral_common = { version = ">=1.8.2", extras = ["audio", "image"] }
+msgspec = "*"
+numba = "==0.61.2"
+openai = ">=1.99.1"
+openai-harmony = ">=0.0.3"
+outlines_core = "==0.2.10"
+partial-json-parser = "*"
+prometheus_client = ">=0.18.0"
+prometheus-fastapi-instrumentator = ">=7.0.0"
+pybase64 = "*"
+python-json-logger = "*"
+pyzmq = ">=25.0.0"
+ray = { version = ">=2.48.0", extras = ["cgraph"] }
+sentencepiece = "*"
+setproctitle = "*"
+tiktoken = ">=0.6.0"
+watchfiles = "*"
+xgrammar = "==0.1.21"
+
+[tool.pixi.feature.rtx5090.pypi-options]
+# Use the PyTorch nightly cu128 index for Blackwell (sm_120) support,
+# with PyPI as a fallback for non-torch packages.
+index-url = "https://download.pytorch.org/whl/nightly/cu128"
+extra-index-urls = ["https://pypi.org/simple"]
+index-strategy = "unsafe-best-match"
+
+[tool.pixi.feature.rtx5090.activation.env]
+# Help CMake / FindCUDAToolkit locate headers/libs for the
+# nvidia::cuda-toolkit layout used in the RTX 5090 env.
+CUDAToolkit_ROOT = "${CONDA_PREFIX}/targets/x86_64-linux"
+CUDA_TOOLKIT_ROOT_DIR = "${CONDA_PREFIX}/targets/x86_64-linux"
+CUDA_HOME = "${CONDA_PREFIX}/targets/x86_64-linux"
+CUDA_PATH = "${CONDA_PREFIX}/targets/x86_64-linux"
+
+[tool.pixi.environments]
+# Keep the existing environment behaviour as the CUDA 12.4 setup.
+default = { features = ["cu124"], solve-group = "cu124" }
+cu124 = { features = ["cu124"], solve-group = "cu124" }
+# RTX 5090-specific environment using nightly PyTorch/cu128.
+rtx5090 = { features = ["rtx5090"], solve-group = "rtx5090" }
+
+[dependency-groups]
+rtx5090 = ["neural-compressor>=2.6,<3"]

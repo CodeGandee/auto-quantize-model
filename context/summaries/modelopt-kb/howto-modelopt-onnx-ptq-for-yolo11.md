@@ -5,7 +5,7 @@ Howto: ModelOpt ONNX PTQ for YOLO11 (INT8 / mixed precision)
 - **Status**: Draft, based on subtask 001-101 findings
 - **Date**: 2025-12-01
 - **Owner**: AI assistant (Codex CLI)
-- **Source**: See `context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md` for the underlying analysis.
+- **Source**: See `context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-101-modelopt-docs-and-apis.md` for the underlying analysis.
 
 ## 1. Prerequisites and model/export
 
@@ -226,5 +226,5 @@ With both engines, run your YOLO11 evaluation script to compute:
 - TensorRT official docs for explicit quantization and best practices:
   - https://docs.nvidia.com/deeplearning/tensorrt/latest/inference-library/work-quantized-types.html
 - This repo’s task context:
-  - `context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md` (detailed notes and findings)
+  - `context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-101-modelopt-docs-and-apis.md` (detailed notes and findings)
   - `context/tasks/working/task-quantize-yolo11-by-modelopt.md` (overall plan and follow-up subtasks)

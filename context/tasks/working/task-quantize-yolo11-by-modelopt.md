@@ -26,31 +26,31 @@ Understand the ModelOpt ONNX quantization workflow (with a focus on CNN/ONNX usa
 
 Goal: Read the ModelOpt docs and examples (especially ONNX and CNN-related material) plus TensorRT best practices so we know the recommended way to run ONNX quantization for models like YOLO11, including any constraints or flags we should care about.
 
-- Subtask spec and findings: context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md
+- Subtask spec and findings: context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-101-modelopt-docs-and-apis.md
 
 #### 1.2 Verify environment and YOLO11 repo wiring
 
 Goal: Confirm that the `pixi` environment has `nvidia-modelopt` installed and usable, and that the `models/yolo11/` directory (checkpoints, helpers, ONNX, src) is correctly set up for later quantization and engine-building steps.
 
-- Subtask spec: context/tasks/working/subtask-001-102-env-and-yolo11-structure.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-102-env-and-yolo11-structure.md
 
 #### 1.3 Choose YOLO11 variants and define success criteria
 
 Goal: Decide which YOLO11 checkpoint(s) we will use for experiments and write down concrete success criteria (hardware, metrics, acceptable accuracy drop) so later milestones have a clear optimization target.
 
-- Subtask spec: context/tasks/working/subtask-001-103-variants-and-success-criteria.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-103-variants-and-success-criteria.md
 
 ### TODOs
 
-- [x] Job-001-101: Complete subtask 1.1: Study ModelOpt ONNX/CNN docs and TensorRT best practices, focusing on how to apply them to YOLO11 (see `context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md` for the summary).
+- [x] Job-001-101: Complete subtask 1.1: Study ModelOpt ONNX/CNN docs and TensorRT best practices, focusing on how to apply them to YOLO11 (see `context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-101-modelopt-docs-and-apis.md` for the summary).
 - [x] Job-001-102: Complete subtask 1.2: Verify `pixi`/ModelOpt environment and review the `models/yolo11/` structure.
 - [x] Job-001-103: Complete subtask 1.3: Select YOLO11 variant(s) and document success criteria for the quantization work.
 
 ### Status summary for Task 1
 
-- ModelOpt docs and APIs: high-level findings and ONNX/CNN usage notes are summarized in `context/tasks/working/subtask-001-101-modelopt-docs-and-apis.md`, which now points to the detailed how-to and conceptual notes under `context/summaries/modelopt-kb/`.
-- Environment and YOLO11 wiring: `nvidia-modelopt` is present and importable in the `pixi` environment, and the `models/yolo11/` layout (bootstrap, checkpoints, helpers, ONNX, src) is documented in `context/tasks/working/subtask-001-102-env-and-yolo11-structure.md`.
-- Variants and success criteria: `yolo11n` (primary) and `yolo11s` (secondary) are selected as target checkpoints, with hardware assumptions (RTX 3090, 640×640, batch size 1) and quantitative accuracy/latency/memory criteria captured in `context/tasks/working/subtask-001-103-variants-and-success-criteria.md`.
+- ModelOpt docs and APIs: high-level findings and ONNX/CNN usage notes are summarized in `context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-101-modelopt-docs-and-apis.md`, which now points to the detailed how-to and conceptual notes under `context/summaries/modelopt-kb/`.
+- Environment and YOLO11 wiring: `nvidia-modelopt` is present and importable in the `pixi` environment, and the `models/yolo11/` layout (bootstrap, checkpoints, helpers, ONNX, src) is documented in `context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-102-env-and-yolo11-structure.md`.
+- Variants and success criteria: `yolo11n` (primary) and `yolo11s` (secondary) are selected as target checkpoints, with hardware assumptions (RTX 3090, 640×640, batch size 1) and quantitative accuracy/latency/memory criteria captured in `context/tasks/working/quantize-yolo11-by-modelopt/subtask-001-103-variants-and-success-criteria.md`.
 
 ## 2. Prepare YOLO11 ONNX export and calibration/evaluation data
 
@@ -73,19 +73,19 @@ Prepare YOLO11 ONNX exports for the chosen variants, validate that they load cle
 
 Goal: Export YOLO11 checkpoints to ONNX for the chosen variants and verify that the resulting graphs load cleanly and are usable for TensorRT/ModelOpt workflows.
 
-- Subtask spec: context/tasks/working/subtask-002-101-export-and-validate-yolo11-onnx.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-002-101-export-and-validate-yolo11-onnx.md
 
 #### 2.2 Prepare calibration dataset for YOLO11
 
 Goal: Assemble a representative calibration dataset (paths, preprocessing recipe, and storage format) that can be consumed by ModelOpt ONNX PTQ for INT8 calibration.
 
-- Subtask spec: context/tasks/working/subtask-002-102-calibration-data-for-yolo11.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-002-102-calibration-data-for-yolo11.md
 
 #### 2.3 Implement baseline evaluation and metrics
 
 Goal: Implement or adapt an inference script and use it to record baseline FP32/FP16 accuracy and latency metrics for the selected YOLO11 variants on the RTX 3090.
 
-- Subtask spec: context/tasks/working/subtask-002-103-baseline-eval-and-metrics.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-002-103-baseline-eval-and-metrics.md
 
 ### TODOs
 
@@ -113,19 +113,19 @@ Prototype and refine the ModelOpt ONNX PTQ workflow for YOLO11, starting from a 
 
 Goal: Stand up a basic ModelOpt ONNX PTQ flow for YOLO11 using a simple CLI/Python invocation and placeholder/random calibration data to validate end-to-end behavior.
 
-- Subtask spec: context/tasks/working/subtask-003-101-prototype-onnx-ptq-pipeline.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-003-101-prototype-onnx-ptq-pipeline.md
 
 #### 3.2 Wire real calibration data into ONNX PTQ
 
 Goal: Replace placeholder data with the real calibration dataset from section 2 and ensure the PTQ process runs reliably with the expected shapes and preprocessing.
 
-- Subtask spec: context/tasks/working/subtask-003-102-wire-calibration-into-onnx-ptq.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-003-102-wire-calibration-into-onnx-ptq.md
 
 #### 3.3 Generate quantized YOLO11 ONNX artifacts
 
 Goal: Configure INT8/mixed-precision options and produce one or more quantized YOLO11 ONNX models, capturing the chosen settings for later TensorRT engine building.
 
-- Subtask spec: context/tasks/working/subtask-003-103-generate-quantized-yolo11-onnx-artifacts.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-003-103-generate-quantized-yolo11-onnx-artifacts.md
 
 ### TODOs
 
@@ -153,19 +153,19 @@ Establish a reproducible TensorRT engine-building path for YOLO11, create FP16 a
 
 Goal: Decide on the engine-building interface and build FP16-only TensorRT engines from the baseline YOLO11 ONNX models for use as comparison points.
 
-- Subtask spec: context/tasks/working/subtask-004-101-build-fp16-baseline-engines.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-004-101-build-fp16-baseline-engines.md
 
 #### 4.2 Build mixed FP16/INT8 engines and integrate with evaluation
 
 Goal: Build mixed FP16/INT8 TensorRT engines from the quantized ONNX models and extend the evaluation script to run these engines alongside the FP16 baseline.
 
-- Subtask spec: context/tasks/working/subtask-004-102-build-mixed-engines-and-eval.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-004-102-build-mixed-engines-and-eval.md
 
 #### 4.3 Collect and store TensorRT benchmark metrics
 
 Goal: Run benchmarks for all relevant engines and store the resulting latency, throughput, memory, and accuracy metrics in a structured, reproducible format.
 
-- Subtask spec: context/tasks/working/subtask-004-103-collect-trt-benchmark-metrics.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-004-103-collect-trt-benchmark-metrics.md
 
 ### TODOs
 
@@ -193,19 +193,19 @@ Define and explore a manageable search space of quantization and engine-building
 
 Goal: Identify the most impactful quantization and engine-building knobs and design a small, tractable experiment grid for YOLO11.
 
-- Subtask spec: context/tasks/working/subtask-005-101-design-config-search-space.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-005-101-design-config-search-space.md
 
 #### 5.2 Automate experiment grid execution
 
 Goal: Implement an automated pipeline (e.g., a single `pixi run` entrypoint) that runs the quantize → build → benchmark loop across the configuration grid.
 
-- Subtask spec: context/tasks/working/subtask-005-102-automate-experiment-grid.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-005-102-automate-experiment-grid.md
 
 #### 5.3 Analyze results and write deployment guide
 
 Goal: Analyze experiment results to select the best configuration and write a short guide describing how to regenerate the chosen quantized model and TensorRT engine.
 
-- Subtask spec: context/tasks/working/subtask-005-103-analyze-results-and-write-guide.md
+- Subtask spec: context/tasks/working/quantize-yolo11-by-modelopt/subtask-005-103-analyze-results-and-write-guide.md
 
 ### TODOs
 
