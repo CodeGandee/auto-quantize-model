@@ -15,6 +15,12 @@ set -euo pipefail
 #   - Exports a quantized HF checkpoint under:
 #       models/qwen2_5_vl_3b_instruct/quantized/fp8_fp8_coco2017
 #
+# Notes:
+#   - This follows the LM-only FP8 pattern used by NVIDIA / LLM-Compressor
+#     for Qwen2.5-VL (vision tower left in BF16/FP16), which is the layout
+#     expected by vLLM's current ModelOpt integration. See also:
+#       models/qwen2_5_vl_3b_instruct/reports/fp8-vlm-vs-textonly-vllm-compat.md
+#
 # Usage (RTX 5090 env):
 #   pixi run -e rtx5090 bash scripts/qwen/quantize_qwen2_5_vl_3b_fp8_coco2017.sh
 
@@ -70,4 +76,3 @@ PYTHONPATH="${MODELOPT_ROOT}${PYTHONPATH:+:${PYTHONPATH}}" python "${HF_PTQ_SCRI
 
 echo "Done. FP8-quantized Qwen2.5-VL-3B-Instruct exported to:"
 echo "  ${EXPORT_PATH}"
-
