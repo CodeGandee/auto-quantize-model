@@ -34,7 +34,7 @@ CUDNN_HOME="${CUDNN_HOME:-${CUDA_HOME}}"
 ONNXR_CONFIG="${ONNXR_CONFIG:-Release}"
 ONNXR_BUILD_DIR="${ONNXR_BUILD_DIR:-${ORT_DIR}/build/Linux/Release-cuda1281}"
 ONNXR_CUDA_VERSION="${ONNXR_CUDA_VERSION:-12.8}"
-ONNXR_CUDA_ARCHS="${ONNXR_CUDA_ARCHS:-80;86;89}"
+ONNXR_CUDA_ARCHS="${ONNXR_CUDA_ARCHS:-120}"
 PYTHON_BIN="${PYTHON:-python}"
 
 echo "[build-onnxruntime] Repo root: ${ROOT_DIR}"
@@ -61,6 +61,12 @@ export CUDA_HOME
 export CUDNN_HOME
 export PATH="${CUDA_HOME}/bin:${PATH}"
 
+# Force the host C++ compiler to use C++20 so that
+# CMake try-compile checks (e.g., Abseil's C++20 probe)
+# see a C++20-capable configuration even if the default
+# standard is older.
+export CXXFLAGS="${CXXFLAGS:-} -std=c++20"
+
 echo "[build-onnxruntime] Python version in this env:"
 "${PYTHON_BIN}" -V
 
@@ -72,16 +78,17 @@ set -x
 ./build.sh \
   --config "${ONNXR_CONFIG}" \
   --build_dir "${ONNXR_BUILD_DIR}" \
-  --update --build --parallel \
+  --update --build --parallel 6 \
   --build_wheel \
   --use_cuda \
   --cuda_home "${CUDA_HOME}" \
   --cudnn_home "${CUDNN_HOME}" \
   --cuda_version "${ONNXR_CUDA_VERSION}" \
   --cmake_extra_defines "CMAKE_CUDA_ARCHITECTURES=${ONNXR_CUDA_ARCHS}" \
+  --cmake_extra_defines "CMAKE_CXX_STANDARD=20" \
+  --cmake_extra_defines "CMAKE_CXX_STANDARD_REQUIRED=ON" \
   --skip_tests
 set +x
 
 echo "[build-onnxruntime] Build complete. Wheel should be under:"
 echo "  ${ONNXR_BUILD_DIR}/dist"
-

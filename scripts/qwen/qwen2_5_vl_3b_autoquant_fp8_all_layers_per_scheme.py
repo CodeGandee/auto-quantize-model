@@ -49,7 +49,16 @@ from transformers import (
 import modelopt.torch.quantization as mtq
 from auto_quantize_model.modelopt_configs import CUSTOM_QUANT_CONFIGS
 from modelopt.torch.export import export_hf_checkpoint
-from scripts.qwen.qwen2_5_vl_3b_autoquant_fp8_schemes import (
+
+# Ensure the repository root is importable so that absolute imports
+# from the `scripts` package work when this file is executed as a
+# standalone script.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_REPO_ROOT_STR = str(_REPO_ROOT)
+if _REPO_ROOT_STR not in sys.path:
+    sys.path.insert(0, _REPO_ROOT_STR)
+
+from scripts.qwen.qwen2_5_vl_3b_autoquant_fp8_schemes import (  # noqa: E402
     AutoQuantSchemeConfig,
     build_quant_manifest,
     build_vlm_calib_dataloader,
@@ -558,14 +567,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     quantization_formats = _build_quantization_formats(scheme_config)
 
-    dropped_layers = coverage_manifest.get("dropped_layers", [])
-    if not isinstance(dropped_layers, list):
+    dropped_layers_raw = coverage_manifest.get("dropped_layers", [])
+    if not isinstance(dropped_layers_raw, list):
         print(
             "[ERROR] Coverage manifest 'dropped_layers' is not a list.",
             file=sys.stderr,
         )
         return 1
-    disabled_layers = [str(layer_name) for layer_name in dropped_layers]
+    disabled_layers: List[str] = []
+    for layer_name in dropped_layers_raw:
+        base_name = str(layer_name)
+        if base_name.endswith(".quant_recipe"):
+            base_name = base_name[: -len(".quant_recipe")]
+        # Use a wildcard so that both bare module names and their
+        # fully qualified variants (e.g. with a leading 'model.')
+        # are matched by the disabled_layers rule.
+        pattern = f"*{base_name}*"
+        disabled_layers.append(pattern)
 
     print(
         "[INFO] Invoking ModelOpt auto_quantize for all-layers scheme "
@@ -586,7 +604,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         num_calib_steps=num_calib_steps,
         num_score_steps=num_score_steps,
         verbose=True,
-        method="gradient",
     )
 
     # Build a new manifest describing the per-layer quantization state for
@@ -665,4 +682,3 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

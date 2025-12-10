@@ -139,6 +139,7 @@ LD_LIBRARY_PATH = "/usr/local/tensorrt/targets/x86_64-linux-gnu/lib:${CONDA_PREF
 cuda-toolkit = { version = "12.8.1.*", channel = "conda-forge" }
 cuda-nvtx-dev = ">=12.4.99,<13"
 libcudnn-dev = ">=9,<10"
+libprotobuf = "*"
 
 [tool.pixi.feature.rtx5090-vllm.pypi-dependencies]
 # RTX 5090 vLLM PyTorch pin:

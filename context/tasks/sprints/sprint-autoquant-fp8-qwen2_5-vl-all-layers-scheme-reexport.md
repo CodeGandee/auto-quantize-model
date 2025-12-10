@@ -105,11 +105,25 @@ Related context:
     - Confirm:
       - No shape/dtype errors.
       - Model forward passes are stable and reasonably fast on RTX 5090.
+  - Current progress (2025-12-10, RTX 5090 vLLM env):
+    - Regenerated scheme-specific checkpoints for three coverage points using the new driver:
+      - `models/qwen2_5_vl_3b_instruct/quantized/fp8_autoquant_all_layers_top10_coco2017_v2`
+      - `models/qwen2_5_vl_3b_instruct/quantized/fp8_autoquant_all_layers_top20_coco2017_v2`
+      - `models/qwen2_5_vl_3b_instruct/quantized/fp8_autoquant_all_layers_top30_coco2017_v2`
+    - All three checkpoints load cleanly via `Qwen2_5_VLForConditionalGeneration.from_pretrained` with no shape/dtype errors, confirming basic HF compatibility. Text/VLM sanity scripts are still pending.
 - [ ] Sprint-A08: Check weight diversity between schemes
   - Reuse or adapt the debug helper in `tmp/autoquant-schemes-debug/src/check_scheme_weight_diffs.py` to:
     - Compare representative layers across `top10`, `top50`, `top100` new schemes.
     - Assert `max|top10 - top50| > 0` (and similarly for other pairs), confirming that weights truly differ between coverage points.
   - Capture a short Markdown or JSON summary under `tmp/modelopt-autoquant-fp8/` for regression tracking.
+  - Current progress:
+    - For `top10` vs `top30` (`_v2` checkpoints), identified a layer that is dropped in `top10` but selected in `top30` via coverage manifests:
+      - quant_recipe key: `language_model.layers.1.mlp.down_proj.quant_recipe`.
+      - Parameter name: `model.language_model.layers.1.mlp.down_proj.weight`.
+    - Comparing this parameter across schemes shows clear weight diversity:
+      - `dtype(top10_v2) = float32`, `dtype(top30_v2) = float8_e4m3fn`.
+      - `max|top10_v2 - top30_v2| ≈ 4.47e2`, `mean|diff| ≈ 3.11e0`.
+    - For `top10_v2` vs `top20_v2` on the same parameter, both remain unquantized (`float32`) and are bit-identical, as expected from their coverage manifests. A more systematic multi-layer diff and summary under `tmp/` is still TODO.
 - [ ] Sprint-A09: Re-run evaluation scripts against new checkpoints
   - Point:
     - Text-only multi-scheme comparison: `compare_qwen2_5_vl_3b_schemes_vs_fp16.py`
