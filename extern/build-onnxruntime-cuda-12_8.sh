@@ -65,7 +65,16 @@ export PATH="${CUDA_HOME}/bin:${PATH}"
 # CMake try-compile checks (e.g., Abseil's C++20 probe)
 # see a C++20-capable configuration even if the default
 # standard is older.
-export CXXFLAGS="${CXXFLAGS:-} -std=c++20"
+# Also disable certain warnings as errors:
+# - unused-parameter: CUDA 12.8's cuda_fp4.hpp has unused parameters
+# - stringop-overflow: GCC 14.3.0's stricter checks flag false positives in CUTLASS code
+export CXXFLAGS="${CXXFLAGS:-} -std=c++20 -Wno-error=unused-parameter -Wno-error=stringop-overflow"
+
+# Fix linker to use conda sysroot instead of system /lib64 paths
+# This prevents "cannot find /lib64/libm.so.6" errors
+# The conda cross-compilation toolchain has a sysroot with all system libraries
+CONDA_SYSROOT="${CUDA_HOME}/x86_64-conda-linux-gnu/sysroot"
+export LDFLAGS="${LDFLAGS:-} -Wl,--sysroot=${CONDA_SYSROOT} -L${CONDA_SYSROOT}/lib64"
 
 echo "[build-onnxruntime] Python version in this env:"
 "${PYTHON_BIN}" -V
@@ -87,6 +96,8 @@ set -x
   --cmake_extra_defines "CMAKE_CUDA_ARCHITECTURES=${ONNXR_CUDA_ARCHS}" \
   --cmake_extra_defines "CMAKE_CXX_STANDARD=20" \
   --cmake_extra_defines "CMAKE_CXX_STANDARD_REQUIRED=ON" \
+  --cmake_extra_defines "CMAKE_FIND_USE_CMAKE_SYSTEM_PATH=OFF" \
+  --cmake_extra_defines "CMAKE_DISABLE_FIND_PACKAGE_Protobuf=ON" \
   --skip_tests
 set +x
 
