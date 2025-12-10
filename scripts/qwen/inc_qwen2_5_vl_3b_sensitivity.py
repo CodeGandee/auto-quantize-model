@@ -79,6 +79,16 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="Maximum sequence length (tokens) for calibration/eval.",
     )
     parser.add_argument(
+        "--max-mse-ops",
+        type=int,
+        default=32,
+        help=(
+            "Maximum number of ops to score in the INC MSE_V2 sensitivity pass. "
+            "Implemented via the INC_MSE_MAX_OPS environment variable. "
+            "Use 0 to allow all ops (slow)."
+        ),
+    )
+    parser.add_argument(
         "--output-path",
         type=Path,
         default=Path("tmp/qwen2_5_vl_3b_inc/q_model.pt"),
@@ -172,6 +182,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
 
     confidence_batches = conf.tuning_criterion.strategy_kwargs.get("confidence_batches", 1)
+
+    # Limit the number of ops scored by the patched MSE helpers to keep
+    # runtimes reasonable for large LLMs. This is especially important
+    # because each scored op requires preparing and running an FX-quantized
+    # copy of the model.
+    if args.max_mse_ops is not None and args.max_mse_ops > 0:
+        os.environ["INC_MSE_MAX_OPS"] = str(args.max_mse_ops)
 
     print("[INFO] Computing INC MSE_V2 op sensitivity via adaptor.calculate_op_sensitivity ...")
     fp32_mse_map, int8_mse_map = run_single_mse_v2_sensitivity_pass(

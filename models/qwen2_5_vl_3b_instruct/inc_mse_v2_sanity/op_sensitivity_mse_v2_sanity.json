@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "backend": "pytorch_fx",
+    "device": "cpu",
+    "strategy": "mse_v2",
+    "confidence_batches": 1,
+    "calib_samples": 3,
+    "calib_batch_size": 1,
+    "max_seq_len": 128
+  },
+  "fp32_fallback_sensitivity": [
+    {
+      "op_name": "model.visual.patch_embed.proj",
+      "op_type": "Conv3d",
+      "mse": 239756304.0
+    },
+    {
+      "op_name": "model.visual.blocks.0.attn.qkv.module",
+      "op_type": "Linear",
+      "mse": 239756304.0
+    },
+    {
+      "op_name": "model.visual.blocks.0.attn.proj.module",
+      "op_type": "Linear",
+      "mse": 239756304.0
+    }
+  ],
+  "int8_requant_sensitivity": []
+}

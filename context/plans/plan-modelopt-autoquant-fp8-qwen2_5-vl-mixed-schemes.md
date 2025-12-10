@@ -27,9 +27,9 @@ We want to move beyond a single “all‑eligible FP8” config and:
 
 Success looks like:
 
-- A small set of named schemes (e.g., `fp8_autoquant_top25`, `fp8_autoquant_top50`, `fp8_autoquant_full`) with:
+- A family of named schemes (e.g., LM-only `fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`, plus selected all-layers variants) with:
   - Corresponding exported HF checkpoints under `models/qwen2_5_vl_3b_instruct/quantized/`.
-  - Documented per-layer quantization decisions and effective bits summaries.
+  - Documented per-layer quantization decisions, sensitivity rankings, and effective bits summaries.
 - A reusable Python driver that:
   - Runs AutoQuant for Qwen2.5‑VL‑3B LM with different `--auto_quantize_bits` / scoring settings.
   - Outputs machine-readable quantization manifests (e.g., JSON) indicating which layers are FP8 vs BF16/FP16.
@@ -83,8 +83,8 @@ To keep this work reusable and extensible beyond the initial FP8 LM-only schemes
    - Confirm how `hf_ptq.py` wires `mtq.auto_quantize` (`auto_quantize_bits`, `auto_quantize_method`, `num_score_steps`, etc.).  
    - Decide on a **language-model-only AutoQuant** usage: we still reuse the “extract language model, disable vision” pattern from the existing FP8 path.
 2. **Design a set of AutoQuant scenarios**  
-   - Pick 2–3 effective bits targets or other knobs to produce different FP8 coverage levels (e.g., more aggressive vs conservative).  
-   - Decide how to map AutoQuant’s outputs into “top‑K layers quantized” schemes if needed (e.g., by sensitivity ranking).
+   - Choose one or more effective-bits targets and scoring budgets that will be used for **full-coverage sensitivity analysis runs** (LM-only and, optionally, all-layers).  
+   - Define a family of derived schemes that slice these sensitivity baselines into “top‑X% of layers quantized” variants (e.g., LM-only `fp8_autoquant_top10`, `top20`, …, `top100`) by ranking layers by sensitivity and quantizing only the top fraction.
 3. **Implement a Qwen2.5‑VL‑specific AutoQuant driver**  
    - New Python script under `scripts/qwen/` that:
      - Loads the LM-only Qwen2.5‑VL model.  
@@ -92,9 +92,9 @@ To keep this work reusable and extensible beyond the initial FP8 LM-only schemes
      - Calls `mtq.auto_quantize` with configurable `effective_bits` / methods.  
      - Collects per-layer quantization decisions and writes them out as a manifest.
 4. **Export multiple HF checkpoints using derived schemes**  
-   - For each scheme:
-     - Apply the chosen AutoQuant config (or filtered quantization config) to the LM.  
-     - Export a unified HF checkpoint via `export_hf_checkpoint` under a distinct directory (e.g., `fp8_autoquant_top25_coco2017`, `fp8_autoquant_top50_coco2017`).
+   - For each derived scheme (LM-only `fp8_autoquant_topXX` or an all-layers top‑X% variant):
+     - Apply the scheme’s sliced quantization config (only the top‑X% most sensitive layers remain quantized; others are reverted to BF16/FP16).  
+     - Export a unified HF checkpoint via `export_hf_checkpoint` under a distinct directory (e.g., `fp8_autoquant_top10_coco2017`, `fp8_autoquant_top50_coco2017`).
 5. **Probe vLLM compatibility**  
    - For each exported scheme:
      - Attempt to load with `scripts/qwen/run_qwen2_5_vl_3b_vllm_fp8.py` (pointed at the new path).  
@@ -293,71 +293,62 @@ This section defines the initial catalog of FP8 AutoQuant schemes for Qwen2.5‑
 
 ### 6.1 Scheme catalog (names and intent)
 
-We define three schemes:
+We define a **family** of LM-only schemes that sweep the fraction of transformer blocks quantized to FP8 in 10% increments, plus an all-layers FP8 analysis variant:
 
-- `fp8_autoquant_top25`
-  - **Intent**: Conservative, high-quality scheme that only quantizes the most important fraction of LM blocks according to AutoQuant sensitivity, keeping the rest in BF16/FP16. Serves as a “safe” mixed-precision baseline.
-  - **Coverage target**:
-    - Approx. **top 25%** of LM transformer blocks by sensitivity (measured at the block level via AutoQuant recipes).
+- LM-only coverage grid:
+  - Scheme names: `fp8_autoquant_top10`, `fp8_autoquant_top20`, `fp8_autoquant_top30`, …, `fp8_autoquant_top100`.
+  - **Intent**: provide a smooth coverage axis where we can study how quality and memory change as more LM blocks are pushed into FP8, while keeping the vision tower in BF16/FP16.
+  - **Coverage target** for `fp8_autoquant_topXX`:
+    - Approx. **top XX%** of LM transformer blocks by sensitivity (measured at the block level via AutoQuant recipes).
     - Remaining blocks stay unquantized (BF16/FP16), except for any layers that AutoQuant’s default disabled list already excludes (e.g., `lm_head`).
   - **AutoQuant settings (starting point)**:
-    - `auto_quantize_bits ≈ 13.0` in the initial implementation, to satisfy the FP8-only constraint that effective bits must be ≥ the most aggressive recipe’s bitwidth (8 for FP8), while remaining relatively conservative.  
-    - `auto_quantize_method = "gradient"` (uses loss-based gradients; COCO captions with labels from causal LM loss).  
-    - `auto_quantize_score_size = 128` (default) or slightly reduced if runtime is problematic.
-
-- `fp8_autoquant_top50`
-  - **Intent**: Medium-aggressive scheme that quantizes roughly half of the LM blocks, trading more memory savings for potential quality loss. This is the primary candidate for vLLM deployment experiments.
-  - **Coverage target**:
-    - Approx. **top 50%** of LM transformer blocks by sensitivity.  
-    - Remaining blocks unquantized (BF16/FP16), honoring AutoQuant’s default disabled patterns.
-  - **AutoQuant settings (starting point)**:
-    - `auto_quantize_bits ≈ 11.0` in the initial implementation, providing a moderate compression target above the FP8 floor (8 bits) but below the conservative scheme.  
-    - `auto_quantize_method = "gradient"`.  
+    - `auto_quantize_bits ≈ 11.0` for all `fp8_autoquant_topXX` schemes in the first round of experiments, using FP8-only formats; this gives a moderate compression target above the FP8 floor (8 bits).
+    - `auto_quantize_method = "gradient"` (uses loss-based gradients; COCO captions with labels from causal LM loss).
     - `auto_quantize_score_size = 128` (or tuned modestly up/down depending on observed runtime vs quality).
 
-- `fp8_autoquant_full`
-  - **Intent**: Aggressive scheme that quantizes all eligible LM blocks that AutoQuant does not explicitly disable, i.e., “as much FP8 as AutoQuant deems acceptable under a tighter effective-bits budget”. Useful as an upper bound on compression and as a stress test for vLLM compatibility.
+- All-layers FP8 analysis scheme:
+  - Scheme name: `fp8_autoquant_all_layers_fp8`.
+  - **Intent**: aggressive analysis setting that enables FP8 quantization for all eligible layers using a custom config (`FP8_ALL_LAYERS_CFG`), including non-LM components, to study sensitivity across the full VLM.
   - **Coverage target**:
-    - **All eligible** LM transformer blocks (subject to AutoQuant’s internal disabled-layers list and any LM-only constraints), with no explicit top-K pruning; the effective-bits constraint itself forces some layers to remain higher precision / unquantized.
+    - **All eligible** transformer blocks across the model (subject to AutoQuant’s internal disabled-layers list and any model-specific constraints), with no explicit top-K pruning; the effective-bits constraint itself forces some layers to remain higher precision / unquantized.
   - **AutoQuant settings (starting point)**:
-    - `auto_quantize_bits ≈ 9.0` in the initial implementation, as an aggressive setting that drives more layers toward FP8 while respecting the FP8-only constraint.  
-    - `auto_quantize_method = "gradient"`.  
-    - `auto_quantize_score_size = 96–128` (can be slightly reduced if runtime is prohibitive).
+    - `auto_quantize_bits ≈ 11.0` in the initial implementation, as a balanced setting that drives many layers toward FP8 while respecting the FP8-only constraint.
+    - `auto_quantize_method = "gradient"`.
+    - `auto_quantize_score_size = 128` (using multimodal calibration data as described in §5 and Subtask 4.3).
 
-All three schemes:
+All schemes:
 
-- Use **LM-only AutoQuant** as defined in §5 (vision tower BF16/FP16, LM extracted via `get_language_model_from_vl`).  
-- Restrict `quantization_formats` to FP8-based configs compatible with vLLM (initially `mtq.FP8_DEFAULT_CFG` only; NVFP4 or hybrid formats can be added later in a separate experiment, or via custom configs per §1.1).  
+- Use **LM-only AutoQuant** as defined in §5 for the `fp8_autoquant_topXX` family (vision tower BF16/FP16, LM extracted via `get_language_model_from_vl`), and the VLM-aware calibration path plus `FP8_ALL_LAYERS_CFG` for `fp8_autoquant_all_layers_fp8`.
+- Restrict `quantization_formats` to FP8-based configs compatible with vLLM (initially `mtq.FP8_DEFAULT_CFG` and the custom `FP8_ALL_LAYERS_CFG`; NVFP4 or hybrid formats can be added later in a separate experiment, or via custom configs per §1.1).
 - Rely on ModelOpt’s internal grouping rules to keep Q/K/V and MoE experts consistent within each transformer block.
 
-The exact `auto_quantize_bits` values are expected to be tuned after first experiments, but the relative ordering (top25 > top50 > full in effective bits / conservativeness) should remain stable. The current driver uses approximate values of 13.0 / 11.0 / 9.0 for (top25 / top50 / full) under FP8-only formats.
+### 6.2 Two-stage sensitivity + “top-K” scheme mapping
 
-### 6.2 Mapping AutoQuant outputs to “top-K” schemes
+AutoQuant itself optimizes per-layer quantization recipes under an **effective bits** constraint; it does not directly operate in terms of “top 10% / 20% / … / 100% of layers”. For both LM-only and all-layers analysis, we therefore split the workflow into two stages:
 
-AutoQuant itself optimizes per-layer quantization recipes under an **effective bits** constraint; it does not directly operate in terms of “top 25% of layers”. To make the schemes reproducible and interpretable, we define a post-processing step on top of the AutoQuant search results:
+1. **Stage A – Full sensitivity analysis (all eligible layers):**
+   - Run AutoQuant once per configuration family, with all candidate layers enabled:
+     - LM-only family: run a single LM-only AutoQuant search (e.g., using the `fp8_autoquant_top100` / full-coverage settings) so that **all LM transformer blocks** participate in the search under the chosen `auto_quantize_bits`, formats, and calibration data.
+     - All-layers analysis: run AutoQuant with the `FP8_ALL_LAYERS_CFG` config on the full Qwen2.5‑VL model (including non-LM components) so that **all eligible layers** receive candidate recipes and sensitivity scores.
+   - From the resulting AutoQuant `state_dict` and quantized model, extract per-block recipes and statistics:
+     - Collapse per-module recipes at the transformer block (or logical layer) level (e.g., group all quantized linear/attention modules under a block index `block_i`).
+     - For each block, compute a *block importance / sensitivity score* (e.g., the sum of AutoQuant scores over all recipes/modules in that block).
+     - Optionally compute a **FP8 coverage indicator** per block (e.g., whether the block’s main GEMM paths are in FP8 in the full-coverage run).
+   - Store these full-coverage manifests as the canonical **sensitivity baselines** for later slicing.
 
-1. **Run AutoQuant once per scheme** with the scheme-specific `auto_quantize_bits` and other knobs, on the LM-only model.
-2. **Extract per-block recipes** from the searched model:
-   - Collapse per-module recipes at the transformer block level (e.g., group all quantized linear/attention modules under a block index `block_i`).  
-   - For each block, compute a *block importance score* such as:
-     - The sum of AutoQuant scores over all recipes/modules in that block, or  
-     - The effective compression achieved in that block (as implied by the chosen recipes).  
-   - Also compute a **FP8 coverage indicator** per block (e.g., whether the block’s main GEMM paths are in FP8).
-3. **Rank blocks by importance** or by the degree to which AutoQuant chose FP8 recipes.
-4. **Apply coverage rules per scheme**:
-   - `fp8_autoquant_top25`:
-     - Keep FP8 (or quantized) decisions only for the top 25% of ranked blocks.  
-     - For all other blocks, revert them to BF16/FP16 by disabling quantizers / selecting the “no quantization” recipe.  
-   - `fp8_autoquant_top50`:
-     - Same as above, but keep FP8 decisions for the top 50% of ranked blocks.  
-   - `fp8_autoquant_full`:
-     - Do **not** prune by rank; use AutoQuant’s selected recipes as-is (subject to AutoQuant’s own disabled-layers list and effective-bits constraint).
-5. **Emit a manifest** capturing:
-   - For each LM block index: whether it is FP8-quantized in the scheme, and which recipe name is used.  
-   - Scheme-level effective bits and approximate FP8 coverage fraction.  
-   - This manifest will be stored alongside the exported HF checkpoint and used in reports.
+2. **Stage B – Derive “top-X% quantized” schemes from sensitivity rankings:**
+   - For LM-only coverage schemes `fp8_autoquant_topXX`, where `XX ∈ {10, 20, 30, …, 100}`:
+     - Let `coverage_fraction = XX / 100.0`.
+     - Rank LM transformer blocks by their sensitivity score from Stage A (highest sensitivity first).
+     - Mark the top `coverage_fraction` of LM blocks as **quantized** (keep their FP8 recipes from the full-coverage run) and revert all remaining LM blocks to BF16/FP16 by disabling quantizers or selecting the “no quantization” recipe.
+   - For all-layers analysis, optionally define analogous “top-X% of all layers quantized” schemes:
+     - Rank all eligible layers (LM + vision + other modules) by sensitivity.
+     - Select the top-X% of layers and keep their FP8 recipes; revert the rest to BF16/FP16.
+   - For each derived scheme, emit a manifest capturing:
+     - For each block (LM-only or all-layers): whether it is FP8-quantized in the scheme, and which recipe name is used.
+     - Scheme-level effective bits and approximate FP8 coverage fraction.
 
-This mapping ensures that each scheme is defined both in terms of AutoQuant’s effective-bits budget *and* an explicit proportion of LM blocks that ultimately remain FP8 after post-processing. The initial implementation focuses on running AutoQuant and recording per-layer recipes and sensitivity; explicit top‑K pruning can be added as a follow-up refinement once baseline behavior is well-understood.
+This two-stage mapping ensures that schemes are defined in terms of a **single full-coverage sensitivity analysis** per configuration family, plus an explicit proportion of layers (top-X% by sensitivity) that are actually quantized in each derived scheme. The initial implementation focuses on running the full sensitivity pass and recording per-layer statistics; the scheme slicing step (Stage B) can then be applied flexibly without re-running AutoQuant for every coverage point.
 
 ### 6.3 Machine-readable scheme config
 
@@ -372,45 +363,54 @@ We will maintain a small machine-readable config that the driver script can cons
 
 ```python
 AUTOQUANT_FP8_SCHEMES: dict[str, dict[str, object]] = {
-    "fp8_autoquant_top25": {
-        "auto_quantize_bits": 5.5,
+    "fp8_autoquant_top10": {
+        "auto_quantize_bits": 11.0,
         "auto_quantize_method": "gradient",
         "auto_quantize_score_size": 128,
         "coverage_mode": "top_k_blocks",
-        "coverage_fraction": 0.25,
+        "coverage_fraction": 0.10,
         "quant_formats": ["FP8_DEFAULT_CFG"],
     },
-    "fp8_autoquant_top50": {
-        "auto_quantize_bits": 4.8,
+    "fp8_autoquant_top20": {
+        "auto_quantize_bits": 11.0,
         "auto_quantize_method": "gradient",
         "auto_quantize_score_size": 128,
         "coverage_mode": "top_k_blocks",
-        "coverage_fraction": 0.50,
+        "coverage_fraction": 0.20,
         "quant_formats": ["FP8_DEFAULT_CFG"],
     },
-    "fp8_autoquant_full": {
-        "auto_quantize_bits": 4.2,
+    # ...
+    "fp8_autoquant_top100": {
+        "auto_quantize_bits": 11.0,
         "auto_quantize_method": "gradient",
-        "auto_quantize_score_size": 96,
-        "coverage_mode": "full",
+        "auto_quantize_score_size": 128,
+        "coverage_mode": "top_k_blocks",
         "coverage_fraction": 1.0,
         "quant_formats": ["FP8_DEFAULT_CFG"],
+    },
+    "fp8_autoquant_all_layers_fp8": {
+        "auto_quantize_bits": 11.0,
+        "auto_quantize_method": "gradient",
+        "auto_quantize_score_size": 128,
+        "coverage_mode": "full",
+        "coverage_fraction": 1.0,
+        "quant_formats": ["FP8_ALL_LAYERS_CFG"],
     },
 }
 ```
 
 The driver will:
 
-- Look up scheme settings by name.  
-- Run LM-only AutoQuant with the given `auto_quantize_bits`, method, formats, and score size.  
+- Look up scheme settings by name.
+- Run LM-only AutoQuant with the given `auto_quantize_bits`, method, formats, and score size for the `fp8_autoquant_topXX` family (and the VLM-aware path for `fp8_autoquant_all_layers_fp8`).
 - Apply the scheme’s `coverage_mode` / `coverage_fraction` rule to the ranked blocks to produce the final manifest and checkpoint.
 
 ### 6.4 Rationale and expected usage
 
-- **Why three schemes?**
-  - `fp8_autoquant_top25` probes the regime where only the most sensitive/harmful-to-quantize blocks are kept in higher precision, providing a high-quality baseline with modest memory savings.  
-  - `fp8_autoquant_top50` strikes a middle ground and is likely the most interesting candidate for production-style vLLM serving experiments on RTX 5090.  
-  - `fp8_autoquant_full` provides a “maximally compressed” FP8 setting that may sacrifice some quality but gives insight into vLLM’s robustness to aggressive FP8 coverage.
+- **Why a 10%-step coverage grid?**
+  - The `fp8_autoquant_top10` … `fp8_autoquant_top100` family gives a simple, monotonic coverage axis where we can correlate “fraction of LM blocks in FP8” with quality, memory, and vLLM behavior.
+  - The same AutoQuant settings (method, formats, score size) can be reused across the grid, with `effective_bits` and coverage fraction treated as separate knobs.
+  - `fp8_autoquant_top100` serves as the “full LM coverage” anchor, while lower-percentage schemes approximate more conservative mixed-precision settings.
 - **Reuse for larger Qwen2.5-VL variants**
   - The scheme definitions are expressed as fractions of LM blocks and effective bits, rather than absolute layer indices, so they should generalize to larger variants (e.g., 7B, 14B) with minimal adjustment.
 - **vLLM implications**

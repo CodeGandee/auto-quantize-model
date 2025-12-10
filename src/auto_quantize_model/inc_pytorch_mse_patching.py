@@ -338,6 +338,18 @@ def run_single_mse_v2_sensitivity_pass(
 
         # Build a single initial tuning configuration covering all quantizable ops.
         _, _, initial_op_tuning_cfg = strategy.initial_tuning_cfg()
+        # MSE_V2TuneStrategy normally injects ``calib_sampling_size`` into the
+        # per-op tuning config inside its own generator loop before calling
+        # ``_tune_cfg_converter``. Because we bypass that loop and call the
+        # converter directly, we need to provide a reasonable value here to
+        # avoid KeyError and to let INC compute ``calib_iteration``. We set it
+        # to the number of samples in the provided calibration dataloader.
+        if "calib_sampling_size" not in initial_op_tuning_cfg:
+            try:
+                calib_sampling_size = len(calib_dataloader.dataset)
+            except Exception:
+                calib_sampling_size = getattr(calib_dataloader, "batch_size", 1)
+            initial_op_tuning_cfg["calib_sampling_size"] = int(calib_sampling_size)
         base_tune_cfg = strategy._tune_cfg_converter(initial_op_tuning_cfg)
 
         # Fallback phase: treat INT8 ops as candidates for FP32 fallback.

@@ -6,17 +6,17 @@ Design a small, well-motivated set of AutoQuant FP8 mixed-precision scheme varia
 
 ## Planned outputs
 
-- A list of 2–3 named schemes (e.g., `fp8_autoquant_top25`, `fp8_autoquant_top50`, `fp8_autoquant_full`), each with:
+- A **family** of named schemes that sweep LM-only FP8 coverage in 10% increments, e.g., `fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`, each with:
   - Target effective bits or other AutoQuant settings (e.g., `auto_quantize_bits`, scoring mode, number of scoring steps).
-  - A clear definition of how many transformer blocks or which sensitivity percentile should be quantized for that scheme.
+  - A clear definition of what “top XX% of layers” means in terms of transformer blocks and AutoQuant sensitivity rankings.
 - A document or small config file (e.g., JSON or YAML) mapping scheme names to AutoQuant configuration parameters and any post-filtering rules.
-- A brief rationale for each scheme, explaining expected quality vs. aggressiveness and how it will be used in experiments.
+- A brief rationale for the coverage grid (why 10% steps) and how these schemes will be used in experiments.
 
 ## TODOs
 
-- [x] Job-004-102-001 Based on Subtask 4.1 findings and the main plan, choose 2–3 AutoQuant operating points (e.g., different `effective_bits` or scoring budgets) that are likely to produce distinct mixed-precision profiles for the LM.
-- [x] Job-004-102-002 Decide how to translate AutoQuant sensitivity scores into “top-K layers quantized” schemes (e.g., quantize top 25% and 50% of blocks by sensitivity, plus an all-eligible baseline), and write down the mapping rules.
-- [x] Job-004-102-003 Assign stable scheme names (e.g., `fp8_autoquant_top25`, `fp8_autoquant_top50`, `fp8_autoquant_full`) and define their expected coverage and high-level goals.
+- [x] Job-004-102-001 Based on Subtask 4.1 findings and the main plan, choose representative AutoQuant operating points (e.g., a baseline `effective_bits` and scoring budget) that are suitable for sweeping coverage across multiple LM-only schemes.
+- [x] Job-004-102-002 Decide how to translate AutoQuant sensitivity scores into “top-K layers quantized” schemes, using coverage fractions at 10% steps (e.g., top 10%, 20%, 30%, …, 100% of LM blocks by sensitivity), and write down the mapping rules.
+- [x] Job-004-102-003 Assign stable scheme names (`fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`) and define their expected coverage and high-level goals.
 - [x] Job-004-102-004 Draft a small machine-readable config (JSON/YAML or Python dict) that maps scheme names to AutoQuant configuration knobs and any post-processing parameters; decide where this config should live (e.g., alongside the driver script).
 - [x] Job-004-102-005 Record the scheme catalog and rationale in either the main plan or a short sub-doc, so later subtasks can treat it as authoritative.
 
@@ -29,7 +29,7 @@ Design a small, well-motivated set of AutoQuant FP8 mixed-precision scheme varia
 
 This subtask defines the initial FP8 AutoQuant scheme catalog for Qwen2.5-VL-3B LM-only:
 
-- We selected three schemes—`fp8_autoquant_top25`, `fp8_autoquant_top50`, and `fp8_autoquant_full`—with progressively more aggressive effective bits targets and FP8 coverage.
-- We specified how to translate AutoQuant’s per-layer search results into “top-K LM blocks quantized” schemes by ranking blocks and pruning FP8 recipes according to a coverage fraction.
-- We outlined a small machine-readable config (an `AUTOQUANT_FP8_SCHEMES` dict) that maps scheme names to `auto_quantize_bits`, method, score size, coverage mode, and allowed quantization formats.
+- We defined a **coverage grid** of schemes—`fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`—that sweep how many LM blocks are quantized to FP8 in 10% increments, while keeping the vision tower in BF16/FP16.
+- We specified a **two-stage** procedure: first run a full LM-only sensitivity analysis with all eligible blocks participating in AutoQuant, then rank blocks by sensitivity and, for each scheme, quantize only the top-X% most sensitive LM blocks while leaving the rest in BF16/FP16.
+- We outlined a small machine-readable config (an `AUTOQUANT_FP8_SCHEMES` dict) that maps scheme names to `auto_quantize_bits`, method, score size, coverage mode, coverage fraction, and allowed quantization formats.
 - All details, including rationale and mapping rules, are recorded in `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md` under **6. AutoQuant FP8 scheme variants (Subtask 4.2)**.

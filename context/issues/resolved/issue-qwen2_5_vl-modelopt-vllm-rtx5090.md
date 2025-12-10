@@ -1,3 +1,5 @@
+# Status: Resolved
+
 # Issue: Qwen2.5-VL ModelOpt quantization + vLLM on RTX 5090
 
 ## Summary

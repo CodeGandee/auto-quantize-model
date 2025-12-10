@@ -1,3 +1,5 @@
+# Status: Resolved
+
 Issue: Build vLLM inside Pixi env with CUDA 12.4 and torch 2.6.0
 ================================================================
 

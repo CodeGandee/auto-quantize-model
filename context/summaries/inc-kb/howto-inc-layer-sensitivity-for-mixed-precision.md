@@ -257,7 +257,196 @@ Putting it together:
 
 These mechanisms let INC act not just as a quantization tool, but as a **sensitivity analysis engine** you can reuse to design custom mixed-precision schemes for Qwen and other LLMs, even if final inference is not run via INC on Intel hardware.
 
-## 5. Best-practice patterns (LLM and non-LLM)
+## 5. How INC actually computes per-layer sensitivity (PyTorch FX MSE_V2)
+
+The precise mechanics of per-op sensitivity matter a lot when you try to interpret the results or re-use them in other frameworks. This section summarizes the critical behavior of `mse_v2` on the PyTorch FX backend and gives pseudocode aligned with the actual INC implementation.
+
+### 5.1 Two phases: fallback vs re-quant (what is being quantized?)
+
+For PyTorch FX, MSE-based op sensitivity is implemented by:
+
+- `MSE_V2TuneStrategy` (strategy driver) in `extern/neural-compressor/neural_compressor/strategy/mse_v2.py`
+- `PyTorch_FXAdaptor.calculate_op_sensitivity(...)` in `extern/neural-compressor/neural_compressor/adaptor/pytorch.py`
+- Two helpers in `extern/neural-compressor/neural_compressor/adaptor/torch_utils/util.py`:
+  - `get_mse_order_per_fp32(...)`
+  - `get_mse_order_per_int8(...)`
+
+There are *two distinct phases* in MSE_V2:
+
+1. **Fallback sensitivity (`get_mse_order_per_fp32`)**  
+   - Start from a config where **all candidate ops are quantized** (INT8).  
+   - For each op, temporarily “fallback” that op to fp32 while keeping **all other ops quantized**.  
+   - Measure how much the last-layer output MSE improves; high MSE = more sensitive to being quantized.
+
+2. **Re-quant sensitivity (`get_mse_order_per_int8`)**  
+   - Start from a config where some ops have already been kept fp32.  
+   - For each fp32 op that could be re-quantized, quantize *only that op* while other ops remain in their current (often fp32) state.  
+   - Measure how much the last-layer output MSE increases; low MSE = “safe” to re-quantize.
+
+This means:
+
+- In the **fallback phase**, you are measuring:  
+  “If all ops are INT8 and I let this one op be fp32, how much error does it fix?”  
+  → all others remain quantized.
+
+- In the **re-quant phase**, you are measuring:  
+  “If I leave almost everything fp32 and quantize this one op, how much error does it introduce?”  
+  → this op is quantized while many others are fp32.
+
+So INC does **not** always run with “only one quantized layer and everything else fp32”; the behavior depends on which phase you are looking at.
+
+### 5.2 Pseudocode for the PyTorch FX fallback phase (get_mse_order_per_fp32)
+
+This is a cleaned-up pseudocode version of `get_mse_order_per_fp32` from `torch_utils/util.py`, with comments marking the important details:
+
+```python
+def get_mse_order_per_fp32(adaptor, model, example_inp, tune_cfg):
+    # 1) Build op-wise qconfig mapping from INC's tune_cfg
+    op_cfgs = _cfg_to_qconfig(tune_cfg, tune_cfg["approach"])
+    op_type_dict = {op_name: op_type for (op_name, op_type) in tune_cfg["op"].keys()}
+
+    # 2) Hook last module to capture its output on FP32 model
+    last_module_name = list(op_cfgs.keys())[-1]
+    last_module = fetch_module(model, last_module_name)
+    last_module.register_forward_hook(capture_inner_output)
+    fp32_out = simple_inference(model, example_inp)
+    inner_output_fp32 = captured_inner_output
+
+    fallback_order = {}
+
+    # 3) MAIN per-op loop (fallback sensitivity)
+    #    Start from "all ops quantized" (op_cfgs), and for each op:
+    #    - temporarily disable its qconfig (fallback to fp32)
+    #    - quantize the rest of the model with FX
+    #    - run forward and compare outputs vs FP32 baseline
+    for op_name, qconfig in op_cfgs.items():
+        if op_name == "bf16_ops_list":
+            continue
+
+        tmp_model = deepcopy(model)
+        if not qconfig:
+            # No quantization config for this op, skip
+            continue
+
+        # Temporarily disable this op's qconfig -> treat it as fp32
+        op_cfgs[op_name] = None
+        fx_op_cfgs = _cfgs_to_fx_cfgs(op_cfgs, tune_cfg["approach"])
+        op_cfgs[op_name] = qconfig  # restore
+
+        # *** FX quantization for "all other ops" ***
+        # prepare_fx inserts observers on quantizable ops
+        tmp_model = prepare_fx(tmp_model, fx_op_cfgs, example_inp)
+        simple_inference(tmp_model, example_inp)  # calibration
+        # convert_fx replaces ops with quantized modules (fbgemm backend)
+        tmp_model = convert_fx(tmp_model)
+
+        # Hook last module and run quantized model
+        last_module_q = fetch_module(tmp_model, last_module_name)
+        last_module_q.register_forward_hook(capture_inner_output)
+        qdq_out = simple_inference(tmp_model, example_inp)
+        inner_output_int8 = dequantize_if_needed(captured_inner_output)
+
+        mse_val = (inner_output_fp32 - inner_output_int8).pow(2).sum()
+        key = (op_name, op_type_dict[op_name])
+        fallback_order[key] = float(mse_val.item())
+
+    # 4) Return ops sorted by MSE (sensitivity)
+    ordered_ops = sorted(fallback_order.keys(), key=lambda k: fallback_order[k], reverse=False)
+    return ordered_ops
+```
+
+Important points:
+
+- The loop **does not isolate one quantized op at a time**. Instead:
+  - All ops that have qconfigs in `op_cfgs` are quantized, except the one being “fallbacked”.
+  - This measures the error contribution of each op inside a fully-quantized model.
+- The expensive part is inside the loop:
+  - `prepare_fx` + `convert_fx` called for every candidate op.
+  - This rebuilds an FX-quantized model and repacks quantized weights many times.
+
+### 5.3 Pseudocode for the PyTorch FX re-quant phase (get_mse_order_per_int8)
+
+The re-quant phase is similar, but starts from a more fp32-heavy config and quantizes one op at a time:
+
+```python
+def get_mse_order_per_int8(adaptor, fp32_model, example_inp, tune_cfg):
+    op_cfgs = _cfg_to_qconfig(tune_cfg, tune_cfg["approach"])
+    op_type_dict = {op_name: op_type for (op_name, op_type) in tune_cfg["op"].keys()}
+
+    # Capture last-layer FP32 output once
+    last_module = fetch_module(fp32_model, list(op_cfgs.keys())[-1])
+    last_module.register_forward_hook(capture_inner_output)
+    fp32_out = simple_inference(fp32_model, example_inp)
+    inner_output_fp32 = captured_inner_output
+
+    # Build list of ops that are currently fp32 but can be quantized
+    quant_list = []
+    for (op_name, op_type), cfg_state in tune_cfg["op"].items():
+        if op_type in ["LayerNorm", "Dropout", "InstanceNorm3d"]:
+            continue  # skip fragile ops
+        if cfg_state["weight"]["dtype"] == "fp32":
+            quant_list.append((op_name, op_type))
+
+    fallback_order = {}
+
+    # MAIN per-op loop (re-quant sensitivity)
+    for op_name, op_type in quant_list:
+        if op_name not in op_cfg_mapping:
+            continue
+
+        tmp_model = deepcopy(fp32_model)
+
+        # Restore quantization config for this op only
+        op_cfgs[op_name] = op_cfg_mapping[op_name]
+        fx_op_cfgs = _cfgs_to_fx_cfgs(op_cfgs, tune_cfg["approach"])
+
+        # Quantize this op in an otherwise FP32 model
+        tmp_model = prepare_fx(tmp_model, fx_op_cfgs, example_inp)
+        simple_inference(tmp_model, example_inp)
+        tmp_model = convert_fx(tmp_model)
+
+        last_module_q = fetch_module(tmp_model, list(op_cfgs.keys())[-1])
+        last_module_q.register_forward_hook(capture_inner_output)
+        qdq_out = simple_inference(tmp_model, example_inp)
+        inner_output_int8 = dequantize_if_needed(captured_inner_output)
+
+        mse_val = (inner_output_fp32 - inner_output_int8).pow(2).sum()
+        key = (op_name, op_type_dict[op_name])
+        fallback_order[key] = float(mse_val.item())
+
+    ordered_ops = sorted(fallback_order.keys(), key=lambda k: fallback_order[k], reverse=False)
+    return ordered_ops
+```
+
+Here:
+
+- We start from a **mostly FP32 model** and quantify the effect of quantizing one op at a time.
+- This is closer to “only this op is quantized” (though there can still be other quantized ops depending on the config).
+
+### 5.4 Why this matters for interpretation and performance
+
+Interpretation:
+
+- Fallback MSE (`get_mse_order_per_fp32`) answers:  
+  “In a fully quantized model, which ops would most reduce error if kept fp32?”  
+  → Good for deciding which ops to **keep in higher precision**.
+
+- Re-quant MSE (`get_mse_order_per_int8`) answers:  
+  “Among currently fp32 ops, which can safely be moved back to int8?”  
+  → Good for deciding which fp32 fallbacks can be **aggressively re-quantized**.
+
+Performance:
+
+- Both helpers rebuild an FX-quantized model **inside the per-op loop**, which is the major bottleneck we measured for Qwen2.5-VL-3B:
+  - `prepare_fx` + `convert_fx` + quantized `Linear` packing (`linear_prepack`) dominate runtime.
+  - Each op in the loop pays this cost separately.
+- In this repo we:
+  - Force these helpers to run even when `quantization.fit` would not (via `run_single_mse_v2_sensitivity_pass` and monkeypatching).
+  - Add `INC_MSE_MAX_OPS` to limit how many ops go through the heavy loop for large LLMs.
+
+For mixed-precision planning, it’s important to remember that INC’s MSE_V2 scores are computed under these two specific contexts (all-INT8 plus single fp32 fallback, and vice versa), not under a “one-layer-only quantized” regime.
+
+## 6. Best-practice patterns (LLM and non-LLM)
 
 ### 5.1 Forcing INC to emit layer sensitivity even when tuning fails
 
@@ -310,7 +499,7 @@ In both patterns, the key design principle is:
 
 This section summarizes practical patterns from INC docs and common usage for turning sensitivity information into mixed-precision recipes.
 
-### 5.1 General patterns for op sensitivity
+### 6.1 General patterns for op sensitivity
 
 - Prefer `quant_level=1` and set `TuningCriterion.strategy` explicitly (`"mse_v2"` or `"hawq_v2"`) if you care about per-op sensitivity; the default `"basic"` strategy is not sensitivity-focused.
 - Use `strategy_kwargs` to control sensitivity scoring:
@@ -325,7 +514,7 @@ This section summarizes practical patterns from INC docs and common usage for tu
 - Narrow the tuning space:
   - Use `op_type_dict` / `op_name_dict` to force known fragile ops (e.g. LayerNorm, Softmax, logits heads) to stay fp32/bf16 so the strategy focuses on the remaining ops.
 
-### 5.2 LLM-specific best practices
+### 6.2 LLM-specific best practices
 
 - For full W8A8 (weights + activations):
   - Use `mse_v2` for PTQ static on PyTorch or ONNX:
@@ -341,7 +530,7 @@ This section summarizes practical patterns from INC docs and common usage for tu
   - Use MSE or HAWQ scores to choose a small set of “high-importance” blocks (e.g. top 10–20% of layers by sensitivity).
   - Restrict high-precision formats (fp16/bf16/MXFP8) to that set and try more aggressive formats (int8/MXFP4/4-bit) on the rest.
 
-### 5.3 ViT / non-LLM model best practices
+### 6.3 ViT / non-LLM model best practices
 
 - For ViT and similar models:
   - Keep patch embedding and final classification head in higher precision.
@@ -354,7 +543,7 @@ This section summarizes practical patterns from INC docs and common usage for tu
   - Similar pattern: keep first and last convs (and sometimes downsample blocks) higher precision, let `mse_v2` rank intermediate convs.
   - Use accuracy criteria (`AccuracyCriterion`) to enforce a small tolerable loss (e.g. 0.5–1% top-1 drop).
 
-### 5.4 Choosing between MSE_V2 and HAWQ_V2
+### 6.4 Choosing between MSE_V2 and HAWQ_V2
 
 - Use `mse_v2` when:
   - You want a simple, directly interpretable metric based on output MSE.

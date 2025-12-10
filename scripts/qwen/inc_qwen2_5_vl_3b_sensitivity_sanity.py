@@ -89,6 +89,16 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         default=10,
         help="Number of most-sensitive ops to print from each map.",
     )
+    parser.add_argument(
+        "--max-mse-ops",
+        type=int,
+        default=16,
+        help=(
+            "Maximum number of ops to score in the INC MSE_V2 sensitivity sanity pass. "
+            "Implemented via the INC_MSE_MAX_OPS environment variable. "
+            "Use 0 to allow all ops (slow)."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -206,6 +216,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
 
     confidence_batches = conf.tuning_criterion.strategy_kwargs.get("confidence_batches", 1)
+
+    # Use the same INC_MSE_MAX_OPS knob as the main sensitivity script,
+    # but with a smaller default to keep the sanity check very fast.
+    if args.max_mse_ops is not None and args.max_mse_ops > 0:
+        os.environ["INC_MSE_MAX_OPS"] = str(args.max_mse_ops)
 
     print("[INFO] Running forced INC MSE_V2 sensitivity sanity pass ...")
     fp32_mse_map, int8_mse_map = run_single_mse_v2_sensitivity_pass(

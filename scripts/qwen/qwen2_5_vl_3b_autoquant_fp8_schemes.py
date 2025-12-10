@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -28,10 +29,16 @@ import torch
 import torch.nn.functional as F
 from mdutils import MdUtils
 from torch.utils.data import DataLoader, Dataset
-from transformers import AutoProcessor, AutoTokenizer, Qwen2_5_VLForConditionalGeneration
+from transformers import (
+    AutoConfig,
+    AutoProcessor,
+    AutoTokenizer,
+    Qwen2_5_VLForConditionalGeneration,
+)
 
 import modelopt.torch.quantization as mtq
 from auto_quantize_model.modelopt_configs import CUSTOM_QUANT_CONFIGS
+from modelopt.torch.export import export_hf_checkpoint
 from modelopt.torch.export.model_utils import get_language_model_from_vl
 from modelopt.torch.quantization.utils import is_quantized_linear
 from qwen_vl_utils import process_vision_info
@@ -452,6 +459,25 @@ def build_quant_manifest(
             "costs": _to_float_list(costs),
         }
 
+    # Derive a simple global sensitivity ranking so that downstream
+    # tools (e.g., export scripts) can slice the full sensitivity
+    # analysis into "top-X% quantized" schemes without rerunning
+    # AutoQuant. We use the maximum candidate score per layer as the
+    # ranking key, and sort in ascending order so that lower scores
+    # (less sensitive layers) come first.
+    sensitivity_ranking: List[Dict[str, Any]] = []
+    for name, entry in layer_sensitivity.items():
+        scores = entry.get("scores") or []
+        importance = max(scores) if scores else 0.0
+        entry["importance"] = float(importance)
+        sensitivity_ranking.append({"name": name, "importance": float(importance)})
+
+    # Sort layers from least to most sensitive.
+    sensitivity_ranking.sort(key=lambda item: item["importance"])
+    for rank, item in enumerate(sensitivity_ranking, start=1):
+        layer_name = item["name"]
+        layer_sensitivity[layer_name]["rank"] = rank
+
     best = state_dict.get("best", {})
     autoquant_state_summary = {
         "keys": list(state_dict.keys()),
@@ -466,6 +492,7 @@ def build_quant_manifest(
         "layers": layers,
         "autoquant_state": autoquant_state_summary,
         "layer_sensitivity": layer_sensitivity,
+        "sensitivity_ranking": sensitivity_ranking,
     }
     return manifest
 
@@ -662,6 +689,17 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         type=str,
         default="cuda",
         help="Torch device to use (default: cuda).",
+    )
+    parser.add_argument(
+        "--export-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Optional directory to export a quantized HF checkpoint for the "
+            "current AutoQuant run. If set, the script will save config, "
+            "processor, tokenizer, and call export_hf_checkpoint(...) on the "
+            "quantized model (typically the full VLM with a quantized LM)."
+        ),
     )
     parser.add_argument(
         "--effective-bits",
@@ -903,6 +941,58 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         autoquant_state=manifest["autoquant_state"],
         out_path=sensitivity_md_path,
     )
+
+    # Optional: export a quantized HF checkpoint for this AutoQuant run.
+    if args.export_dir is not None:
+        export_dir: Path = args.export_dir
+        export_dir.mkdir(parents=True, exist_ok=True)
+
+        print(f"[INFO] Exporting quantized HF checkpoint to: {export_dir}")
+
+        # Save base HF config and processor (mirroring other ModelOpt export flows).
+        AutoConfig.from_pretrained(
+            str(args.model_dir),
+            trust_remote_code=True,
+        ).save_pretrained(export_dir)
+        try:
+            AutoProcessor.from_pretrained(
+                str(args.model_dir),
+                trust_remote_code=True,
+            ).save_pretrained(export_dir)
+        except Exception as exc:  # noqa: BLE001
+            print(f"[WARN] Could not save processor config: {exc}", file=sys.stderr)
+
+        # Ensure the full VLM references the quantized LM module.
+        model_to_export = full_model
+        if hasattr(model_to_export, "language_model"):
+            model_to_export.language_model = quantized_lm
+
+        export_hf_checkpoint(
+            model_to_export,
+            export_dir=export_dir,
+        )
+
+        # Save tokenizer after export so any runtime adjustments are captured.
+        tokenizer.save_pretrained(export_dir)
+
+        print(
+            "[INFO] Export completed. Quantized HF checkpoint written to: "
+            f"{export_dir}"
+        )
+
+        # Make the exported directory self-contained by copying layer
+        # sensitivity artifacts alongside the checkpoint.
+        layer_sens_dir = export_dir / "layer-sensitivity"
+        layer_sens_dir.mkdir(parents=True, exist_ok=True)
+        for src in (manifest_path, state_path, sensitivity_md_path):
+            try:
+                if src.is_file():
+                    shutil.copy2(src, layer_sens_dir / src.name)
+            except Exception as exc:  # noqa: BLE001
+                print(
+                    f"[WARN] Failed to copy {src} into {layer_sens_dir}: {exc}",
+                    file=sys.stderr,
+                )
 
     print("[INFO] AutoQuant completed successfully.")
     print(f"[INFO] Quantization manifest written to: {manifest_path}")
