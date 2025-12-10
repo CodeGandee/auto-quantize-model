@@ -24,3 +24,4 @@ Ensure that the bf16/fp16 Qwen2.5-VL-3B-Instruct checkpoint is correctly bootstr
 - `pixi run -e rtx5090 python scripts/qwen/run_qwen2_5_vl_3b_sanity.py` loads the model with `device_map="auto"` on GPU and completes both text-only and image+text sanity checks without errors.
 - Sanity outputs are saved under `tmp/qwen2_5_vl_3b_sanity/` (`text_only.txt`, `image_text.txt`, and the input image copy), and the responses are coherent and on-topic for the prompts.
 - Hardware: `NVIDIA GeForce RTX 5090` with ~31 GB VRAM; CUDA is available (`torch.cuda.is_available() == True`), so subsequent INC runs can assume a single-GPU, CUDA-enabled environment.
+- These baseline assets and sanity outputs serve as the shared reference point for both ModelOpt- and INC-based quantization experiments in this repo.

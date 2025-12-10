@@ -2,7 +2,7 @@
 
 ## Scope
 
-Use the sensitivity rankings (from MSE_V2 and optionally HAWQ_V2) to design several quantization profiles that span a spectrum from minimal to aggressive W8A8 INT8 quantization. Each profile specifies which layers/ops remain in higher precision and which are quantized to INT8.
+Use the sensitivity rankings (from MSE_V2 and optionally HAWQ_V2) to design several quantization profiles that span a spectrum from minimal to aggressive W8A8 INT8 quantization. Each profile specifies which layers/ops remain in higher precision and which are quantized to INT8. These profiles are **analysis artifacts first**: they should be usable both for INC PTQ runs and for cross-framework comparison (e.g., against ModelOpt W8A8 / FP8 schemes), even when the underlying INC PTQ runs that produced the rankings did not yield high-accuracy quantized models.
 
 ## Planned outputs
 
@@ -24,4 +24,4 @@ Use the sensitivity rankings (from MSE_V2 and optionally HAWQ_V2) to design seve
 ## Notes
 
 - Profiles should be designed to be easy to reuse across scripts and potentially other models with similar architectures.
-
+- Treat the INC-derived sensitivity rankings as one input among several: when defining profiles, consider how they compare to ModelOpt / manual schemes, and do not assume that every INC “most sensitive” op must stay in higher precision—these profiles are primarily for experimentation and trade-off exploration, not hard production rules.

@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Dict, Optional, Sequence, Tuple
 
 import torch
-from neural_compressor import quantization
 from neural_compressor.config import (
     AccuracyCriterion,
     PostTrainingQuantConfig,
@@ -16,7 +16,7 @@ from neural_compressor.config import (
 )
 from transformers import Qwen2_5_VLForConditionalGeneration
 
-from auto_quantize_model.inc_pytorch_mse_patching import capture_mse_v2_sensitivity
+from auto_quantize_model.inc_pytorch_mse_patching import run_single_mse_v2_sensitivity_pass
 from auto_quantize_model.qwen2_5_vl_inc_data import (
     QwenCalibConfig,
     build_qwen_calib_dataloader,
@@ -56,7 +56,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--max-calib-samples",
         type=int,
-        default=5,
+        default=3,
         help="Maximum number of calibration samples to use for the sanity check.",
     )
     parser.add_argument(
@@ -118,6 +118,16 @@ def _print_top_k(
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
+
+    # Allow INC/PyTorch to use most CPU cores even in the
+    # sanity run, while leaving a couple for the OS.
+    cpu_count = os.cpu_count() or 1
+    num_threads = max(1, cpu_count - 2)
+    torch.set_num_threads(num_threads)
+    try:
+        torch.set_num_interop_threads(max(1, num_threads // 2))
+    except AttributeError:
+        pass
 
     # Ensure INC workspace (tuning history, deploy.yaml, etc.) lives under
     # the repository tmp/ tree instead of cluttering the repo root.
@@ -184,6 +194,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         approach="static",
         quant_level=1,
         tuning_criterion=TuningCriterion(
+            max_trials=1,
             strategy="mse_v2",
             strategy_kwargs={"confidence_batches": 1},
         ),
@@ -194,21 +205,21 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         ),
     )
 
-    print("[INFO] Starting INC PTQ (sanity run) with mse_v2 strategy ...")
-    # Capture per-op MSE sensitivity via monkeypatched INC helpers.
-    with capture_mse_v2_sensitivity() as (fp32_mse_map, int8_mse_map):
-        _ = quantization.fit(
-            model=model,
-            conf=conf,
-            calib_dataloader=calib_dataloader,
-            eval_func=eval_func,
-        )
-    print("[INFO] INC PTQ sanity run completed.")
+    confidence_batches = conf.tuning_criterion.strategy_kwargs.get("confidence_batches", 1)
+
+    print("[INFO] Running forced INC MSE_V2 sensitivity sanity pass ...")
+    fp32_mse_map, int8_mse_map = run_single_mse_v2_sensitivity_pass(
+        model=model,
+        conf=conf,
+        calib_dataloader=calib_dataloader,
+        confidence_batches=confidence_batches,
+    )
+    print("[INFO] MSE_V2 sensitivity sanity pass completed.")
 
     if not fp32_mse_map and not int8_mse_map:
         print(
-            "[ERROR] No per-op MSE values were captured. "
-            "Check INC version and mse_v2 strategy usage."
+            "[ERROR] No per-op MSE values were captured by the forced sensitivity pass. "
+            "Check INC version and MSE helper monkeypatching."
         )
         return 1
 

@@ -2,7 +2,7 @@
 
 ## Scope
 
-Using the quantized models and manifests produced by the AutoQuant driver, export one Hugging Face-style checkpoint directory per scheme under `models/qwen2_5_vl_3b_instruct/quantized/`, following a consistent naming convention and ensuring that each checkpoint is self-contained and ready for vLLM or other consumers.
+Using the quantized models and manifests produced by the AutoQuant driver, export one Hugging Face-style checkpoint directory per scheme under `models/qwen2_5_vl_3b_instruct/quantized/`, following a consistent naming convention and ensuring that each checkpoint is self-contained and ready for downstream consumers (including vLLM and pure PyTorch-based experiments). This subtask is primarily about **artifact organization and comparability**, not about optimizing accuracy of any particular scheme.
 
 ## Planned outputs
 
@@ -21,4 +21,4 @@ Using the quantized models and manifests produced by the AutoQuant driver, expor
 ## Notes
 
 - Keep exports focused on the language model component; ensure that any assumptions about the vision tower (e.g., unquantized BF16/FP16) are clearly documented for potential future integration.
-
+- Treat these checkpoints as **experimental artifacts** for comparing schemes and configs; it is acceptable if some exported models have poor quality, as long as they are loadable for analysis.

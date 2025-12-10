@@ -1,7 +1,7 @@
 # Plan: INC Op Sensitivity and Quantization Spectrum for Qwen2.5-VL-3B-Instruct
 
 ## HEADER
-- **Purpose**: Use Intel Neural Compressor to analyze per-layer sensitivity of Qwen2.5-VL-3B-Instruct and derive a family of quantized models ranging from fp16/bf16 baseline to increasingly aggressive W8A8 INT8 configurations with different numbers of quantized layers.
+- **Purpose**: Use Intel Neural Compressor to analyze per-layer sensitivity of Qwen2.5-VL-3B-Instruct and derive a family of quantized models ranging from fp16/bf16 baseline to increasingly aggressive W8A8 INT8 configurations with different numbers of quantized layers, primarily as a **comparison point** against the existing ModelOpt FP8 / W8A8 flows.
 - **Status**: Draft
 - **Date**: 2025-12-08
 - **Dependencies**:
@@ -35,6 +35,64 @@ The outcome should be:
 
 This complements the existing ModelOpt-based W8A8 pipeline by giving us an INC-based, sensitivity-driven view of where quantization hurts and where we can be more aggressive.
 
+## 1.1 Requirements
+
+To keep this plan aligned with the ModelOpt AutoQuant experiments (and to treat INC as another framework under test rather than a production pipeline), the tools and scripts we build here must satisfy:
+
+- **Framework parity and isolation**
+  - Reuse the same **baseline checkpoint**, calibration captions, and sanity prompts as the ModelOpt plans wherever possible.
+  - Keep INC-specific wiring confined to `scripts/qwen/inc_*` and small helpers under `src/auto_quantize_model/`, so that swapping frameworks (ModelOpt vs INC) does not require touching model assets or datasets.
+
+- **Machine-readable sensitivity outputs**
+  - Always emit **JSON** (and optionally Markdown) artifacts that capture:
+    - Per-op MSE-based sensitivity rankings (and later HAWQ-style scores if used).
+    - Enough metadata (backend, device, config, sample counts) to interpret results days or weeks later.
+  - Place stable copies under `context/summaries/inc-kb/` in addition to transient files under `tmp/`.
+
+- **Configurable, time-bounded runs**
+  - Expose knobs to bound runtime on large models:
+    - Calibration/eval sample counts and batch sizes.
+    - `confidence_batches`, `max_trials`, and (if needed) simple “max ops” caps in the sensitivity path.
+  - Default configs should complete on a single RTX 5090 box in **minutes**, not hours, even if this reduces absolute accuracy.
+
+- **Accuracy-agnostic sensitivity extraction (must-have)**
+  - The pipeline **must** produce a per-layer / per-op sensitivity report even when:
+    - No quantized configuration meets INC’s default accuracy criterion.
+    - The tuning loop terminates early due to `max_trials` or other limits.
+  - Scripts should treat INC primarily as a **layer analysis oracle**:
+    - It is acceptable to bypass or relax the built-in tuning objective (e.g., by invoking `calculate_op_sensitivity(...)` directly or using trivial accuracy criteria) so that `mse_v2`/`hawq_v2` still yield ranked op lists.
+    - Lack of a “good” quantized model must **not** be treated as a failure for this plan as long as the layer-wise sensitivity report is produced.
+
+- **Profile definitions consumable by other tools**
+  - Quantization profiles derived from INC sensitivity must be:
+    - Encoded in a small, versioned config file (JSON/YAML/Markdown) under `context/summaries/inc-kb/`.
+    - Expressed in terms of op names / types or layer indices that can be mapped into both INC PTQ configs and, where useful, ModelOpt / ONNX export flows.
+
+- **Non-intrusive to existing pipelines**
+  - No changes to `models/qwen2_5_vl_3b_instruct/quantized/*` produced by ModelOpt.
+  - No dependence on vendored `extern/neural-compressor` sources at runtime beyond what the installed `neural_compressor` package provides; monkeypatching must remain local to this repo.
+
+## 1.2 Research focus and relationship to other frameworks
+
+This plan is **exploratory** and treats INC as one of several quantization frameworks we are evaluating, not as the canonical deployment path:
+
+- Primary goals:
+  - Understand how INC’s MSE_V2 / HAWQ_V2 **per-op sensitivity rankings** compare to:
+    - ModelOpt AutoQuant’s implicit layer importance signals.
+    - Any manual or heuristic W8A8 schemes we already use.
+  - **Force** INC (via tuning or direct adaptor calls) to emit **layer-wise sensitivity reports** for Qwen2.5-VL-3B, even when no quantized configuration reaches a particular accuracy target.
+  - Use INC’s PTQ flow to generate **a few representative W8A8 variants**, mainly to study failure modes and sensitivity patterns rather than to chase the best possible accuracy.
+- Accuracy expectations:
+  - It is acceptable for some INC-derived W8A8 variants to have noticeably worse quality than:
+    - The bf16/fp16 baseline.
+    - ModelOpt’s INT8 SmoothQuant W8A8 checkpoints.
+  - Those “bad” variants are still useful data points for cross-framework comparison and for designing future mixed-precision schemes.
+- Evaluation emphasis:
+  - Focus on **lightweight text-only metrics** (negative average loss on COCO captions) and qualitative sanity runs, keeping runs cheap enough to iterate.
+  - Where helpful, compare INC profiles against ModelOpt/W8A8 profiles on the same prompt sets to see whether both frameworks flag similar layers as sensitive.
+
+In short, this plan positions INC as another **experimental lens** on Qwen2.5-VL-3B quantization (next to ModelOpt), with an emphasis on shared datasets, comparable artifacts, and fast-turnaround sensitivity experiments.
+
 ## 2. Implementation Approach
 
 ### 2.1 High-level flow
@@ -62,13 +120,14 @@ This complements the existing ModelOpt-based W8A8 pipeline by giving us an INC-b
 
 4. **Implement MSE-based op sensitivity analysis (MSE_V2)**
    - Configure `PostTrainingQuantConfig` with:
-     - `quant_level=1`, `tuning_criterion.strategy="mse_v2"`, and a reasonable `confidence_batches` (e.g., 2–4 for LLM).
+     - `quant_level=1`, `tuning_criterion.strategy="mse_v2"`, and a small, bounded `confidence_batches` for runtime control.
+     - A loose or trivial `AccuracyCriterion` (or a direct adaptor path) so that the **sensitivity computation always runs**, even if no candidate model meets a strict accuracy goal.
      - `op_type_dict` / `op_name_dict` constraints to:
        - Force critical ops (embeddings, final LM head, LayerNorm, Softmax, vision blocks) to stay in higher precision.
        - Allow attention and MLP blocks to be candidates for INT8.
-   - Run a **pure sensitivity analysis pass**:
-     - Either run INC’s tuning process and capture the MSE-based fallback logs, or
-     - Directly call `adaptor.calculate_op_sensitivity(...)` on a constructed `tune_cfg` to obtain a ranked list of ops by MSE.
+   - Run a **pure sensitivity analysis pass**, treating INC as a scoring oracle:
+     - Prefer directly calling `adaptor.calculate_op_sensitivity(...)` on a constructed `tune_cfg` if the built-in `mse_v2` loop would otherwise exit before computing per-op scores.
+     - Only fall back to parsing tuning logs if necessary; the key requirement is a **deterministic ranked list of ops by MSE**, independent of whether PTQ finds an acceptable config.
    - Persist the sensitivity ranking (op names, types, scores) to a JSON/Markdown artifact under `datasets/quantize-calib` or `context/summaries`.
 
 5. **(Optional) Implement Hessian-based sensitivity analysis (HAWQ_V2)**
@@ -180,4 +239,3 @@ sequenceDiagram
 - [ ] **Extend sanity-check script for multiple variants** Update or wrap `run_qwen2_5_vl_3b_sanity.py` so it can easily evaluate baseline and all INC variants with consistent prompts and produce labeled outputs.
 - [ ] **Compare variants and summarize trade-offs** Run the evaluation suite across all variants, record qualitative/quantitative differences, and write a concise summary in `context/summaries/inc-kb/qwen2_5_vl_3b_quant_profiles.md`.
 - [ ] **Generalize guidance for other models** Add a short section or hint in the INC KB explaining how to adapt the Qwen sensitivity+quantization pipeline to non-LLM models (e.g., ViT-like architectures) in this repo.
-

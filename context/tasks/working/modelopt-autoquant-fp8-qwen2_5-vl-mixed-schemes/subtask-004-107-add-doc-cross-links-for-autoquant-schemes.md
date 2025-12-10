@@ -2,7 +2,7 @@
 
 ## Scope
 
-Update relevant documentation and knowledge-base files so that the new AutoQuant FP8 schemes, scripts, and reports are discoverable and easy to reuse for future experiments, both for Qwen2.5-VL-3B and potentially other models.
+Update relevant documentation and knowledge-base files so that the new AutoQuant FP8 schemes, scripts, and reports are discoverable and easy to reuse for future experiments, both for Qwen2.5-VL-3B and potentially other models. The emphasis is on positioning this work as a **research toolkit** for quantization and sensitivity studies, not just as a single fixed FP8 recipe.
 
 ## Planned outputs
 
@@ -22,4 +22,3 @@ Update relevant documentation and knowledge-base files so that the new AutoQuant
 ## Notes
 
 - Keep documentation changes incremental and aligned with existing style; avoid duplicating full explanations that already live in the ModelOpt KB.
-

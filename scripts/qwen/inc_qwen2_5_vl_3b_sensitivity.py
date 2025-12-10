@@ -2,15 +2,16 @@
 from __future__ import annotations
 
 import argparse
+import os
+import shutil
 from pathlib import Path
 from typing import Optional, Sequence
 
 import torch
-from neural_compressor import quantization
 from neural_compressor.config import PostTrainingQuantConfig, TuningCriterion, options as nc_options
 from transformers import Qwen2_5_VLForConditionalGeneration
 
-from auto_quantize_model.inc_pytorch_mse_patching import capture_mse_v2_sensitivity
+from auto_quantize_model.inc_pytorch_mse_patching import run_single_mse_v2_sensitivity_pass
 from auto_quantize_model.qwen2_5_vl_inc_data import (
     QwenCalibConfig,
     build_qwen_calib_dataloader,
@@ -50,7 +51,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--max-calib-samples",
         type=int,
-        default=512,
+        default=3,
         help="Maximum number of calibration samples to use.",
     )
     parser.add_argument(
@@ -88,6 +89,17 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
+
+    # Allow INC/PyTorch to use most CPU cores for the heavy
+    # CPU-only PTQ run, while leaving a couple for the OS.
+    cpu_count = os.cpu_count() or 1
+    num_threads = max(1, cpu_count - 2)
+    torch.set_num_threads(num_threads)
+    try:
+        torch.set_num_interop_threads(max(1, num_threads // 2))
+    except AttributeError:
+        # Older PyTorch versions may not expose set_num_interop_threads.
+        pass
 
     # Ensure INC workspace (tuning history, deploy.yaml, etc.) lives under
     # the repository tmp/ tree instead of cluttering the repo root.
@@ -153,24 +165,29 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         approach="static",
         quant_level=1,
         tuning_criterion=TuningCriterion(
+            max_trials=1,
             strategy="mse_v2",
-            strategy_kwargs={"confidence_batches": 2},
+            strategy_kwargs={"confidence_batches": 1},
         ),
     )
 
-    print("[INFO] Starting INC PTQ with mse_v2 strategy ...")
-    # Capture per-op MSE sensitivity via monkeypatched INC helpers.
-    with capture_mse_v2_sensitivity() as (fp32_mse_map, int8_mse_map):
-        q_model = quantization.fit(
-            model=model,
-            conf=conf,
-            calib_dataloader=calib_dataloader,
-            eval_func=eval_func,
-        )
-    print("[INFO] INC PTQ completed.")
+    confidence_batches = conf.tuning_criterion.strategy_kwargs.get("confidence_batches", 1)
+
+    print("[INFO] Computing INC MSE_V2 op sensitivity via adaptor.calculate_op_sensitivity ...")
+    fp32_mse_map, int8_mse_map = run_single_mse_v2_sensitivity_pass(
+        model=model,
+        conf=conf,
+        calib_dataloader=calib_dataloader,
+        confidence_batches=confidence_batches,
+    )
+    print("[INFO] INC MSE_V2 sensitivity pass completed.")
 
     # Persist sensitivity results if available.
-    out_sens_dir = Path("tmp/qwen2_5_vl_3b_inc")
+    out_sens_dir = (
+        args.output_path.parent
+        if args.output_path is not None
+        else Path("tmp/qwen2_5_vl_3b_inc")
+    )
     out_sens_dir.mkdir(parents=True, exist_ok=True)
     if fp32_mse_map or int8_mse_map:
         import json
@@ -194,7 +211,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                         "backend": "pytorch_fx",
                         "device": "cpu",
                         "strategy": "mse_v2",
-                        "confidence_batches": 2,
+                        "confidence_batches": confidence_batches,
                         "calib_samples": calib_cfg.max_samples,
                         "calib_batch_size": calib_cfg.batch_size,
                         "max_seq_len": calib_cfg.max_seq_len,
@@ -227,26 +244,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"[INFO] Saved op sensitivity JSON to {json_path}")
         print(f"[INFO] Saved op sensitivity Markdown to {md_path}")
 
-    if q_model is None:
-        print(
-            "[WARN] INC did not return a quantized model (q_model is None). "
-            "This is expected when no candidate meets the accuracy criterion. "
-            "Calibration and evaluation loaders ran successfully."
-        )
-        return 0
-
-    if args.output_path is not None:
-        args.output_path.parent.mkdir(parents=True, exist_ok=True)
-        # Save quantized model using INC's save method if available, otherwise torch.
-        try:
-            q_model.save(str(args.output_path))
-            print(f"[INFO] Saved quantized model via INC .save() to {args.output_path}")
-        except AttributeError:
-            torch.save(q_model.state_dict(), args.output_path)
-            print(
-                f"[INFO] Saved quantized model state_dict via torch.save to "
-                f"{args.output_path}"
-            )
+        # Also persist a stable copy under context/summaries/inc-kb for reuse.
+        stable_root = repo_root / "context" / "summaries" / "inc-kb"
+        stable_root.mkdir(parents=True, exist_ok=True)
+        stable_json = stable_root / "qwen2_5_vl_3b_mse_sensitivity.json"
+        stable_md = stable_root / "qwen2_5_vl_3b_mse_sensitivity.md"
+        shutil.copy2(json_path, stable_json)
+        shutil.copy2(md_path, stable_md)
+        print(f"[INFO] Copied op sensitivity JSON to {stable_json}")
+        print(f"[INFO] Copied op sensitivity Markdown to {stable_md}")
 
     return 0
 

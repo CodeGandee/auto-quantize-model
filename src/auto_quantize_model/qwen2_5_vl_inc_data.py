@@ -17,7 +17,7 @@ class QwenCalibConfig:
     """Configuration for Qwen2.5-VL calibration/eval dataloaders."""
 
     captions_path: Path = DEFAULT_CAPTIONS_PATH
-    max_samples: int = 512
+    max_samples: int = 3
     max_seq_len: int = 256
     batch_size: int = 8
     num_workers: int = 0
@@ -199,4 +199,3 @@ def make_qwen_eval_func(
         return -avg_loss
 
     return _eval
-

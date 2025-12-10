@@ -2,7 +2,7 @@
 
 ## Scope
 
-Extend or wrap `scripts/qwen/run_qwen2_5_vl_3b_sanity.py` so it can evaluate both the baseline and multiple INC-quantized variants using a consistent set of prompts, and label outputs by variant for easier comparison.
+Extend or wrap `scripts/qwen/run_qwen2_5_vl_3b_sanity.py` so it can evaluate both the baseline and multiple INC-quantized variants using a consistent set of prompts, and label outputs by variant for easier comparison. The same machinery should be usable to compare ModelOpt and INC variants side by side, since the updated main plan treats INC as one of several frameworks under test.
 
 ## Planned outputs
 
@@ -21,4 +21,4 @@ Extend or wrap `scripts/qwen/run_qwen2_5_vl_3b_sanity.py` so it can evaluate bot
 ## Notes
 
 - Keep the prompt set small but diverse enough to highlight any obvious regressions (e.g., hallucinations, failure to describe images).
-
+- Because some INC-derived W8A8 profiles are expected to be “bad” on purpose (for sensitivity research), the sanity script should focus on making differences easy to see (qualitatively and with simple scalar metrics) rather than enforcing any hard pass/fail accuracy threshold. This keeps it aligned with the exploratory nature of the main INC plan.

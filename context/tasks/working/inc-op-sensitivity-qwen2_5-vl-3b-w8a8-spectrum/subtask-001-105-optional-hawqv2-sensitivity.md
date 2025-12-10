@@ -2,7 +2,7 @@
 
 ## Scope
 
-Optionally extend the sensitivity tooling to use INC’s `hawq_v2` strategy, which leverages Hessian trace-based metrics to rank layer sensitivity. This subtask is more compute-intensive and can be skipped if `mse_v2` is sufficient, but it can provide a richer view of sensitivity for research or fine-grained mixed-precision design.
+Optionally extend the sensitivity tooling to use INC’s `hawq_v2` strategy, which leverages Hessian trace-based metrics to rank layer sensitivity. This subtask is more compute-intensive and can be skipped if `mse_v2` is sufficient, but it can provide a richer view of sensitivity for research or fine-grained mixed-precision design. As with `mse_v2`, the goal is to **force a layer-wise Hessian-based report** even if no quantized configuration meets any particular accuracy goal.
 
 ## Planned outputs
 
@@ -21,4 +21,4 @@ Optionally extend the sensitivity tooling to use INC’s `hawq_v2` strategy, whi
 ## Notes
 
 - Because HAWQ_V2 is more expensive than MSE_V2, keep calibration sizes and iterations small, treating this as an analysis tool rather than a frequent operation.
-
+- When wiring HAWQ_V2 into Qwen2.5-VL-3B, follow the same design as for `mse_v2`: treat INC as a **sensitivity oracle**, and prefer direct adaptor calls (e.g., `calculate_hessian_trace` / HAWQ utilities) over relying on `quantization.fit` to find an acceptable quantized model; as long as a stable per-op trace map is produced and saved, this subtask is considered successful.

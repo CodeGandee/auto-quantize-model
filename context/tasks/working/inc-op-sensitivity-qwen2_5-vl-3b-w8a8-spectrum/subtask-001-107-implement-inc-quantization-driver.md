@@ -2,7 +2,7 @@
 
 ## Scope
 
-Implement a quantization driver script (e.g., `scripts/qwen/inc_qwen2_5_vl_3b_quantize.py`) that reads the sensitivity-derived profiles and invokes INC PTQ to produce quantized checkpoints for each profile under a consistent directory structure.
+Implement a quantization driver script (e.g., `scripts/qwen/inc_qwen2_5_vl_3b_quantize.py`) that reads the sensitivity-derived profiles and invokes INC PTQ to produce quantized checkpoints for each profile under a consistent directory structure. Unlike deployment-oriented pipelines, this driver is primarily for **experimentation and comparison**: it is acceptable if some INC-generated W8A8 variants perform poorly, as long as they help validate the profiles and provide data points alongside ModelOpt and baseline checkpoints.
 
 ## Planned outputs
 
@@ -16,10 +16,9 @@ Implement a quantization driver script (e.g., `scripts/qwen/inc_qwen2_5_vl_3b_qu
 
 - [ ] Job-001-107-001 Design the command-line interface or entrypoint for the quantization driver (e.g., `--profile minimal|medium|aggressive`).
 - [ ] Job-001-107-002 Implement logic to map profile definitions into INC op-wise precision settings (`op_type_dict` / `op_name_dict` or explicit `tune_cfg`).
-- [ ] Job-001-107-003 Run PTQ for each profile and verify that quantized checkpoints are saved correctly and can be loaded.
+- [ ] Job-001-107-003 Run PTQ for each profile (with time-bounded, possibly relaxed accuracy criteria) and verify that any resulting quantized checkpoints are saved correctly and can be loaded; profiles that never produce an acceptable quantized model are still useful if they exercise the INC config space and inform sensitivity-based design.
 - [ ] Job-001-107-004 Capture logs and basic metadata (e.g., quantization config, runtime) for each profile under a reproducible path (e.g., `tmp/qwen2_5_vl_3b_inc_quant/`).
 
 ## Notes
 
-- Consider adding a “dry-run” mode that validates profile mapping without actually running PTQ, to speed up iteration on configuration errors.
-
+- Consider adding a “dry-run” mode that validates profile mapping without actually running PTQ, to speed up iteration on configuration errors and to decouple profile definition from INC’s tuning behavior; in the updated main plan, the existence and correctness of the layer profiles and sensitivity reports is more important than the absolute accuracy of any single INC-generated model.

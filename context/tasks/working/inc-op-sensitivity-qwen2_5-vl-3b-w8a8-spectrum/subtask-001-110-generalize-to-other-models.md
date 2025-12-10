@@ -2,7 +2,7 @@
 
 ## Scope
 
-Adapt the Qwen2.5-VL INC sensitivity and quantization pipeline into a reusable pattern for other models in this repo (e.g., ViT-like models, YOLO/ONNX flows). This involves identifying which parts are Qwen-specific and extracting general guidance and examples.
+Adapt the Qwen2.5-VL INC sensitivity and quantization pipeline into a reusable pattern for other models in this repo (e.g., ViT-like models, YOLO/ONNX flows). This involves identifying which parts are Qwen-specific and extracting general guidance and examples, with a focus on treating INC as a **framework-agnostic sensitivity engine** (via adaptor-level APIs and light monkeypatching) that can be applied even when PTQ accuracy is poor or when another framework (e.g., ModelOpt) is used for deployment.
 
 ## Planned outputs
 
@@ -21,4 +21,4 @@ Adapt the Qwen2.5-VL INC sensitivity and quantization pipeline into a reusable p
 ## Notes
 
 - Keep the generalized guidance high-level enough to cover multiple architectures, but concrete enough that a developer can start from it without reverse-engineering the Qwen scripts.
-
+- Emphasize patterns that do not depend on INC producing a successful quantized model (e.g., calling `calculate_op_sensitivity(...)` / Hessian utilities directly, using small calibration sets, and exporting per-op scores as JSON), so that the same guidance is usable for “INC-as-oracle, other-framework-for-inference” workflows.

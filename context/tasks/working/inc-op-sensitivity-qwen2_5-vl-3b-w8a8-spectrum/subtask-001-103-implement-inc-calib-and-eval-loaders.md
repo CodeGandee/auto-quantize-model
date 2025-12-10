@@ -22,7 +22,7 @@ Build calibration and evaluation dataloaders compatible with the chosen INC adap
 
 ## Notes
 
-- Keep calibration and evaluation sample counts small enough to avoid long runtimes (e.g., a few hundred to a few thousand samples, depending on sequence length).
+- Keep calibration and evaluation sample counts small enough to avoid long runtimes (for this Qwen2.5-VL work we deliberately stay in the “tens of samples” regime rather than thousands, since the primary goal is to drive sensitivity analysis, not maximize absolute accuracy).
 - Implemented CPU+PyTorch calibration/eval utilities in `src/auto_quantize_model/qwen2_5_vl_inc_data.py`:
   - `QwenCalibConfig` configures text-only calibration using `datasets/vlm-quantize-calib/coco2017_captions.txt` (one caption per line), with small default sample counts and batch sizes.
   - `build_qwen_calib_dataloader(...)` builds a `torch.utils.data.DataLoader` that:
@@ -40,4 +40,6 @@ Build calibration and evaluation dataloaders compatible with the chosen INC adap
   - The HF `Qwen2_5_VLForConditionalGeneration` model is loaded in `torch.float32` and moved explicitly to CPU before calling `quantization.fit(...)`.
 - Sanity checks:
   - Independent CPU-only tests confirm that `build_qwen_calib_dataloader` and `build_qwen_eval_dataloader` produce well-shaped batches for Qwen2.5-VL (e.g., `input_ids` `[B, L]`, `attention_mask` `[B, L]`), and that `make_qwen_eval_func` returns a finite scalar (negative average loss) on a few batches.
-  - The INC driver script successfully constructs and uses the calibration/eval loaders for a short PTQ run; if no quantized model meets the accuracy criterion, it logs that `q_model` is `None` and exits cleanly without treating this as a loader failure.
+  - The INC driver script successfully constructs and uses the calibration/eval loaders for short PTQ / sensitivity runs; if no quantized model meets the accuracy criterion, it logs that `q_model` is `None` and exits cleanly without treating this as a loader failure—this is acceptable in the updated main plan, because these loaders are primarily feeding INC’s per-op sensitivity routines (e.g., `calculate_op_sensitivity(...)`), not required to deliver a high-quality quantized checkpoint.
+- Current implementation status:
+  - `src/auto_quantize_model/qwen2_5_vl_inc_data.py` defines `QwenCalibConfig`, `build_qwen_calib_dataloader(...)`, `build_qwen_eval_dataloader(...)`, and `make_qwen_eval_func(...)` with small default sample counts, and these are wired into both `scripts/qwen/inc_qwen2_5_vl_3b_sensitivity.py` and `scripts/qwen/inc_qwen2_5_vl_3b_sensitivity_sanity.py` for all current sensitivity runs.

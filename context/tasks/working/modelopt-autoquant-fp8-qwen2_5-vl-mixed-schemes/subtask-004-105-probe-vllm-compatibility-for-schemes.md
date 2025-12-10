@@ -2,7 +2,7 @@
 
 ## Scope
 
-Evaluate whether each exported AutoQuant FP8 scheme checkpoint can be loaded and used by vLLM in the existing FP8 environment, and document any incompatibilities, error messages, or required workarounds. This subtask focuses on wiring vLLM to the new checkpoints and capturing structured results.
+Evaluate whether each exported AutoQuant FP8 scheme checkpoint can be loaded and used by vLLM in the existing FP8 environment, and document any incompatibilities, error messages, or required workarounds. This subtask focuses on wiring vLLM to the new checkpoints and capturing structured results. vLLM compatibility is treated as a **practical constraint and diagnostic tool**, not the primary optimization target of this plan.
 
 ## Planned outputs
 
@@ -22,5 +22,5 @@ Evaluate whether each exported AutoQuant FP8 scheme checkpoint can be loaded and
 
 ## Notes
 
-- Treat vLLM compatibility as a practical constraint: if certain AutoQuant settings consistently break compatibility, capture that insight for potential changes in earlier subtasks.
-
+- Treat vLLM compatibility as a practical constraint and a way to **compare** how different quantization configs behave in deployment; if certain AutoQuant settings consistently break compatibility, capture that insight for potential changes in earlier subtasks.
+- Prefer to keep this subtask focused on **whether** schemes load and run under vLLM, rather than on measuring fine-grained accuracy; detailed quality comparisons should primarily use PyTorch inference per the main plan.

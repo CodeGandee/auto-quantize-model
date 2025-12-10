@@ -259,7 +259,44 @@ These mechanisms let INC act not just as a quantization tool, but as a **sensiti
 
 ## 5. Best-practice patterns (LLM and non-LLM)
 
-### 5.1 PyTorch backend vs ONNX Runtime GPU
+### 5.1 Forcing INC to emit layer sensitivity even when tuning fails
+
+For large LLMs it is common that no INT8 or mixed-precision configuration meets a strict accuracy goal within a small number of trials; if you rely only on `quantization.fit(..., strategy="mse_v2")`, the MSE-based sensitivity computation may never run and you will not get a layer-wise report, even though the underlying machinery exists.
+
+For the PyTorch FX backend (used for Qwen-style models), the call path for MSE-based sensitivity is:
+- `quantization.fit(...)` (in `neural_compressor/quantization.py`) chooses `strategy_name="mse_v2"` and constructs `MSE_V2TuneStrategy` when `framework="pytorch_fx"` and `tuning_criterion.strategy="mse_v2"`.
+- `MSE_V2TuneStrategy.next_tune_cfg(...)` (in `strategy/mse_v2.py`) only calls `self.adaptor.calculate_op_sensitivity(...)` in its fallback / re-quant loops, after it has a “best” quantized config that meets the accuracy criterion.
+- `PyTorch_FXAdaptor.calculate_op_sensitivity(...)` (in `adaptor/pytorch.py`) delegates to `get_fallback_order(...)` in `adaptor/torch_utils/util.py`.
+- `get_fallback_order(...)` calls `get_mse_order_per_fp32(...)` and `get_mse_order_per_int8(...)`, which are the helpers that actually compute per-op MSE and build a `fallback_order` dict that is sorted into a sensitivity ranking.
+
+If no quantized configuration ever meets the accuracy goal and `max_trials` is small, the fallback / re-quant loops are never entered, `calculate_op_sensitivity(...)` is never called, and the MSE helpers are never executed. To treat INC as a **layer analysis oracle** instead of an accuracy gate, you can use two patterns:
+
+- **Pattern A: Monkeypatch the MSE helpers and call `calculate_op_sensitivity(...)` directly**
+  - Monkeypatch `get_mse_order_per_fp32` and `get_mse_order_per_int8` in `neural_compressor.adaptor.torch_utils.util` to:
+    - Copy the upstream implementations (from the installed INC version) so behavior stays identical.
+    - Record the computed MSE per op (e.g., into `Dict[(op_name, op_type), float]` maps) before returning the sorted list.
+  - With those patches active, build a `PostTrainingQuantConfig` for `pytorch_fx`, construct an adaptor and `tune_cfg`, and call:
+    ```python
+    ops_lst = adaptor.calculate_op_sensitivity(
+        model=wrapped_model,
+        dataloader=calib_dataloader,
+        tune_cfg=tune_cfg,
+        output_op_names=None,
+        confidence_batches=1,
+        fallback=True,
+    )
+    ```
+  - This call goes through `get_fallback_order → get_mse_order_per_fp32`, so your patches see all MSE values and you can serialize the per-op maps to JSON/Markdown, even if `quantization.fit` itself never finds an acceptable model.
+  - In this repo, `src/auto_quantize_model/inc_pytorch_mse_patching.py` implements this pattern for Qwen2.5-VL-3B and exposes a `capture_mse_v2_sensitivity()` context manager.
+
+- **Pattern B: Ensure `mse_v2` calls `calculate_op_sensitivity(...)` at least once**
+  - Loosen or trivialize the `AccuracyCriterion` for the `mse_v2` run so that at least one INT8 configuration is considered “good enough”, giving `MSE_V2TuneStrategy` a non-`None` `cur_best_tuning_cfg` / `last_qmodel`, and therefore entering the fallback loop where `calculate_op_sensitivity(...)` is invoked.
+  - If you are comfortable with a deeper monkeypatch, you can wrap `MSE_V2TuneStrategy.next_tune_cfg` to inject a single `calculate_op_sensitivity(...)` call after the initial stage-1 configs, even if no trial meets the original accuracy goal; the important part is that the MSE helpers run on a representative calibration batch.
+
+In both patterns, the key design principle is:
+- Treat INC as a **scoring engine**: you care primarily that `get_mse_order_per_fp32` / `get_mse_order_per_int8` run on a representative dataloader and produce a deterministic ranking; whether `quantization.fit` returns a “good” quantized model is secondary. Once you have the per-op MSE maps, you can build your own mixed-precision profiles (e.g., keep the top-N most sensitive ops in fp16/bf16, quantize the rest) and feed them into INC, ModelOpt, TensorRT, or other runtimes.
+
+### 5.2 PyTorch backend vs ONNX Runtime GPU
 
 - **PyTorch+INC is typically CPU-centric.** With INC 2.x, the PyTorch FX backend is designed first for Intel CPUs (and, with IPEX/ITEX, Intel GPUs). The `PostTrainingQuantConfig` `backend` options for PTQ (`default`, `ipex`, `itex`, etc.) do not expose a dedicated “PyTorch CUDA” backend for NVIDIA; quantized kernels and FX lowering are generally CPU-focused.
 - In practice, many tutorials and examples run **all PTQ tuning and sensitivity analysis on CPU**, even when the final deployment is on a different device (or after exporting to another runtime). This matches how INC is usually used for PyTorch today.

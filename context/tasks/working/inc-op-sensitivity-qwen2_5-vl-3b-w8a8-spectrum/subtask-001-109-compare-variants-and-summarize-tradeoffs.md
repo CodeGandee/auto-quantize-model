@@ -2,7 +2,7 @@
 
 ## Scope
 
-Analyze outputs and any available metrics from the baseline and quantized Qwen2.5-VL variants to understand the trade-offs between quantization aggressiveness, quality, and resource usage. Produce a concise summary that can guide which profile to use in practice.
+Analyze outputs and any available metrics from the baseline and quantized Qwen2.5-VL variants to understand the trade-offs between quantization aggressiveness, quality, and resource usage. Produce a concise summary that can guide which profile to use in practice and how INC-derived profiles compare to ModelOpt and other schemes. The emphasis is on **characterizing behavior across profiles and frameworks**, not on selecting a single “best” INC configuration.
 
 ## Planned outputs
 
@@ -22,4 +22,4 @@ Analyze outputs and any available metrics from the baseline and quantized Qwen2.
 ## Notes
 
 - If time permits, include small quantitative experiments (e.g., token-level log-likelihood on a tiny benchmark) to complement qualitative impressions.
-
+- When summarizing results, make it explicit where INC disagrees with ModelOpt or manual intuition about sensitive layers; those disagreements are valuable research signals even if the corresponding INC variants are not good deployment candidates.

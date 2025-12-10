@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 import copy
+import os
 from typing import Callable, Dict, Iterable, Tuple
 
 import neural_compressor.adaptor.torch_utils.util as nc_util
@@ -39,6 +40,8 @@ def capture_mse_v2_sensitivity() -> Iterable[Tuple[MseMap, MseMap]]:
         """Patched get_mse_order_per_fp32 that also records MSE values."""
         inner_output = None
 
+        nc_util.logger.info("[MSE_PATCH] wrapped_fp32 invoked for mse_v2 sensitivity capture.")
+
         def output_hook(self, input, output):  # type: ignore[no-untyped-def]
             nonlocal inner_output
             inner_output = output
@@ -65,7 +68,15 @@ def capture_mse_v2_sensitivity() -> Iterable[Tuple[MseMap, MseMap]]:
         fallback_order: Dict[Tuple[str, str], float] = {}
         nc_util.logger.info("Evaluate the sensitivity for each int8 operation")
 
-        for op_name, qconfig in nc_util.tqdm(op_cfgs.items()):
+        max_ops_env = os.environ.get("INC_MSE_MAX_OPS", "")
+        try:
+            max_ops = int(max_ops_env) if max_ops_env else 0
+        except ValueError:
+            max_ops = 0
+
+        for idx, (op_name, qconfig) in enumerate(nc_util.tqdm(op_cfgs.items())):
+            if max_ops > 0 and idx >= max_ops:
+                break
             if op_name == "bf16_ops_list":
                 continue
             global_op_cfg_mapping = nc_util.op_cfg_mapping
@@ -170,6 +181,8 @@ def capture_mse_v2_sensitivity() -> Iterable[Tuple[MseMap, MseMap]]:
         """Patched get_mse_order_per_int8 that also records MSE values."""
         inner_output = None
 
+        nc_util.logger.info("[MSE_PATCH] wrapped_int8 invoked for mse_v2 sensitivity capture.")
+
         def output_hook(self, input, output):  # type: ignore[no-untyped-def]
             nonlocal inner_output
             inner_output = output
@@ -196,9 +209,17 @@ def capture_mse_v2_sensitivity() -> Iterable[Tuple[MseMap, MseMap]]:
             if v["weight"]["dtype"] == "fp32":
                 quant_list.append(k)
 
+        max_ops_env = os.environ.get("INC_MSE_MAX_OPS", "")
+        try:
+            max_ops = int(max_ops_env) if max_ops_env else 0
+        except ValueError:
+            max_ops = 0
+
         fallback_order: Dict[Tuple[str, str], float] = {}
         nc_util.logger.info("Evaluate the sensitivity for each fp32 operation")
-        for op_name, op_type in nc_util.tqdm(quant_list):
+        for idx, (op_name, op_type) in enumerate(nc_util.tqdm(quant_list)):
+            if max_ops > 0 and idx >= max_ops:
+                break
             if op_name in nc_util.op_cfg_mapping:
                 tmp_model = copy.deepcopy(fp32_model)
                 from neural_compressor.adaptor.pytorch import (  # type: ignore[import]
@@ -253,3 +274,91 @@ def capture_mse_v2_sensitivity() -> Iterable[Tuple[MseMap, MseMap]]:
     finally:
         nc_util.get_mse_order_per_fp32 = original_fp32  # type: ignore[assignment]
         nc_util.get_mse_order_per_int8 = original_int8  # type: ignore[assignment]
+
+
+def run_single_mse_v2_sensitivity_pass(
+    model,  # torch.nn.Module, but kept untyped to avoid hard torch dependency here
+    conf,
+    calib_dataloader,
+    confidence_batches: int = 1,
+) -> Tuple[MseMap, MseMap]:
+    """Run a single bounded MSE_V2 sensitivity pass via the PyTorch FX adaptor.
+
+    This helper wraps the common pattern needed to force INC to execute its
+    per-op MSE helpers (``get_mse_order_per_fp32`` / ``get_mse_order_per_int8``)
+    at least once, regardless of whether ``quantization.fit`` finds a good
+    quantized model.
+
+    It:
+    - Wraps the HF model in an INC ``Model`` using the provided PTQ config.
+    - Constructs an ``MSE_V2TuneStrategy`` with the calibration dataloader.
+    - Initializes the adaptor, capability, and tuning space.
+    - Builds an initial tuning config and passes it through
+      ``adaptor.calculate_op_sensitivity(...)`` for both fallback and
+      re-quant phases under ``capture_mse_v2_sensitivity()``, so the
+      monkeypatched helpers can populate MSE maps.
+
+    Returns:
+        (fp32_mse_map, int8_mse_map): dictionaries mapping (op_name, op_type)
+        to MSE values for fallback and re-quant sensitivity, respectively.
+    """
+    # Local imports to avoid imposing these dependencies on importers that
+    # only need the monkeypatch context manager.
+    from copy import deepcopy
+
+    from neural_compressor.model import Model as NcModel  # type: ignore[import]
+    from neural_compressor.quantization import _Config as NcInternalConfig  # type: ignore[import]
+    from neural_compressor.strategy.mse_v2 import (  # type: ignore[import]
+        MSE_V2TuneStrategy,
+    )
+
+    internal_conf = NcInternalConfig(
+        quantization=conf,
+        benchmark=None,
+        pruning=None,
+        distillation=None,
+        nas=None,
+    )
+    wrapped_model = NcModel(model, conf=conf)
+
+    with capture_mse_v2_sensitivity() as (fp32_mse_map, int8_mse_map):
+        strategy = MSE_V2TuneStrategy(
+            model=wrapped_model,
+            conf=internal_conf,
+            q_dataloader=calib_dataloader,
+            q_func=None,
+            eval_func=None,
+            eval_dataloader=None,
+            eval_metric=None,
+            resume=None,
+            q_hooks=None,
+        )
+        # Initialize adaptor, capability, tuning space, and (if needed) baseline.
+        strategy._prepare_tuning()
+
+        # Build a single initial tuning configuration covering all quantizable ops.
+        _, _, initial_op_tuning_cfg = strategy.initial_tuning_cfg()
+        base_tune_cfg = strategy._tune_cfg_converter(initial_op_tuning_cfg)
+
+        # Fallback phase: treat INT8 ops as candidates for FP32 fallback.
+        _ = strategy.adaptor.calculate_op_sensitivity(
+            model=strategy.model,
+            dataloader=calib_dataloader,
+            tune_cfg=deepcopy(base_tune_cfg),
+            output_op_names=None,
+            confidence_batches=confidence_batches,
+            fallback=True,
+        )
+
+        # Re-quant phase: treat FP32 ops as candidates for re-quantization.
+        _ = strategy.adaptor.calculate_op_sensitivity(
+            model=strategy.model,
+            dataloader=calib_dataloader,
+            tune_cfg=deepcopy(base_tune_cfg),
+            output_op_names=None,
+            confidence_batches=confidence_batches,
+            fallback=False,
+            requantize_cfgs=deepcopy(base_tune_cfg["op"]),
+        )
+
+    return fp32_mse_map, int8_mse_map
