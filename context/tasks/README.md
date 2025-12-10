@@ -1,15 +1,10 @@
-# Tasks Directory
+# Tasks
 
-## HEADER
-- **Purpose**: Track work items organized by status (working, done, backlog)
-- **Status**: Active
-- **Date**: 2025-11-28
-- **Dependencies**: Plans, issues, and design documents
-- **Target**: AI assistants and developers
+This directory contains task descriptions, working notes, and sprint trackers for this repository.
 
-## Content
-Use this directory to manage task files grouped by status:
-- `working/` for tasks currently in progress
-- `done/` for completed tasks kept for reference
-- `backlog/` for planned tasks not yet started
+Subdirectories:
+- `working/`: active, in-progress tasks with detailed subtasks and quickstarts.
+- `sprints/`: short-term, focused sprints that group related work items (e.g., evaluation passes, integration steps).
+
+See the individual markdown files inside each subdirectory for task-specific details.
 

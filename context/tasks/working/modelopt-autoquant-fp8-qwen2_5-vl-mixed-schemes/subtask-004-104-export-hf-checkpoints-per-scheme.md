@@ -57,12 +57,12 @@ Stage 2: LM-only scheme exports (later)
 Stage 1: all-layers FP8 analysis
 
 1. **Obtain full-sensitivity analysis for all selected layers**
-   - [ ] Job-004-104-001 Run the all-layers AutoQuant baseline (`fp8_autoquant_all_layers_fp8`) so that **all model layers selected by the FP8_ALL_LAYERS_CFG config** participate in the search, and write a self-contained manifest + state + Markdown report under a stable `tmp/` subdirectory and the baseline checkpoint’s `layer-sensitivity/` folder.
-   - [ ] Job-004-104-002 Verify that the baseline manifest exposes a usable `sensitivity_ranking` over all selected layers (LM + vision + any other quantizable blocks), and that the exported HF checkpoint (`fp8_autoquant_all_layers_fp8_coco2017`) is loadable.
+   - [x] Job-004-104-001 Run the all-layers AutoQuant baseline (`fp8_autoquant_all_layers_fp8`) so that **all model layers selected by the FP8_ALL_LAYERS_CFG config** participate in the search, and write a self-contained manifest + state + Markdown report under a stable `tmp/` subdirectory and the baseline checkpoint’s `layer-sensitivity/` folder.
+   - [x] Job-004-104-002 Verify that the baseline manifest exposes a usable `sensitivity_ranking` over all selected layers (LM + vision + any other quantizable blocks), and that the exported HF checkpoint (`fp8_autoquant_all_layers_fp8_coco2017`) is loadable.
 2. **Derive and export top-X% quantized schemes from the all-layers baseline**
-   - [ ] Job-004-104-003 Implement a slicer/helper that, given the all-layers baseline manifest, **quantizes layers in order of increasing sensitivity**: for each coverage point (10%, 20%, 30%, …, 100%), select the 10/20/…/100% of selected layers with the **lowest** sensitivity scores to keep in FP8, and treat the remaining layers as BF16/FP16.
-   - [ ] Job-004-104-004 For each chosen coverage point, apply this slicing rule to construct a concrete quantization config (or equivalent ModelOpt representation) and export a scheme-specific HF checkpoint directory (e.g., `fp8_autoquant_all_layers_top10_coco2017`, `fp8_autoquant_all_layers_top20_coco2017`), making each directory self-contained (weights + hf_quant_config + layer-sensitivity artifacts + per-scheme coverage manifest).
-   - [ ] Job-004-104-005 Implement light sanity checks (e.g., short text-only and/or multimodal generation) for a small subset of all-layers schemes (such as 10%, 50%, and 100% coverage) to confirm that models load and run end-to-end under PyTorch/Transformers, even if quality is not yet evaluated.
+   - [x] Job-004-104-003 Implement a slicer/helper that, given the all-layers baseline manifest, **quantizes layers in order of increasing sensitivity**: for each coverage point (10%, 20%, 30%, …, 100%), select the 10/20/…/100% of selected layers with the **lowest** sensitivity scores to keep in FP8, and treat the remaining layers as BF16/FP16.
+   - [x] Job-004-104-004 For each chosen coverage point, apply this slicing rule to construct a concrete quantization config (or equivalent ModelOpt representation) and export a scheme-specific HF checkpoint directory (e.g., `fp8_autoquant_all_layers_top10_coco2017`, `fp8_autoquant_all_layers_top20_coco2017`), making each directory self-contained (weights + hf_quant_config + layer-sensitivity artifacts + per-scheme coverage manifest).
+   - [x] Job-004-104-005 Implement light sanity checks (e.g., short text-only and/or multimodal generation) for a small subset of all-layers schemes (such as 10%, 50%, and 100% coverage) to confirm that models load and run end-to-end under PyTorch/Transformers, even if quality is not yet evaluated.
 
 Stage 2: LM-only schemes (deferred)
 
@@ -78,3 +78,22 @@ Stage 2: LM-only schemes (deferred)
 
 - For LM-only coverage schemes, exports remain focused on the language model component and keep the vision tower in BF16/FP16, consistent with the LM-only AutoQuant setup; all-layers variants explicitly relax this constraint and may quantize non-LM modules as part of the analysis.
 - Treat these checkpoints as **experimental artifacts** for comparing schemes and configs; it is acceptable if some exported models have poor quality, as long as they are loadable for analysis.
+
+## Summary
+
+Stage 1 (all-layers FP8 analysis) has been implemented and exercised:
+
+- Ran the all-layers AutoQuant baseline (`fp8_autoquant_all_layers_fp8`) with `FP8_ALL_LAYERS_CFG`, producing a full-sensitivity manifest, AutoQuant state, and `per-layer-sensitivity.md` under:
+  - `tmp/modelopt-autoquant-fp8/all-layers-full-sensitivity/`, and
+  - `models/qwen2_5_vl_3b_instruct/quantized/fp8_autoquant_all_layers_fp8_coco2017/layer-sensitivity/`.
+- Extended the AutoQuant driver to export a self-contained HF checkpoint for the baseline at:
+  - `models/qwen2_5_vl_3b_instruct/quantized/fp8_autoquant_all_layers_fp8_coco2017`
+  including config, processor, tokenizer, weights, `hf_quant_config.json`, and sensitivity artifacts.
+- Added `sensitivity_ranking` (sorted by increasing sensitivity) to the manifest so that least-sensitive layers can be selected first for quantization.
+- Implemented a slicer helper:
+  - `scripts/qwen/slice_qwen2_5_vl_3b_autoquant_all_layers_schemes.py`
+  which derives top-10%, 20%, …, 100% all-layers schemes from the baseline:
+  - Creates scheme directories such as `fp8_autoquant_all_layers_top10_coco2017` under `models/qwen2_5_vl_3b_instruct/quantized/`.
+  - Copies the baseline checkpoint and sensitivity artifacts into each scheme’s `layer-sensitivity/`.
+  - Writes per-scheme coverage manifests describing which layers are selected (least sensitive X%) and which are dropped.
+- Verified that baseline and derived scheme checkpoints are loadable under HF, and that the sensitivity baselines are fully self-contained for downstream analysis and evaluation.

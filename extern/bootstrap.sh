@@ -52,6 +52,6 @@ clone_repo "neural-compressor"        "https://github.com/intel/neural-compresso
 clone_repo "nncf"                     "https://github.com/openvinotoolkit/nncf.git"
 clone_repo "openvino"                 "https://github.com/openvinotoolkit/openvino.git"
 clone_repo "vllm"                     "https://github.com/vllm-project/vllm.git"
+clone_repo "onnxruntime"              "https://github.com/microsoft/onnxruntime.git"
 
 echo "[extern/bootstrap] Done."
-

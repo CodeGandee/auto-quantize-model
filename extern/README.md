@@ -31,6 +31,13 @@ The contents are **not** committed to this repo. They are ignored via
   - Used for cross-referencing runtime / graph passes that interact with NNCF
     or quantized models.
 
+- `onnxruntime/`
+  - Shallow clone of Microsoft ONNX Runtime.
+  - Upstream: <https://github.com/microsoft/onnxruntime>
+  - Used to build a custom ONNX Runtime with CUDA Execution Provider (CUDA
+    toolkit 12.8.1) for running ONNX models on GPU, and to inspect/export
+    configuration for CUDA EP builds.
+
 - `vllm/`
   - Shallow clone of the vLLM inference engine.
   - Upstream: <https://github.com/vllm-project/vllm>
@@ -54,5 +61,34 @@ git clone --depth=1 https://github.com/intel/neural-compressor.git neural-compre
 git clone --depth=1 https://github.com/openvinotoolkit/nncf.git nncf
 git clone --depth=1 https://github.com/openvinotoolkit/openvino.git openvino
 git clone --depth=1 https://github.com/vllm-project/vllm.git vllm
+git clone --depth=1 https://github.com/microsoft/onnxruntime.git onnxruntime
 ```
+
+For ONNX Runtime, see the upstream docs for detailed CUDA build instructions:
+
+- Build with CUDA EP: <https://onnxruntime.ai/docs/build/eps.html#cuda>
+- High-level Linux example (CUDA toolkit 12.8.1):
+
+  ```bash
+  cd extern/onnxruntime
+
+  # Ensure CUDA 12.8.1 and cuDNN 9.x are installed and discoverable:
+  #   export CUDA_HOME=/usr/local/cuda-12.8.1
+  #   export CUDNN_HOME=/usr/local/cuda-12.8.1
+  #   export PATH=\"$CUDA_HOME/bin:$PATH\"
+
+  ./build.sh \\
+    --config Release \\
+    --build_dir build/Linux/Release-cuda1281 \\
+    --update --build --parallel \\
+    --build_wheel \\
+    --use_cuda \\
+    --cuda_home \"$CUDA_HOME\" \\
+    --cudnn_home \"$CUDNN_HOME\" \\
+    --cuda_version 12.8 \\
+    --cmake_extra_defines CMAKE_CUDA_ARCHITECTURES=\"80;86;89\" \
+    --skip_tests
+
+  # Resulting wheel will be under build/Linux/Release-cuda1281/dist/
+  ```
 
