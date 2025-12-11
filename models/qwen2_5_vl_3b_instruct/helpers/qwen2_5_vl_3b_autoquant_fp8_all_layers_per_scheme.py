@@ -50,15 +50,14 @@ import modelopt.torch.quantization as mtq
 from auto_quantize_model.modelopt_configs import CUSTOM_QUANT_CONFIGS
 from modelopt.torch.export import export_hf_checkpoint
 
-# Ensure the repository root is importable so that absolute imports
-# from the `scripts` package work when this file is executed as a
-# standalone script.
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-_REPO_ROOT_STR = str(_REPO_ROOT)
-if _REPO_ROOT_STR not in sys.path:
-    sys.path.insert(0, _REPO_ROOT_STR)
+# Ensure the helper module for Qwen2.5-VL AutoQuant is importable
+# from the same directory when this file is executed as a script.
+_THIS_DIR = Path(__file__).resolve().parent
+_THIS_DIR_STR = str(_THIS_DIR)
+if _THIS_DIR_STR not in sys.path:
+    sys.path.insert(0, _THIS_DIR_STR)
 
-from scripts.qwen.qwen2_5_vl_3b_autoquant_fp8_schemes import (  # noqa: E402
+from qwen2_5_vl_3b_autoquant_fp8_schemes import (  # noqa: E402
     AutoQuantSchemeConfig,
     build_quant_manifest,
     build_vlm_calib_dataloader,
