@@ -8,7 +8,7 @@
   - `src/auto_quantize_model/modelopt_configs.py`
   - `models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_schemes.py`
   - `models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_all_layers_per_scheme.py`
-  - `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers_fp8/run_qwen3_vl_4b_autoquant_all_layers_fp8.py`
+  - `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
   - `context/summaries/modelopt-kb/howto-modelopt-all-layer-sensitivity-analysis.md`
   - `context/instructions/prep-rtx5090.md`
 - **Target**: Quantization / VLM developers and AI assistants
@@ -48,7 +48,7 @@ This gives a parallel set of INT8 sensitivity artifacts to compare against exist
    - Clone the existing `qwen2_5_vl_3b_autoquant_fp8_all_layers_per_scheme` flow to an INT8 variant that uses `INT8_ALL_LAYERS_CFG`.
    - Ensure it writes per-scheme `per-layer-sensitivity.{md,json}` with consistent shape.
 5. **Extend Qwen3-VL all-layers helper for INT8**:
-   - Add an optional `--quant-format` or `--scheme-type` flag to `run_qwen3_vl_4b_autoquant_all_layers_fp8.py` (or a new sibling script) to switch between `FP8_ALL_LAYERS_CFG` and `INT8_ALL_LAYERS_CFG`.
+   - Add an optional `--quant-format` or `--scheme-type` flag to `run_qwen3_vl_4b_autoquant_all_layers.py` (or a new sibling script) to switch between `FP8_ALL_LAYERS_CFG` and `INT8_ALL_LAYERS_CFG`.
    - Maintain identical JSON/Markdown output shape for FP8 and INT8 runs, only changing scheme metadata.
 6. **Add LM-only INT8 helper for Qwen3-VL**:
    - Implement a Qwen3-VL LM-only AutoQuant driver (similar to Qwen2.5’s LM-only script) using `INT8_LM_DEFAULT_CFG` and text-only COCO captions.
@@ -101,7 +101,7 @@ sequenceDiagram
   - Add `write_layer_sensitivity_json` helper (already present) to handle INT8 as well.
 - **models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_all_layers_per_scheme.py**
   - Allow selecting INT8 all-layers config and generate `per-layer-sensitivity.{md,json}` per scheme.
-- **models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers_fp8/run_qwen3_vl_4b_autoquant_all_layers_fp8.py**
+- **models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py**
   - Generalize to support an INT8 all-layers scheme (via flag or new entry point) and ensure both FP8 and INT8 write `per-layer-sensitivity.{md,json}`.
 - **models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py** (new)
   - New LM-only INT8 AutoQuant driver for Qwen3-VL-4B, mirroring the Qwen2.5 LM-only flow.
@@ -121,7 +121,7 @@ sequenceDiagram
 
 ### 4.2 Qwen3-VL tasks
 
-- [ ] **Generalize Qwen3-VL all-layers helper for INT8** Update `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers_fp8/run_qwen3_vl_4b_autoquant_all_layers_fp8.py` (or add a sibling script) so it can select `INT8_ALL_LAYERS_CFG` as the quantization format and still write `per-layer-sensitivity.{md,json}` with the same structure as FP8.
+- [ ] **Generalize Qwen3-VL all-layers helper for INT8** Update `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py` (or add a sibling script) so it can select `INT8_ALL_LAYERS_CFG` as the quantization format and still write `per-layer-sensitivity.{md,json}` with the same structure as FP8.
 - [ ] **Implement Qwen3-VL LM-only INT8 driver** Add `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py` that mirrors the Qwen2.5 LM-only AutoQuant driver but uses `INT8_LM_DEFAULT_CFG`, text-only calibration, and writes into `tmp/qwen3_vl_4b_autoquant_int8_lm/`.
 - [ ] **Run Qwen3-VL INT8 sanity tests (3-phase)** In the `rtx5090` env, run both LM-only and all-layers INT8 drivers for Qwen3-VL with:
   - A tiny calibration set (≈10 samples) to validate basic wiring and output files.

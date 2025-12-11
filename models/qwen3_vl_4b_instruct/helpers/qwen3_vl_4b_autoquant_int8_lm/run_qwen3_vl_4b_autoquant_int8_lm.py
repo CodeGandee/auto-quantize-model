@@ -35,15 +35,15 @@ import modelopt.torch.quantization as mtq
 from auto_quantize_model.modelopt_configs import CUSTOM_QUANT_CONFIGS
 from modelopt.torch.export.model_utils import get_language_model_from_vl
 
-# Reuse shared AutoQuant helpers from the all-layers FP8 driver.
+# Reuse shared AutoQuant helpers from the all-layers driver.
 _THIS_DIR = Path(__file__).resolve().parent
 _HELPERS_DIR = _THIS_DIR.parent
-_ALL_LAYERS_DIR = _HELPERS_DIR / "qwen3_vl_4b_autoquant_all_layers_fp8"
+_ALL_LAYERS_DIR = _HELPERS_DIR / "qwen3_vl_4b_autoquant_all_layers"
 _ALL_LAYERS_DIR_STR = str(_ALL_LAYERS_DIR)
 if _ALL_LAYERS_DIR_STR not in sys.path:
     sys.path.insert(0, _ALL_LAYERS_DIR_STR)
 
-from run_qwen3_vl_4b_autoquant_all_layers_fp8 import (  # noqa: E402
+from run_qwen3_vl_4b_autoquant_all_layers import (  # noqa: E402
     AutoQuantSchemeConfig,
     build_quant_manifest,
     create_forward_step,
@@ -546,4 +546,3 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
