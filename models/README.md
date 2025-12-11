@@ -21,5 +21,7 @@ This directory groups model families used by the project. Each subdirectory owns
   - See `models/qwen2_5_vl_3b_instruct/README.md` for details.
   - Bootstrap script: `./models/qwen2_5_vl_3b_instruct/bootstrap.sh`
   - Contains `checkpoints/Qwen2.5-VL-3B-Instruct` symlink pointing to a local HF snapshot (e.g. `/data2/llm-models/Qwen2.5-VL-3B-Instruct`), ignored by Git.
+- `qwen3_vl_4b_instruct/` — Qwen3-VL 4B Instruct (HF snapshot, external weights):
+  - Tracks a local HF snapshot via `checkpoints/Qwen3-VL-4B-Instruct` symlink pointing to a host-specific directory (e.g. `/workspace/llm-models/Qwen3-VL-4B-Instruct`), ignored by Git.
 
 All large artifacts (source clones, checkpoints, temporary files, and external HF snapshots) are managed per-model and are not committed to the repository. Use the per-model README files and local symlink conventions for exact setup and bootstrap instructions.

@@ -63,6 +63,7 @@ from scripts.qwen.qwen2_5_vl_3b_autoquant_fp8_schemes import (  # noqa: E402
     build_quant_manifest,
     build_vlm_calib_dataloader,
     write_layer_sensitivity_md,
+    write_layer_sensitivity_json,
 )
 
 
@@ -613,6 +614,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         model=quantized_model,
         scheme=scheme_config,
         state_dict=state_dict,
+        model_id=str(args.model_dir),
     )
 
     layer_sens_dir = out_dir / "layer-sensitivity"
@@ -621,6 +623,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     manifest_path = layer_sens_dir / f"{scheme_config.name}_quant_manifest.json"
     state_path = layer_sens_dir / f"{scheme_config.name}_autoquant_state.pt"
     sensitivity_md_path = layer_sens_dir / "per-layer-sensitivity.md"
+    sensitivity_json_path = layer_sens_dir / "per-layer-sensitivity.json"
 
     with manifest_path.open("w", encoding="utf-8") as file:
         json.dump(manifest, file, indent=2)
@@ -632,6 +635,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         scheme=scheme_config,
         autoquant_state=manifest["autoquant_state"],
         out_path=sensitivity_md_path,
+        model_id=str(args.model_dir),
+    )
+
+    write_layer_sensitivity_json(
+        manifest=manifest,
+        out_path=sensitivity_json_path,
     )
 
     # Export a self-contained HF checkpoint for this scheme.
