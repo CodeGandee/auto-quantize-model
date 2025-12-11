@@ -374,6 +374,17 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--quant-format",
+        type=str,
+        default="fp8",
+        choices=["fp8", "int8"],
+        help=(
+            "Quantization format family to use for the per-scheme run. "
+            "'fp8' reuses the FP8 baseline config, 'int8' switches to "
+            "INT8_ALL_LAYERS_CFG while keeping the same coverage manifest."
+        ),
+    )
+    parser.add_argument(
         "--overwrite",
         action="store_true",
         default=False,
@@ -476,11 +487,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
         return 1
 
-    effective_bits: float = (
+    requested_bits: float = (
         float(args.effective_bits)
         if args.effective_bits is not None
         else float(baseline_scheme.auto_quantize_bits)
     )
+    if args.quant_format == "int8" and args.effective_bits is None:
+        effective_bits = 8.0
+    else:
+        effective_bits = requested_bits
     score_size: int = (
         int(args.auto_quantize_score_size)
         if args.auto_quantize_score_size is not None
@@ -488,14 +503,25 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
 
     coverage_fraction = float(coverage_manifest.get("coverage_fraction", 1.0))
+
+    quant_formats: List[str] = ["FP8_ALL_LAYERS_CFG"]
+    scheme_label = scheme_name
+    if args.quant_format == "int8":
+        quant_formats = ["INT8_ALL_LAYERS_CFG"]
+        if scheme_label.startswith("fp8_autoquant_all_layers_"):
+            suffix = scheme_label[len("fp8_autoquant_all_layers_") :]
+            scheme_label = f"int8_autoquant_all_layers_{suffix}"
+        else:
+            scheme_label = f"{scheme_label}_int8"
+
     scheme_config = AutoQuantSchemeConfig(
-        name=scheme_name,
+        name=scheme_label,
         auto_quantize_bits=effective_bits,
         auto_quantize_method="gradient",
         auto_quantize_score_size=score_size,
         coverage_mode="all_layers_from_baseline",
         coverage_fraction=coverage_fraction,
-        quant_formats=["FP8_ALL_LAYERS_CFG"],
+        quant_formats=quant_formats,
     )
 
     # Prepare output directory.

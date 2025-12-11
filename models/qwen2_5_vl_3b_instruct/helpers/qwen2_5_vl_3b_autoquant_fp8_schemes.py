@@ -94,6 +94,41 @@ AUTOQUANT_FP8_SCHEMES: Dict[str, AutoQuantSchemeConfig] = {
     ),
 }
 
+AUTOQUANT_INT8_SCHEMES: Dict[str, AutoQuantSchemeConfig] = {
+    "int8_autoquant_top25": AutoQuantSchemeConfig(
+        name="int8_autoquant_top25",
+        auto_quantize_bits=8.0,
+        auto_quantize_method="gradient",
+        auto_quantize_score_size=128,
+        coverage_mode="top_k_blocks",
+        coverage_fraction=0.25,
+        quant_formats=["INT8_LM_DEFAULT_CFG"],
+    ),
+    "int8_autoquant_top50": AutoQuantSchemeConfig(
+        name="int8_autoquant_top50",
+        auto_quantize_bits=8.0,
+        auto_quantize_method="gradient",
+        auto_quantize_score_size=128,
+        coverage_mode="top_k_blocks",
+        coverage_fraction=0.50,
+        quant_formats=["INT8_LM_DEFAULT_CFG"],
+    ),
+    "int8_autoquant_full": AutoQuantSchemeConfig(
+        name="int8_autoquant_full",
+        auto_quantize_bits=8.0,
+        auto_quantize_method="gradient",
+        auto_quantize_score_size=96,
+        coverage_mode="full",
+        coverage_fraction=1.0,
+        quant_formats=["INT8_LM_DEFAULT_CFG"],
+    ),
+}
+
+AUTOQUANT_SCHEMES: Dict[str, AutoQuantSchemeConfig] = {
+    **AUTOQUANT_FP8_SCHEMES,
+    **AUTOQUANT_INT8_SCHEMES,
+}
+
 
 class CocoCaptionsDataset(Dataset[Mapping[str, torch.Tensor]]):
     """
@@ -722,7 +757,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "--scheme-name",
         type=str,
         required=True,
-        choices=sorted(AUTOQUANT_FP8_SCHEMES.keys()),
+        choices=sorted(AUTOQUANT_SCHEMES.keys()),
         help="Name of the AutoQuant scheme to run.",
     )
     parser.add_argument(
@@ -834,7 +869,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
 
-    scheme = AUTOQUANT_FP8_SCHEMES[args.scheme_name]
+    scheme = AUTOQUANT_SCHEMES[args.scheme_name]
 
     # Apply CLI overrides.
     if args.effective_bits is not None:
