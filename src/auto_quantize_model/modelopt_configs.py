@@ -61,10 +61,64 @@ def _build_fp8_all_layers_cfg() -> Dict[str, Any]:
     return cfg
 
 
+def _build_int8_lm_default_cfg() -> Dict[str, Any]:
+    """Build an INT8 quantization config for LM-only flows.
+
+    This config is a direct copy of ``mtq.INT8_DEFAULT_CFG`` so that it
+    preserves ModelOpt's built-in name-pattern filters and default
+    enablement for large language models.
+
+    Returns
+    -------
+    dict
+        A deep copy of the default INT8 configuration suitable for LM
+        AutoQuant runs.
+    """
+    cfg: Dict[str, Any] = deepcopy(mtq.INT8_DEFAULT_CFG)
+    return cfg
+
+
+def _build_int8_all_layers_cfg() -> Dict[str, Any]:
+    """Build an INT8 quantization config that enables all layers.
+
+    This config mirrors :func:`_build_fp8_all_layers_cfg` but starts
+    from ``mtq.INT8_DEFAULT_CFG`` so that both the vision and language
+    towers can be quantized with INT8 where supported.
+
+    Returns
+    -------
+    dict
+        INT8 configuration with generic quantizers enabled for all
+        layers (subject to ModelOpt operator support).
+    """
+    cfg: Dict[str, Any] = deepcopy(mtq.INT8_DEFAULT_CFG)
+    quant_cfg = cfg.get("quant_cfg", {})
+
+    keep_keys = {"*weight_quantizer", "*input_quantizer"}
+    keys_to_remove = [key for key in list(quant_cfg.keys()) if key not in keep_keys]
+    for key in keys_to_remove:
+        quant_cfg.pop(key, None)
+
+    input_cfg = quant_cfg.get("*input_quantizer", {})
+    num_bits = input_cfg.get("num_bits", 8)
+    axis = input_cfg.get("axis", None)
+    quant_cfg["default"] = {
+        "num_bits": num_bits,
+        "axis": axis,
+        "enable": True,
+    }
+
+    return cfg
+
+
 FP8_ALL_LAYERS_CFG: Dict[str, Any] = _build_fp8_all_layers_cfg()
+INT8_LM_DEFAULT_CFG: Dict[str, Any] = _build_int8_lm_default_cfg()
+INT8_ALL_LAYERS_CFG: Dict[str, Any] = _build_int8_all_layers_cfg()
 
 # Registry of custom quantization configs that can be referenced by name
 # from higher-level drivers (e.g., AutoQuant schemes).
 CUSTOM_QUANT_CONFIGS: Dict[str, Dict[str, Any]] = {
     "FP8_ALL_LAYERS_CFG": FP8_ALL_LAYERS_CFG,
+    "INT8_LM_DEFAULT_CFG": INT8_LM_DEFAULT_CFG,
+    "INT8_ALL_LAYERS_CFG": INT8_ALL_LAYERS_CFG,
 }

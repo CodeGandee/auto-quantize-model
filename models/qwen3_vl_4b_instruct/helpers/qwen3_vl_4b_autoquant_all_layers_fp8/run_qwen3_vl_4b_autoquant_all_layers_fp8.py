@@ -39,6 +39,42 @@ AUTOQUANT_FP8_ALL_LAYERS = AutoQuantSchemeConfig(
     quant_formats=["FP8_ALL_LAYERS_CFG"],
 )
 
+AUTOQUANT_INT8_ALL_LAYERS = AutoQuantSchemeConfig(
+    name="int8_autoquant_all_layers_int8",
+    auto_quantize_bits=8.0,
+    auto_quantize_method="gradient",
+    auto_quantize_score_size=128,
+    coverage_mode="full",
+    coverage_fraction=1.0,
+    quant_formats=["INT8_ALL_LAYERS_CFG"],
+)
+
+
+def select_autoquant_scheme(quant_format: str) -> AutoQuantSchemeConfig:
+    """Select an AutoQuant scheme configuration based on the quant format.
+
+    Parameters
+    ----------
+    quant_format :
+        Name of the quantization format family to use. Supported values
+        are ``\"fp8\"`` and ``\"int8\"``.
+
+    Returns
+    -------
+    AutoQuantSchemeConfig
+        Scheme describing bits budget, score size, and quant formats.
+
+    Raises
+    ------
+    ValueError
+        If an unsupported quant format is requested.
+    """
+    if quant_format == "fp8":
+        return AUTOQUANT_FP8_ALL_LAYERS
+    if quant_format == "int8":
+        return AUTOQUANT_INT8_ALL_LAYERS
+    raise ValueError(f"Unsupported quant_format: {quant_format!r}")
+
 
 class CocoVlmDataset(Dataset[Mapping[str, torch.Tensor]]):
     """
@@ -538,7 +574,7 @@ def write_layer_sensitivity_json(
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Run ModelOpt AutoQuant FP8 all-layer sensitivity for Qwen3-VL-4B-Instruct "
+            "Run ModelOpt AutoQuant all-layer sensitivity for Qwen3-VL-4B-Instruct "
             "and emit a quantization manifest."
         )
     )
@@ -609,6 +645,34 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="Torch device to use (default: cuda).",
     )
     parser.add_argument(
+        "--quant-format",
+        type=str,
+        default="fp8",
+        choices=["fp8", "int8"],
+        help=(
+            "Quantization format family to use. "
+            "'fp8' selects FP8_ALL_LAYERS_CFG, 'int8' selects INT8_ALL_LAYERS_CFG."
+        ),
+    )
+    parser.add_argument(
+        "--effective-bits",
+        type=float,
+        default=None,
+        help=(
+            "Optional override for the AutoQuant effective_bits constraint. "
+            "Defaults to the scheme's configured value."
+        ),
+    )
+    parser.add_argument(
+        "--auto-quantize-score-size",
+        type=int,
+        default=None,
+        help=(
+            "Optional override for the AutoQuant score size in samples. "
+            "Defaults to the scheme's configured value."
+        ),
+    )
+    parser.add_argument(
         "--report-only",
         action="store_true",
         default=False,
@@ -623,7 +687,27 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
-    scheme = AUTOQUANT_FP8_ALL_LAYERS
+    try:
+        scheme = select_autoquant_scheme(args.quant_format)
+    except ValueError as exc:  # noqa: BLE001
+        print(f"[ERROR] {exc}")
+        return 1
+
+    # Apply CLI overrides to the selected scheme in an immutable way.
+    if args.effective_bits is not None:
+        scheme = AutoQuantSchemeConfig(
+            **{
+                **asdict(scheme),
+                "auto_quantize_bits": args.effective_bits,
+            }
+        )
+    if args.auto_quantize_score_size is not None:
+        scheme = AutoQuantSchemeConfig(
+            **{
+                **asdict(scheme),
+                "auto_quantize_score_size": args.auto_quantize_score_size,
+            }
+        )
 
     if args.report_only:
         if not args.output_dir.is_dir():
@@ -725,7 +809,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         max_length=args.calib_seq_len,
     )
 
-    print("[INFO] Running AutoQuant FP8 all-layers scheme for Qwen3-VL-4B-Instruct ...")
+    print(
+        "[INFO] Running AutoQuant all-layers scheme "
+        f"{scheme.name} for Qwen3-VL-4B-Instruct ..."
+    )
     quantized_model, state_dict = autoquant_model(
         model=model,
         scheme=scheme,
