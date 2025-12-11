@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Design and implement INT8 (W8A8) ModelOpt configs and drivers to run per-layer sensitivity analysis for Qwen2.5-VL-3B and Qwen3-VL-4B, both for full VLM (vision + text towers) and LM-only text towers.
-- **Status**: Draft
+- **Status**: In progress — INT8 configs and Qwen2.5/Qwen3 drivers wired; full 3-phase runs and docs still pending.
 - **Date**: 2025-12-11
 - **Dependencies**:
   - `src/auto_quantize_model/modelopt_configs.py`
@@ -115,7 +115,15 @@ sequenceDiagram
 ### 4.1 Shared / Core work
 
 - [x] **Add INT8 configs in ModelOpt wrapper** Implemented `INT8_LM_DEFAULT_CFG` and `INT8_ALL_LAYERS_CFG` in `src/auto_quantize_model/modelopt_configs.py` and exposed them via `CUSTOM_QUANT_CONFIGS` for reuse across Qwen2.5-VL and Qwen3-VL.
-- [ ] **Prepare shared calibration subsets** Create or document small, medium, and large calibration subsets for both text-only and VLM flows (e.g., ~10 / 100 / 512 samples from `datasets/vlm-quantize-calib/coco2017_captions.txt` and `coco2017_vlm_calib.db`) so Qwen2.5-VL and Qwen3-VL INT8 drivers can reuse the same calibration sizes.
+- [x] **Prepare shared calibration subsets** Created deterministic small/medium/large calibration subsets for both text-only and VLM flows so all drivers can share the same budgets:
+  - Text-only captions (first N non-empty lines from `coco2017_captions.txt`):
+    - Small (16): `datasets/vlm-quantize-calib/coco2017_captions_small.txt`
+    - Medium (128): `datasets/vlm-quantize-calib/coco2017_captions_medium.txt`
+    - Large (512): `datasets/vlm-quantize-calib/coco2017_captions_large.txt`
+  - VLM calib DB (first N rows from `vlm_calib_samples` ordered by `id`):
+    - Small (16): `datasets/vlm-quantize-calib/coco2017_vlm_calib_small.db`
+    - Medium (128): `datasets/vlm-quantize-calib/coco2017_vlm_calib_medium.db`
+    - Large (512): `datasets/vlm-quantize-calib/coco2017_vlm_calib_large.db`
 - [ ] **Wire calibration defaults and CLI flags** Ensure all drivers (Qwen2.5-VL and Qwen3-VL, LM-only and all-layers) share sensible defaults for `--max-calib-samples`, `--auto-quantize-score-size`, model paths, and an option to pick FP8 vs INT8 schemes via CLI.
 - [ ] **Update docs and context** Refresh relevant READMEs and (optionally) context docs to point to the new INT8 per-layer analysis commands and explain how INT8 and FP8 runs can be compared.
 
