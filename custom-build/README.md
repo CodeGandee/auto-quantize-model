@@ -14,6 +14,21 @@ The `bootstrap.sh` script will:
 - Optionally use an explicit wheel path passed via `--path`.
 - Create or update a symlink in this directory pointing to the chosen wheel.
 
+## VS Code file watching
+
+This directory may contain large wheel files and related artifacts. If VS Code
+shows warnings about being unable to watch for file changes (often due to Linux
+inotify limits), consider excluding `custom-build/` from file watching in your
+workspace settings (repo root `.vscode/settings.json`):
+
+```json
+{
+  "files.watcherExclude": {
+    "**/custom-build/**": true
+  }
+}
+```
+
 Typical usage (from the repo root):
 
 - `bash custom-build/bootstrap.sh` – auto-discover the latest wheel and link it here.

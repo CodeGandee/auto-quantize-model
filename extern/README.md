@@ -6,6 +6,24 @@ tooling used as references by this project and its notes under `context/hints/`.
 The contents are **not** committed to this repo. They are ignored via
 `extern/.gitignore` and can be safely deleted and re-cloned at any time.
 
+## VS Code file watching
+
+This directory can contain a very large number of files (vendored repositories).
+On Linux, VS Code may hit inotify watch limits and show warnings like “unable to
+watch for file changes”.
+
+Recommended: exclude `extern/` from VS Code’s file watcher (and typically also
+other large vendor/build directories). Add this to your workspace settings
+(`.vscode/settings.json` at the repo root):
+
+```json
+{
+  "files.watcherExclude": {
+    "**/extern/**": true
+  }
+}
+```
+
 ## Layout
 
 - `TensorRT-Model-Optimizer/`
