@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Design and implement INT8 (W8A8) ModelOpt configs and drivers to run per-layer sensitivity analysis for Qwen2.5-VL-3B and Qwen3-VL-4B, both for full VLM (vision + text towers) and LM-only text towers.
-- **Status**: In progress — INT8 configs/drivers wired and docs updated; full 3-phase runs still pending.
+- **Status**: Done — INT8 configs/drivers wired, docs updated, and 3‑phase runs completed.
 - **Date**: 2025-12-11
 - **Dependencies**:
   - `src/auto_quantize_model/modelopt_configs.py`
@@ -131,16 +131,22 @@ sequenceDiagram
 
 - [x] **Generalize Qwen3-VL all-layers helper for INT8** Updated `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py` to accept a `--quant-format {fp8,int8}` flag, select between `FP8_ALL_LAYERS_CFG` and `INT8_ALL_LAYERS_CFG`, and emit `per-layer-sensitivity.{md,json}` with a shared manifest structure.
 - [x] **Implement Qwen3-VL LM-only INT8 driver** Added `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py` that mirrors the Qwen2.5 LM-only AutoQuant flow but uses `INT8_LM_DEFAULT_CFG`, text-only COCO captions, and writes into `tmp/qwen3_vl_4b_autoquant_int8_lm/`.
-- [ ] **Run Qwen3-VL INT8 sanity tests (3-phase)** In the `rtx5090` env, run both LM-only and all-layers INT8 drivers for Qwen3-VL with:
+- [x] **Run Qwen3-VL INT8 sanity tests (3-phase)** Completed in the `rtx5090` env for both LM-only and all-layers INT8 drivers with:
   - A tiny calibration set (≈10 samples) to validate basic wiring and output files.
   - A medium calibration set (≈100 samples) to check stability of scores and runtime.
   - A large calibration set (≈512 samples) to generate final, high-resolution per-layer sensitivity artifacts.
+  - Outputs written under:
+    - `tmp/qwen3_vl_4b_autoquant_int8_lm_{small,medium,large}/`
+    - `tmp/qwen3_vl_4b_autoquant_all_layers_int8_{small,medium,large}/`
 
 ### 4.3 Qwen2.5-VL tasks
 
 - [x] **Extend Qwen2.5-VL LM-only AutoQuant for INT8** Updated `models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_schemes.py` to add `int8_autoquant_*` LM-only schemes backed by `INT8_LM_DEFAULT_CFG`, sharing the existing AutoQuant wiring and emitting `per-layer-sensitivity.{md,json}`.
 - [x] **Add Qwen2.5-VL all-layers INT8 variant** Extended `models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_all_layers_per_scheme.py` with a `--quant-format {fp8,int8}` flag so it can reuse FP8 coverage manifests while driving INT8 all-layers schemes via `INT8_ALL_LAYERS_CFG`, writing per-scheme Markdown + JSON in a `layer-sensitivity/` subdir.
-- [ ] **Run Qwen2.5-VL INT8 sanity tests (3-phase)** In the `rtx5090` env, run both LM-only and all-layers INT8 drivers with:
+- [x] **Run Qwen2.5-VL INT8 sanity tests (3-phase)** Completed in the `rtx5090` env for both LM-only and all-layers INT8 drivers with:
   - A tiny calibration set (≈10–16 samples) to validate basic wiring and output files. (LM and all-layers top-10 INT8 sanity runs completed.)
   - A medium calibration set (≈100 samples) to check stability of scores and runtime.
   - A large calibration set (≈512 samples) to generate final, high-resolution per-layer sensitivity artifacts.
+  - Outputs written under:
+    - `tmp/qwen2_5_vl_3b_autoquant_int8_lm_{small,medium,large}/`
+    - `tmp/qwen2_5_vl_3b_autoquant_all_layers_int8_{small,medium,large}/`
