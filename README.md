@@ -23,6 +23,21 @@ The goal is to compare and benchmark different quantization approaches to unders
 
 Coming soon...
 
+## VS Code settings
+
+If VS Code warns that it’s “unable to watch for file changes” (common on Linux
+when this repo contains many vendored files under `extern/`), exclude the heavy
+directories from file watching by adding this to `.vscode/settings.json`:
+
+```json
+{
+	"files.watcherExclude": {
+		"**/extern/**": true,
+		"**/custom-build/**": true
+	}
+}
+```
+
 ## License
 
 TBD
