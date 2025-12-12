@@ -18,6 +18,14 @@ Follow the existing repository guidelines in `AGENTS.md` and prefer Pixi-managed
 
 If any rules in `AGENTS.md` conflict with this prep document, prefer this prep document for this session.
 
+## ModelOpt per-layer sensitivity runs
+
+Per-layer quantization sensitivity analysis for Qwen2.5‑VL / Qwen3‑VL (FP8 or INT8)
+is done with NVIDIA ModelOpt `auto_quantize` drivers under `models/qwen*/helpers/`.
+Run them in this env and write outputs under `tmp/` (for example
+`tmp/qwen3_vl_4b_autoquant_all_layers_int8_large/`), then compare
+`per-layer-sensitivity.{md,json}` across schemes.
+
 ## Know your tools in the RTX 5090 env
 
 The `rtx5090` Pixi environment already includes several key packages for ONNX and quantization work:

@@ -41,3 +41,27 @@ Notes:
 - Do not commit the `checkpoints/Qwen2.5-VL-3B-Instruct` symlink; it is environment-specific.
 - Prefer downloading the model via ModelScope CLI (`pip install modelscope` + `modelscope download --model Qwen/Qwen2.5-VL-3B-Instruct --local_dir <path>`) or the ModelScope web UI.
 - Keep any quantized or exported variants (e.g., ONNX, TensorRT) in dedicated experiment or export directories rather than inside this snapshot.
+
+## Per-layer sensitivity (ModelOpt AutoQuant)
+
+Once the checkpoint symlink is in place and COCO calibration subsets are available,
+you can run per-layer quantization sensitivity with NVIDIA ModelOpt:
+
+```bash
+# INT8 (W8A8) LM-only sensitivity (text tower).
+pixi run -e rtx5090-vllm python \
+  models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_schemes.py \
+  --scheme-name int8_autoquant_full \
+  --output-dir tmp/qwen2_5_vl_3b_autoquant_int8_lm_large
+
+# FP8 LM-only sensitivity.
+pixi run -e rtx5090-vllm python \
+  models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_schemes.py \
+  --scheme-name fp8_autoquant_full \
+  --output-dir tmp/qwen2_5_vl_3b_autoquant_fp8_lm_large
+```
+
+These drivers write `per-layer-sensitivity.md` and `per-layer-sensitivity.json`
+under the chosen output directory. For all-layers (vision+text) schemes, see
+`models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_all_layers_per_scheme.py`
+and the plan in `context/plans/plan-int8-per-layer-sensitivity-qwen-vl.md`.

@@ -285,7 +285,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     default_captions = (
         Path("datasets")
         / "vlm-quantize-calib"
-        / "coco2017_captions.txt"
+        / "coco2017_captions_large.txt"
     )
     default_output_dir = Path("tmp") / "qwen3_vl_4b_autoquant_int8_lm"
 
@@ -305,7 +305,10 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "--captions-path",
         type=Path,
         default=default_captions,
-        help="Path to COCO2017 captions text file.",
+        help=(
+            "Path to COCO2017 captions text file. Defaults to the shared "
+            "large (512-sample) calibration subset."
+        ),
     )
     parser.add_argument(
         "--max-calib-samples",

@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Seque
 
 import torch
 from mdutils import MdUtils
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from transformers import AutoModelForImageTextToText, AutoProcessor, AutoTokenizer
 
 import modelopt.torch.quantization as mtq
@@ -441,7 +441,7 @@ def write_layer_sensitivity_md(
 
     headers = ["Layer", "Num Bits", "Sensitivity", "Size Cost"]
     rows: List[str] = []
-    row_entries: List[Tuple[str, List[float], List[float], List[float]]] = []
+    row_entries: List[Tuple[str, List[str], List[float], List[float]]] = []
 
     for layer_name, entry in layer_sensitivity.items():
         formats = entry.get("formats", [])
@@ -588,7 +588,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     default_vlm_calib_db = (
         Path("datasets")
         / "vlm-quantize-calib"
-        / "coco2017_vlm_calib.db"
+        / "coco2017_vlm_calib_large.db"
     )
     default_coco_root = Path("datasets") / "coco2017" / "source-data"
 
@@ -608,7 +608,10 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "--vlm-calib-db",
         type=Path,
         default=default_vlm_calib_db,
-        help="Path to the COCO2017 VLM calibration SQLite DB.",
+        help=(
+            "Path to the COCO2017 VLM calibration SQLite DB. Defaults to the "
+            "shared large (512-sample) subset."
+        ),
     )
     parser.add_argument(
         "--coco-root",

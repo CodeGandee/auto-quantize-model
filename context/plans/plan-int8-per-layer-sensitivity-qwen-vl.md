@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Design and implement INT8 (W8A8) ModelOpt configs and drivers to run per-layer sensitivity analysis for Qwen2.5-VL-3B and Qwen3-VL-4B, both for full VLM (vision + text towers) and LM-only text towers.
-- **Status**: In progress — INT8 configs and Qwen2.5/Qwen3 drivers wired; full 3-phase runs and docs still pending.
+- **Status**: In progress — INT8 configs/drivers wired and docs updated; full 3-phase runs still pending.
 - **Date**: 2025-12-11
 - **Dependencies**:
   - `src/auto_quantize_model/modelopt_configs.py`
@@ -124,8 +124,8 @@ sequenceDiagram
     - Small (16): `datasets/vlm-quantize-calib/coco2017_vlm_calib_small.db`
     - Medium (128): `datasets/vlm-quantize-calib/coco2017_vlm_calib_medium.db`
     - Large (512): `datasets/vlm-quantize-calib/coco2017_vlm_calib_large.db`
-- [ ] **Wire calibration defaults and CLI flags** Ensure all drivers (Qwen2.5-VL and Qwen3-VL, LM-only and all-layers) share sensible defaults for `--max-calib-samples`, `--auto-quantize-score-size`, model paths, and an option to pick FP8 vs INT8 schemes via CLI.
-- [ ] **Update docs and context** Refresh relevant READMEs and (optionally) context docs to point to the new INT8 per-layer analysis commands and explain how INT8 and FP8 runs can be compared.
+- [x] **Wire calibration defaults and CLI flags** Updated all Qwen2.5/Qwen3 drivers to default to the shared large (512-sample) calibration subsets and consistent `--max-calib-samples`/`--auto-quantize-score-size`/`--quant-format` flags.
+- [x] **Update docs and context** Added usage examples and notes in model READMEs and RTX5090 prep context for running INT8 per-layer sensitivity and comparing against FP8.
 
 ### 4.2 Qwen3-VL tasks
 

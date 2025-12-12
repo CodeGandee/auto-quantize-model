@@ -118,8 +118,11 @@ def _validate_coverage_partition(
         )
         return
 
-    baseline_names = {entry.get("name") for entry in ranking_entries if isinstance(entry, dict)}
-    baseline_names.discard(None)
+    baseline_names = {
+        str(entry.get("name"))
+        for entry in ranking_entries
+        if isinstance(entry, dict) and entry.get("name") is not None
+    }
 
     selected_layers = coverage_manifest.get("selected_layers", [])
     dropped_layers = coverage_manifest.get("dropped_layers", [])
@@ -317,8 +320,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--max-calib-samples",
         type=int,
-        default=4096,
-        help="Maximum number of VLM calibration samples to use.",
+        default=512,
+        help=(
+            "Maximum number of VLM calibration samples to use. Defaults to the "
+            "shared large (512-sample) calibration budget."
+        ),
     )
     parser.add_argument(
         "--calib-seq-len",
@@ -343,8 +349,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         type=Path,
         default=Path("datasets")
         / "vlm-quantize-calib"
-        / "coco2017_vlm_calib.db",
-        help="Path to the COCO2017 VLM calibration SQLite DB.",
+        / "coco2017_vlm_calib_large.db",
+        help=(
+            "Path to the COCO2017 VLM calibration SQLite DB. Defaults to the "
+            "shared large (512-sample) subset."
+        ),
     )
     parser.add_argument(
         "--coco-root",

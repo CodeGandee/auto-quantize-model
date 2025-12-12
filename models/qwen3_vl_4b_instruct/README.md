@@ -38,3 +38,25 @@ Notes:
 - Prefer downloading the model via ModelScope or Hugging Face CLI, or the respective web UI, into your chosen `${MODELS_ROOT}`.
 - Keep any quantized or exported variants (e.g., ONNX, TensorRT) in dedicated experiment or export directories rather than inside this snapshot.
 
+## Per-layer sensitivity (ModelOpt AutoQuant)
+
+With the checkpoint symlink in place and COCO calibration subsets available, run:
+
+```bash
+# All-layers FP8 sensitivity (vision + text towers).
+pixi run -e rtx5090-vllm python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py
+
+# All-layers INT8 (W8A8) sensitivity.
+pixi run -e rtx5090-vllm python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
+  --quant-format int8 \
+  --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_int8_large
+
+# INT8 LM-only sensitivity (text tower).
+pixi run -e rtx5090-vllm python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py
+```
+
+Outputs include `*_autoquant_state.pt`, `*_quant_manifest.json`, and
+`per-layer-sensitivity.{md,json}` under the selected `tmp/` subdirectory.

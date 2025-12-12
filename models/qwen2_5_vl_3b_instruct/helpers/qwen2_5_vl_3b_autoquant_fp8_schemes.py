@@ -26,7 +26,6 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from mdutils import MdUtils
 from torch.utils.data import DataLoader, Dataset
 from transformers import (
@@ -596,7 +595,7 @@ def write_layer_sensitivity_md(
 
     headers = ["Layer", "Num Bits", "Sensitivity", "Size Cost"]
     rows: List[str] = []
-    row_entries: List[tuple[str, List[float], List[float], List[float]]] = []
+    row_entries: List[tuple[str, List[str], List[float], List[float]]] = []
 
     for layer_name, entry in layer_sensitivity.items():
         entry = layer_sensitivity[layer_name]
@@ -751,7 +750,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     default_captions = (
         Path("datasets")
         / "vlm-quantize-calib"
-        / "coco2017_captions.txt"
+        / "coco2017_captions_large.txt"
     )
     parser.add_argument(
         "--scheme-name",
@@ -776,12 +775,15 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "--captions-path",
         type=Path,
         default=default_captions,
-        help="Path to COCO2017 captions text file.",
+        help=(
+            "Path to COCO2017 captions text file. Defaults to the shared "
+            "large (512-sample) calibration subset."
+        ),
     )
     parser.add_argument(
         "--max-calib-samples",
         type=int,
-        default=4096,
+        default=512,
         help="Maximum number of text samples to use for calibration.",
     )
     parser.add_argument(
@@ -847,10 +849,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         type=Path,
         default=Path("datasets")
         / "vlm-quantize-calib"
-        / "coco2017_vlm_calib.db",
+        / "coco2017_vlm_calib_large.db",
         help=(
             "Path to the COCO2017 VLM calibration SQLite DB containing "
-            "image+caption samples (used for all-layers analysis schemes)."
+            "image+caption samples (used for all-layers analysis schemes). "
+            "Defaults to the shared large (512-sample) subset."
         ),
     )
     parser.add_argument(
