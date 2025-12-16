@@ -11,8 +11,8 @@ This sprint tracks the work required to fix the known issue where all all-layers
 We will follow **Option A** (per-scheme AutoQuant runs) as described in `context/issues/known/bugfix-autoquant-fp8-qwen2_5-vl-schemes-identical.md`.
 
 Related context:
-- Plan: `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`
-- Working task: `context/tasks/working/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/subtask-004-104-export-hf-checkpoints-per-scheme.md`
+- Plan: `context/plans/done/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`
+- Working task: `context/tasks/done/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/subtask-004-104-export-hf-checkpoints-per-scheme.md`
 - Known bug: `context/issues/known/bugfix-autoquant-fp8-qwen2_5-vl-schemes-identical.md`
 - ModelOpt layer-wise bits hint: `context/hints/howto-modelopt-layer-wise-quant-bits.md`
 
@@ -145,7 +145,7 @@ Related context:
       - The chosen fix path (Option A).
       - Pointers to the new driver and wrapper scripts.
       - Where to find regenerated checkpoints and metrics.
-    - `context/tasks/working/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/subtask-004-104-export-hf-checkpoints-per-scheme.md` to mention:
+    - `context/tasks/done/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/subtask-004-104-export-hf-checkpoints-per-scheme.md` to mention:
       - The existence of per-scheme AutoQuant re-runs for all-layers coverage.
   - Optionally add a short report under `models/qwen2_5_vl_3b_instruct/reports/` summarizing:
     - Per-scheme effective bits vs coverage.

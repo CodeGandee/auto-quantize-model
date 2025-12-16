@@ -174,7 +174,7 @@ appear to share **identical HF weights**, despite being labeled as different cov
 1. **Confirm export behavior in the AutoQuant driver**  
    Check `scripts/qwen/qwen2_5_vl_3b_autoquant_fp8_schemes.py` and the slicer/export helper described in:
 
-   - `context/tasks/working/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/subtask-004-104-export-hf-checkpoints-per-scheme.md`
+   - `context/tasks/done/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/subtask-004-104-export-hf-checkpoints-per-scheme.md`
 
    That subtask explicitly states that:
 

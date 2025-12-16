@@ -1,5 +1,7 @@
 # Subtask 4.7: Add documentation and KB cross-links for AutoQuant FP8 schemes
 
+**Status**: CANCEL
+
 ## Scope
 
 Update relevant documentation and knowledge-base files so that the new AutoQuant FP8 schemes, scripts, and reports are discoverable and easy to reuse for future experiments, both for Qwen2.5-VL-3B and potentially other models. The emphasis is on positioning this work as a **research toolkit** for quantization and sensitivity studies, not just as a single fixed FP8 recipe.
@@ -14,10 +16,10 @@ Update relevant documentation and knowledge-base files so that the new AutoQuant
 
 ## TODOs
 
-- [ ] Job-004-107-001 Survey existing ModelOpt and Qwen2.5-VL documentation under `context/summaries/` and `context/plans/` to identify natural places to mention AutoQuant FP8 schemes.
-- [ ] Job-004-107-002 Add concise cross-links to the new AutoQuant driver script, this working directory, and the FP8 AutoQuant schemes report in the appropriate KB or how-to files.
-- [ ] Job-004-107-003 If applicable, extend any vLLM or ModelOpt environment setup docs to include a short “advanced: AutoQuant FP8 schemes” section with invocation examples.
-- [ ] Job-004-107-004 Verify that new cross-links render correctly and do not break existing doc structure or narratives.
+- [ ] **CANCEL** Job-004-107-001 Survey existing ModelOpt and Qwen2.5-VL documentation under `context/summaries/` and `context/plans/` to identify natural places to mention AutoQuant FP8 schemes.
+- [ ] **CANCEL** Job-004-107-002 Add concise cross-links to the new AutoQuant driver script, this working directory, and the FP8 AutoQuant schemes report in the appropriate KB or how-to files.
+- [ ] **CANCEL** Job-004-107-003 If applicable, extend any vLLM or ModelOpt environment setup docs to include a short “advanced: AutoQuant FP8 schemes” section with invocation examples.
+- [ ] **CANCEL** Job-004-107-004 Verify that new cross-links render correctly and do not break existing doc structure or narratives.
 
 ## Notes
 

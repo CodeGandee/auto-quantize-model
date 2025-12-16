@@ -1,6 +1,6 @@
 # Quickstart: ModelOpt AutoQuant FP8 schemes for Qwen2.5-VL-3B (LM-only)
 
-This quickstart summarizes prerequisites, tools, and data locations for working on the FP8 AutoQuant mixed-precision schemes for the Qwen2.5-VL-3B-Instruct language model, as described in `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`.
+This quickstart summarizes prerequisites, tools, and data locations for working on the FP8 AutoQuant mixed-precision schemes for the Qwen2.5-VL-3B-Instruct language model, as described in `context/plans/done/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`.
 
 ## Prerequisites
 
@@ -55,4 +55,3 @@ pixi run -e rtx5090 python scripts/qwen/qwen2_5_vl_3b_autoquant_fp8_schemes.py \
   --auto-quantize-method gradient \
   --calib-text datasets/vlm-quantize-calib/coco2017_captions.txt
 ```
-

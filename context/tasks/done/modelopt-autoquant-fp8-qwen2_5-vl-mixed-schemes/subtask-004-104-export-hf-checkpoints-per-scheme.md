@@ -1,5 +1,7 @@
 # Subtask 4.4: Export HF checkpoints per AutoQuant FP8 scheme
 
+**Status**: Partial — remaining unimplemented items marked **CANCEL**
+
 ## Scope
 
 Using the quantized models and manifests produced by the AutoQuant driver, export one Hugging Face-style checkpoint directory per scheme under `models/qwen2_5_vl_3b_instruct/quantized/`, following a consistent naming convention and ensuring that each checkpoint is self-contained and ready for downstream consumers (including vLLM and pure PyTorch-based experiments). This subtask is primarily about **artifact organization and comparability**, not about optimizing accuracy of any particular scheme.
@@ -73,15 +75,15 @@ Stage 1: all-layers FP8 analysis
    - [x] Job-004-104-004 For each chosen coverage point, apply this slicing rule to construct a concrete quantization config (or equivalent ModelOpt representation) and export a scheme-specific HF checkpoint directory (e.g., `fp8_autoquant_all_layers_top10_coco2017`, `fp8_autoquant_all_layers_top20_coco2017`), making each directory self-contained (weights + hf_quant_config + layer-sensitivity artifacts + per-scheme coverage manifest).
    - [x] Job-004-104-005 Implement light sanity checks (e.g., short text-only and/or multimodal generation) for a small subset of all-layers schemes (such as 10%, 50%, and 100% coverage) to confirm that models load and run end-to-end under PyTorch/Transformers, even if quality is not yet evaluated.
 
-Stage 2: LM-only schemes (deferred)
+Stage 2: LM-only schemes (CANCEL)
 
 1. **Obtain full-sensitivity analysis for LM-selected layers only**
-   - [ ] Job-004-104-006 Run an LM-only AutoQuant baseline (e.g., `fp8_autoquant_top100` or a dedicated LM-only full-coverage scheme) so that **all LM blocks selected by ModelOpt’s default FP8 config and disabled-layer patterns** participate in the search, and write the manifest + state + Markdown report in a stable location (prefer a committed `models/qwen2_5_vl_3b_instruct/layer-analysis/...` tree for reports/manifests; keep `.pt` state ignored) and/or alongside a corresponding LM-only baseline checkpoint’s `layer-sensitivity/` folder if you are exporting a checkpoint.
-   - [ ] Job-004-104-007 Verify that the LM-only manifest exposes a usable `sensitivity_ranking` over the selected LM layers (excluding vision and other components) and that the LM-only baseline checkpoint is loadable.
+   - [ ] **CANCEL** Job-004-104-006 Run an LM-only AutoQuant baseline (e.g., `fp8_autoquant_top100` or a dedicated LM-only full-coverage scheme) so that **all LM blocks selected by ModelOpt’s default FP8 config and disabled-layer patterns** participate in the search, and write the manifest + state + Markdown report in a stable location (prefer a committed `models/qwen2_5_vl_3b_instruct/layer-analysis/...` tree for reports/manifests; keep `.pt` state ignored) and/or alongside a corresponding LM-only baseline checkpoint’s `layer-sensitivity/` folder if you are exporting a checkpoint.
+   - [ ] **CANCEL** Job-004-104-007 Verify that the LM-only manifest exposes a usable `sensitivity_ranking` over the selected LM layers (excluding vision and other components) and that the LM-only baseline checkpoint is loadable.
 2. **Derive and export top-X% LM-only quantized schemes**
-   - [ ] Job-004-104-008 Extend the slicer/helper so it can operate on the LM-only sensitivity baseline: for each LM-only scheme (`fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`), select the 10/20/…/100% of selected LM layers with the **lowest** sensitivity scores to keep in FP8 and treat the remaining LM layers as BF16/FP16.
-   - [ ] Job-004-104-009 For each chosen LM-only coverage point, apply this slicing rule to construct the corresponding quantization config and export an HF checkpoint directory (e.g., `fp8_autoquant_top10_coco2017`, `fp8_autoquant_top20_coco2017`), again ensuring that each directory is self-contained and includes both the LM-only layer-sensitivity artifacts and a per-scheme coverage manifest.
-   - [ ] Job-004-104-010 Implement light text-only sanity checks for a few LM-only schemes (e.g., 10%, 50%, and 100% coverage) to confirm that they run in PyTorch/Transformers and provide basic outputs suitable for later quality analysis.
+   - [ ] **CANCEL** Job-004-104-008 Extend the slicer/helper so it can operate on the LM-only sensitivity baseline: for each LM-only scheme (`fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`), select the 10/20/…/100% of selected LM layers with the **lowest** sensitivity scores to keep in FP8 and treat the remaining LM layers as BF16/FP16.
+   - [ ] **CANCEL** Job-004-104-009 For each chosen LM-only coverage point, apply this slicing rule to construct the corresponding quantization config and export an HF checkpoint directory (e.g., `fp8_autoquant_top10_coco2017`, `fp8_autoquant_top20_coco2017`), again ensuring that each directory is self-contained and includes both the LM-only layer-sensitivity artifacts and a per-scheme coverage manifest.
+   - [ ] **CANCEL** Job-004-104-010 Implement light text-only sanity checks for a few LM-only schemes (e.g., 10%, 50%, and 100% coverage) to confirm that they run in PyTorch/Transformers and provide basic outputs suitable for later quality analysis.
 
 ## Notes
 

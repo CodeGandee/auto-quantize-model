@@ -5,8 +5,8 @@
 This sprint tracks the work required to compare FP8 AutoQuant mixed-precision schemes for Qwen2.5-VL-3B-Instruct against the original FP16/BF16 model without relying on full-scale LLM benchmarks (e.g., MMLU). The focus is on small, reproducible metrics runs over COCO2017-derived subsets and per-layer sensitivity-aware schemes.
 
 Related plan and tasks:
-- Plan: `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`
-- Working task: `context/tasks/working/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/`
+- Plan: `context/plans/done/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`
+- Working task: `context/tasks/done/modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes/`
 - Subtask: `subtask-004-104-export-hf-checkpoints-per-scheme.md`
 
 ## Goals
@@ -62,7 +62,7 @@ Related plan and tasks:
   - Perplexity/logit metric trends vs coverage for all-layers schemes.
   - Any qualitative observations from the VLM eval subset.
 - [ ] Sprint-009: Cross-link this sprint and the evaluation helpers from:
-  - `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`
+  - `context/plans/done/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`
   - Relevant KB hints under `context/hints/` (e.g., the quantized LLM evaluation hint).
 
 ## Notes

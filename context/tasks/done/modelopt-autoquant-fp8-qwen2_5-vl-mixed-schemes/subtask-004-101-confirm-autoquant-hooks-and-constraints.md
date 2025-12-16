@@ -18,11 +18,11 @@ Understand how ModelOpt AutoQuant is currently wired in this repo (via `hf_ptq.p
 - [x] Job-004-101-002 Inspect `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/model_quant.py` and `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/utils.py` to understand how AutoQuant constructs the quantized model and quantization config objects (e.g., how per-layer decisions are stored).
 - [x] Job-004-101-003 Determine how to restrict AutoQuant to LM-only for Qwen2.5-VL-3B (e.g., by passing an LM-only module, using include/exclude patterns, or post-filtering quantization configs), and write down the preferred approach.
 - [x] Job-004-101-004 Identify any AutoQuant configuration knobs that could affect vLLM compatibility (e.g., weight packing formats, extra wrapper modules, or tensor name changes), and note them for later subtasks.
-- [x] Job-004-101-005 Summarize findings in a short note under `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md` or a linked context file, so later subtasks can reference the agreed constraints.
+- [x] Job-004-101-005 Summarize findings in a short note under `context/plans/done/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md` or a linked context file, so later subtasks can reference the agreed constraints.
 
 All findings for this subtask are captured in:
 
-- `context/plans/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`  
+- `context/plans/done/plan-modelopt-autoquant-fp8-qwen2_5-vl-mixed-schemes.md`  
   - Section **5. AutoQuant hooks and LM-only constraints (Subtask 4.1)**, which documents:
     - How `hf_ptq.py` calls `mtq.auto_quantize` and how `auto_quantize_bits`, `auto_quantize_method`, and `num_score_steps` interact.
     - How per-layer decisions are represented via `QuantRecipe`, `QuantRecipeHparam`, and AutoQuant’s `state_dict`, and how to derive LM-only mixed-precision manifests.
