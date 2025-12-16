@@ -1,5 +1,6 @@
 checkpoints/
-quantized/
+quantized/*
+!quantized/README.md
+layer-analysis/**/*.pt
 *.onnx
 *.onnx_data
-

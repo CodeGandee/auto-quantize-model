@@ -8,6 +8,15 @@ Using the quantized models and manifests produced by the AutoQuant driver, expor
 
 Before exporting any HF checkpoints, we rely on the mixed-precision layer sensitivity information produced by the AutoQuant driver in Subtask 4.3.
 
+## Where sensitivity artifacts live (current repo layout)
+
+- **FP8 all-layers scheme exports** keep their per-layer artifacts alongside the exported checkpoint:
+  - `models/qwen2_5_vl_3b_instruct/quantized/<scheme>/layer-sensitivity/`
+  - Note: everything under `models/qwen2_5_vl_3b_instruct/quantized/` is treated as a local artifact directory and is ignored by Git.
+- **INT8 per-layer sensitivity runs** (added later) store analysis artifacts separately under the model’s committed analysis tree:
+  - `models/qwen2_5_vl_3b_instruct/layer-analysis/weight-int8-act-int8/`
+  - Only `.pt` files (serialized AutoQuant state) are ignored by Git; the reports/manifests (`per-layer-sensitivity.{md,json}`, `*_quant_manifest.json`) are intended to be committed.
+
 **AutoQuant outputs and manifests**
 
 - The AutoQuant driver `qwen2_5_vl_3b_autoquant_fp8_schemes.py` runs ModelOpt `mtq.auto_quantize` in a small number of **baseline modes**: an LM-only full-coverage run (all LM blocks eligible) and an all-layers full-coverage run using `FP8_ALL_LAYERS_CFG`. Each baseline produces a quantized model and a `state_dict` with full per-layer sensitivity information.
@@ -67,7 +76,7 @@ Stage 1: all-layers FP8 analysis
 Stage 2: LM-only schemes (deferred)
 
 1. **Obtain full-sensitivity analysis for LM-selected layers only**
-   - [ ] Job-004-104-006 Run an LM-only AutoQuant baseline (e.g., `fp8_autoquant_top100` or a dedicated LM-only full-coverage scheme) so that **all LM blocks selected by ModelOpt’s default FP8 config and disabled-layer patterns** participate in the search, and write the manifest + state + Markdown report under a stable `tmp/` subdirectory and a corresponding LM-only baseline checkpoint’s `layer-sensitivity/` folder.
+   - [ ] Job-004-104-006 Run an LM-only AutoQuant baseline (e.g., `fp8_autoquant_top100` or a dedicated LM-only full-coverage scheme) so that **all LM blocks selected by ModelOpt’s default FP8 config and disabled-layer patterns** participate in the search, and write the manifest + state + Markdown report in a stable location (prefer a committed `models/qwen2_5_vl_3b_instruct/layer-analysis/...` tree for reports/manifests; keep `.pt` state ignored) and/or alongside a corresponding LM-only baseline checkpoint’s `layer-sensitivity/` folder if you are exporting a checkpoint.
    - [ ] Job-004-104-007 Verify that the LM-only manifest exposes a usable `sensitivity_ranking` over the selected LM layers (excluding vision and other components) and that the LM-only baseline checkpoint is loadable.
 2. **Derive and export top-X% LM-only quantized schemes**
    - [ ] Job-004-104-008 Extend the slicer/helper so it can operate on the LM-only sensitivity baseline: for each LM-only scheme (`fp8_autoquant_top10`, `fp8_autoquant_top20`, …, `fp8_autoquant_top100`), select the 10/20/…/100% of selected LM layers with the **lowest** sensitivity scores to keep in FP8 and treat the remaining LM layers as BF16/FP16.
