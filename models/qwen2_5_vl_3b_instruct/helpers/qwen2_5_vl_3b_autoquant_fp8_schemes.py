@@ -610,7 +610,12 @@ def write_layer_sensitivity_md(
                 continue
             filtered.append((fmt, float(score), float(cost)))
 
-        # Skip layers that only had a NONE recipe.
+        # If the layer was fixed to NONE (no quantized candidates), keep the
+        # NONE row so the report still includes every layer.
+        if not filtered:
+            for fmt, score, cost in zip(formats, scores, costs):
+                filtered.append((str(fmt), float(score), float(cost)))
+
         if not filtered:
             continue
 
@@ -690,6 +695,10 @@ def write_layer_sensitivity_json(
             if fmt_str.startswith("NONE("):
                 continue
             filtered.append((fmt_str, float(score), float(cost)))
+
+        if not filtered:
+            for fmt, score, cost in zip(formats, scores, costs):
+                filtered.append((str(fmt), float(score), float(cost)))
 
         if not filtered:
             continue

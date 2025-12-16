@@ -283,6 +283,10 @@ def write_layer_sensitivity_md(
             filtered.append((str(fmt), float(score_value), float(cost_value)))
 
         if not filtered:
+            for fmt, score_value, cost_value in zip(formats, scores, costs):
+                filtered.append((str(fmt), float(score_value), float(cost_value)))
+
+        if not filtered:
             continue
 
         fmt_values = [fmt for fmt, _, _ in filtered]
@@ -351,6 +355,10 @@ def write_layer_sensitivity_json(
             if fmt_str.startswith("NONE("):
                 continue
             filtered.append((fmt_str, float(score), float(cost)))
+
+        if not filtered:
+            for fmt, score, cost in zip(formats, scores, costs):
+                filtered.append((str(fmt), float(score), float(cost)))
 
         if not filtered:
             continue
