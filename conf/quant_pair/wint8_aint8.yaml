@@ -1,14 +1,23 @@
+# Quant-pair identifier used in output naming and Hydra overrides.
 name: wint8_aint8
+
+# Weight precision category for this run.
 weight: int8
+
+# Activation precision category for this run (legacy parity uses INT8 activations).
 activation: int8
+
+# ModelOpt quantization format name (built-in preset or `CUSTOM_QUANT_CONFIGS` key).
 format_name: INT8_LM_DEFAULT_CFG
+
+# Whether this pair is considered experimental (runner may warn).
 experimental: false
 
-# Legacy/published compatibility:
-# - Existing committed artifacts use scheme name `int8_autoquant_lm_default`.
-# - Published INT8 LM-only runs live under:
-#     models/qwen3_vl_4b_instruct/layer-analysis/weight-int8-act-int8/
-#     qwen3_vl_4b_autoquant_int8_lm_{small,medium,large}/
+# AutoQuant scheme name override for published artifact compatibility.
 scheme_name: int8_autoquant_lm_default
+
+# Scheme metadata used to match legacy manifests (does not affect execution).
 coverage_mode: lm_default
+
+# Published run directory name override for compatibility with existing folders.
 publish_run_dir: qwen3_vl_4b_autoquant_int8_lm_${dataset.size}

@@ -98,7 +98,7 @@ def _load_manifest(path: Path) -> Mapping[str, Any]:
     return payload
 
 
-@hydra.main(config_path="../../conf", config_name="qwen3_lm_sensitivity", version_base=None)
+@hydra.main(config_path="../../conf", config_name="preset/qwen3_lm_sensitivity", version_base=None)
 def main(cfg: DictConfig) -> None:
     scheme = _build_scheme(cfg)
 

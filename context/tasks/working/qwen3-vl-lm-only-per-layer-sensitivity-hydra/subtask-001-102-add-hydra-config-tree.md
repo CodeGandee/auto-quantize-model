@@ -21,11 +21,11 @@ This subtask focuses on `conf/` structure and composition (defaults + overrides)
 - AutoQuant defaults config:
   - `conf/autoquant/gradient_default.yaml` (method, effective bits, score size, etc.)
 - A dedicated task config wiring defaults together for the runner:
-  - `conf/qwen3_lm_sensitivity.yaml` (or a similar top-level config name)
+  - `conf/preset/qwen3_lm_sensitivity.yaml` (or a similar top-level config name)
 
 ## Implementation notes (what was added)
 
-- Dedicated config entrypoint: `conf/qwen3_lm_sensitivity.yaml` (we do not reuse `conf/config.yaml` to avoid YOLO defaults).
+- Dedicated config entrypoint: `conf/preset/qwen3_lm_sensitivity.yaml` (we do not reuse `conf/config.yaml` to avoid YOLO defaults).
 - Model arch + infer preset:
   - `conf/model/qwen3_vl_4b_instruct/arch/qwen3_vl_4b_instruct.default.yaml`
   - `conf/model/qwen3_vl_4b_instruct/infer/qwen3_vl_4b_instruct.default.yaml`
@@ -81,7 +81,7 @@ This subtask focuses on `conf/` structure and composition (defaults + overrides)
     - Published location under `models/qwen3_vl_4b_instruct/layer-analysis/...` for committed artifacts
 
 - [x] Job-001-102-007 Create the dedicated task config wiring defaults
-  - Add `conf/qwen3_lm_sensitivity.yaml` with defaults similar to:
+  - Add `conf/preset/qwen3_lm_sensitivity.yaml` with defaults similar to:
     - model: qwen3_vl_4b_instruct.default
     - dataset: vlm_coco2017_captions
     - quant_pair: <default pair>
@@ -101,7 +101,7 @@ Completed.
 ## What was done
 
 - Added a dedicated Hydra entrypoint config to avoid coupling to unrelated defaults:
-  - `conf/qwen3_lm_sensitivity.yaml` (includes `hydra.run.dir` and `hydra.sweep.dir` under `tmp/model-experiments/...`).
+  - `conf/preset/qwen3_lm_sensitivity.yaml` (includes `hydra.run.dir` and `hydra.sweep.dir` under `tmp/model-experiments/...`).
 - Added Qwen3-VL model configs:
   - `conf/model/qwen3_vl_4b_instruct/arch/qwen3_vl_4b_instruct.default.yaml`
   - `conf/model/qwen3_vl_4b_instruct/infer/qwen3_vl_4b_instruct.default.yaml`

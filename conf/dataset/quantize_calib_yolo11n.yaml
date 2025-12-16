@@ -1,3 +1,8 @@
+# Human-readable dataset identifier used for calibration/sensitivity runs.
 name: quantize_calib_yolo11n
+
+# Root directory containing quantization calibration assets (images, filelists, etc.).
 root: ${hydra:runtime.cwd}/datasets/quantize-calib
+
+# Filelist (under `root`) selecting which samples to use for calibration.
 subset_filelist: quant100.txt

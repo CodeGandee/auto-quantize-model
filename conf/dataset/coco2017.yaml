@@ -1,4 +1,8 @@
+# Human-readable dataset identifier.
 name: coco2017
-root: ${hydra:runtime.cwd}/datasets/coco2017/source-data
-subset_filelist: null
 
+# Root directory containing COCO2017 source data (images, annotations, etc.).
+root: ${hydra:runtime.cwd}/datasets/coco2017/source-data
+
+# Optional text file listing a subset of samples to use (relative to `root`).
+subset_filelist: null

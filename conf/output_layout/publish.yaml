@@ -1,4 +1,8 @@
+# Human-readable output layout identifier.
 name: publish
-mode: publish
-root_dir: ${hydra:runtime.cwd}/models/qwen3_vl_4b_instruct/layer-analysis
 
+# Output mode ("publish" writes into the stable `models/.../layer-analysis/` tree).
+mode: publish
+
+# Root directory for published outputs.
+root_dir: ${hydra:runtime.cwd}/models/qwen3_vl_4b_instruct/layer-analysis

@@ -1,4 +1,11 @@
+# Inference batch size.
 batch_size: 1
+
+# Confidence threshold for filtering detections.
 conf_threshold: 0.25
+
+# IoU threshold used for non-maximum suppression.
 iou_threshold: 0.45
+
+# Maximum number of detections to keep per image.
 max_detections: 300

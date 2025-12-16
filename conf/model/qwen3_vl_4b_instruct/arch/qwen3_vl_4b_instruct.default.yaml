@@ -1,7 +1,17 @@
+# Human-readable model identifier.
 name: qwen3_vl_4b_instruct
-family: qwen
-variant: 3-vl-4b-instruct
-format: pytorch
-path: ${hydra:runtime.cwd}/models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct
-dtype: bf16
 
+# Model family/group name (used for organization).
+family: qwen
+
+# Model variant string (helps distinguish checkpoints within a family).
+variant: 3-vl-4b-instruct
+
+# Model artifact format (e.g., "pytorch" for HF checkpoints).
+format: pytorch
+
+# Path to the Hugging Face checkpoint directory.
+path: ${hydra:runtime.cwd}/models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct
+
+# Default compute dtype for loading/execution (runner may override).
+dtype: bf16

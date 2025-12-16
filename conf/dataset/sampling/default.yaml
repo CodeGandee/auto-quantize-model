@@ -1,4 +1,8 @@
+# Number of epochs to iterate over the selected dataset subset.
 num_epochs: 1
-num_samples_per_epoch: 100
-randomize: false
 
+# Number of samples to draw per epoch.
+num_samples_per_epoch: 100
+
+# Whether to randomize sample order (false keeps deterministic ordering).
+randomize: false

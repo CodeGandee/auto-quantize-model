@@ -2,7 +2,7 @@
 
 The Qwen3-VL LM-only sensitivity runner is configured via:
 
-- Entry-point defaults: `conf/qwen3_lm_sensitivity.yaml`
+- Entry-point defaults: `conf/preset/qwen3_lm_sensitivity.yaml`
 - Groups under `conf/`:
   - `conf/model/`
   - `conf/dataset/`
@@ -14,7 +14,7 @@ The runner code is `scripts/qwen/qwen3_lm_sensitivity.py`.
 
 ## Top-level runner controls
 
-In `conf/qwen3_lm_sensitivity.yaml`:
+In `conf/preset/qwen3_lm_sensitivity.yaml`:
 
 - `runner.report_only`: when `true`, do not run AutoQuant; regenerate reports from an existing manifest.
 - `runner.output_dir`: optional explicit output directory override (bypasses `output_layout` resolution).

@@ -1,6 +1,13 @@
+# CUDA device indices to use for multi-GPU runs.
 device_indices: [0, 1, 2, 3, 4, 5, 6, 7]
-distributed:
-  world_size: 8
-  backend: nccl
-  dtype: bf16
 
+# Distributed execution settings (used by runners that support torch.distributed).
+distributed:
+  # Total number of processes/devices participating in the run.
+  world_size: 8
+
+  # Torch distributed backend to use (e.g., "nccl" for GPUs).
+  backend: nccl
+
+  # Default compute dtype for distributed execution.
+  dtype: bf16

@@ -1,0 +1,58 @@
+# @package _global_
+
+# Hydra defaults composition for the Qwen3-VL LM-only sensitivity runner.
+defaults:
+  # Qwen3-VL checkpoint selection and dtype, assigned into `model`.
+  - /model/qwen3_vl_4b_instruct/arch@model: qwen3_vl_4b_instruct.default
+
+  # Captions calibration dataset selection, assigned into `dataset`.
+  - /dataset: vlm_coco2017_captions
+
+  # Weight/activation precision-pair selection, assigned into `quant_pair`.
+  - /quant_pair: wfp8_afp8
+
+  # AutoQuant scoring/config defaults, assigned into `autoquant`.
+  - /autoquant: gradient_default
+
+  # Output layout selection ("tmp" for iteration, "publish" for committed artifacts).
+  - /output_layout: tmp
+
+  # Hardware topology selection (single GPU vs multi GPU), assigned into `hardware`.
+  - /hardware: single_gpu
+
+  # Include the fields defined in this file after composing defaults.
+  - _self_
+
+# Experiment name used in Hydra run/sweep directory templates.
+experiment: qwen3_lm_sensitivity
+
+# Runner controls that are not part of the model/dataset/quantization configuration.
+runner:
+  # When true, do not run AutoQuant; regenerate reports from an existing manifest JSON.
+  report_only: false
+
+  # Optional explicit output directory override (bypasses `output_layout` resolution).
+  output_dir: null
+
+# Hydra runtime configuration for run directories and job behavior.
+hydra:
+  # Single-run output directory settings.
+  run:
+    # Per-run working directory (also becomes the process CWD due to `hydra.job.chdir=true`).
+    dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/${quant_pair.name}/${dataset.size}/${now:%Y-%m-%d_%H-%M-%S}
+
+  # Multirun sweep output directory settings.
+  sweep:
+    # Root directory for a multirun sweep.
+    dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/multirun/${now:%Y-%m-%d_%H-%M-%S}
+
+    # Per-job subdirectory under `hydra.sweep.dir`.
+    subdir: ${quant_pair.name}/${dataset.size}
+
+  # Hydra job settings.
+  job:
+    # Human-readable job name (also used in some loggers).
+    name: ${experiment}
+
+    # Change working directory to `hydra.run.dir` / `hydra.sweep.subdir` before running.
+    chdir: true

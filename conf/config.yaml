@@ -1,17 +1,40 @@
+# Hydra defaults composition (this repo's general-purpose example workflow).
 defaults:
+  # Dataset configuration group (input data source + paths).
   - dataset: quantize_calib_yolo11n
+
+  # Dataset sampling strategy, attached into `dataset.sampling`.
   - dataset/sampling@dataset.sampling: default
+
+  # Model architecture/configuration group, attached into `model`.
   - model/yolo11n/arch@model: yolo11n.default
+
+  # Inference-time model parameters group, attached into `infer`.
   - model/yolo11n/infer@infer: yolo11n.default
+
+  # Inference runtime backend selection, attached into `runtime`.
   - inference_runtime@runtime: onnxruntime
+
+  # Hardware topology selection (single GPU vs multi GPU).
   - hardware: single_gpu
+
+  # Include the fields defined in this file after composing defaults.
   - _self_
 
+# Experiment name used in the Hydra output directory template.
 experiment: dev
 
+# Hydra runtime configuration for output directories and job behavior.
 hydra:
+  # Single-run output directory settings.
   run:
+    # Per-run working directory.
     dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/${now:%Y-%m-%d_%H-%M-%S}
+
+  # Hydra job settings.
   job:
+    # Human-readable job name (also used in some loggers).
     name: ${experiment}
+
+    # Change working directory to `hydra.run.dir` before running the app.
     chdir: true

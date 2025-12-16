@@ -1,6 +1,14 @@
+# Inference runtime type identifier (used by runner dispatch logic).
 type: onnxruntime
-provider: cuda
-batch_size: 1
-num_threads: 1
-optimization_level: 99
 
+# ONNX Runtime execution provider (e.g., "cuda", "cpu").
+provider: cuda
+
+# Inference batch size.
+batch_size: 1
+
+# Number of CPU threads to use for ONNX Runtime (when applicable).
+num_threads: 1
+
+# ONNX Runtime graph optimization level (numeric; higher is more aggressive).
+optimization_level: 99

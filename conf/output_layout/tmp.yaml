@@ -1,4 +1,8 @@
+# Human-readable output layout identifier.
 name: tmp
-mode: tmp
-root_dir: ${hydra:runtime.cwd}/tmp/qwen3_lm_sensitivity
 
+# Output mode ("tmp" writes into the Hydra run directory for iteration).
+mode: tmp
+
+# Root directory used by some runners as a convenient tmp anchor.
+root_dir: ${hydra:runtime.cwd}/tmp/qwen3_lm_sensitivity

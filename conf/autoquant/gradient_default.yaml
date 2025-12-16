@@ -1,16 +1,17 @@
+# AutoQuant scoring method ("gradient" or "kl_div").
 method: gradient
 
-# Runtime defaults for the runner.
+# Torch device used for calibration/scoring (e.g., "cuda", "cuda:0", "cpu").
 device: cuda
+
+# Calibration batch size (samples per forward/score step).
 batch_size: 8
 
-# AutoQuant constraint (effective weight bits budget). Kept configurable because
-# different (W,A) pairs have different implicit costs.
+# AutoQuant constraint: effective bits budget for the chosen quantization format.
 effective_bits: 8.0
 
-# AutoQuant score size in samples (not steps). The runner converts this to
-# steps based on the calibration batch size.
+# AutoQuant score size expressed in samples (the runner converts this to steps).
 score_size: 128
 
-# Logging.
+# Whether to enable verbose ModelOpt logging during AutoQuant.
 verbose: true

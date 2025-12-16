@@ -1,7 +1,20 @@
+# Human-readable model identifier.
 name: yolo11n
+
+# Model family/group name (used for organization).
 family: yolo
+
+# Model variant (e.g., "n" for nano).
 variant: n
+
+# Model artifact format (e.g., "onnx", "pytorch").
 format: onnx
+
+# Path to the model assets (resolved relative to the repo root via Hydra).
 path: ${hydra:runtime.cwd}/models/yolo11
+
+# Expected input image size as [height, width].
 input_size: [640, 640]
+
+# Number of model output classes.
 num_classes: 80

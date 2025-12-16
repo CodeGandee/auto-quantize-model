@@ -81,7 +81,7 @@ Add a small Hydra config “task” dedicated to sensitivity analysis, reusing t
 - **AutoQuant settings**:
   - `conf/autoquant/gradient_default.yaml` (method, score size, effective bits, etc.)
 - **Task config**:
-  - `conf/qwen3_lm_sensitivity.yaml` (defaults wiring + output conventions)
+  - `conf/preset/qwen3_lm_sensitivity.yaml` (defaults wiring + output conventions)
 
 This design supports both:
 
@@ -137,7 +137,7 @@ sequenceDiagram
 - **`conf/dataset/vlm_coco2017_captions.yaml`** (new) Dataset config pointing at `datasets/vlm-quantize-calib/coco2017_captions_${size}.txt`.
 - **`conf/quant_pair/*.yaml`** (new) One file per (W,A) pair (six total).
 - **`conf/autoquant/gradient_default.yaml`** (new) Default AutoQuant scoring config for sensitivity runs.
-- **`conf/qwen3_lm_sensitivity.yaml`** (new) Top-level task config wiring defaults and output layout.
+- **`conf/preset/qwen3_lm_sensitivity.yaml`** (new) Top-level task config wiring defaults and output layout.
 - **`scripts/qwen/qwen3_lm_sensitivity.py`** (new) Hydra entry-point script for LM-only sensitivity runs and sweeps.
 - **`src/auto_quantize_model/qwen/autoquant_sensitivity.py`** (new) Shared implementation: model loading/extraction, dataloaders, AutoQuant wrapper, artifact writing.
 - **`src/auto_quantize_model/modelopt_configs.py`** (update) Add/registry custom configs needed for missing (W,A) pairs (e.g., MXFP4 weight-only; INT8 weight-only; INT8 weight + FP8 act).
