@@ -1,0 +1,20 @@
+name: vlm_coco2017_captions
+root: ${hydra:runtime.cwd}/datasets/vlm-quantize-calib
+
+# Calibration subset size. The corresponding captions file is expected at:
+#   ${dataset.root}/coco2017_captions_${dataset.size}.txt
+size: large
+captions_path: ${dataset.root}/coco2017_captions_${dataset.size}.txt
+
+# Default sample counts used throughout the repo (small/medium/large).
+size_to_max_samples:
+  small: 16
+  medium: 128
+  large: 512
+
+# Optional override for calibration sample count. When null, the runner should
+# use `size_to_max_samples[dataset.size]`.
+max_calib_samples: null
+
+# Tokenization defaults for LM-only calibration.
+calib_seq_len: 512

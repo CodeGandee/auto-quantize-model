@@ -75,7 +75,7 @@ model, search_state = mtq.auto_quantize(
     loss_func=loss_func,                          # or forward_backward_step
     num_calib_steps=256,
     num_score_steps=128,
-    method="gradient",                            # or "kl"
+    method="gradient",                            # or "kl_div"
     verbose=True,
 )
 
@@ -236,4 +236,3 @@ For YOLO11 mixed FP16/INT8 in this project:
 - ModelOpt PyTorch quantization & `auto_quantize`: `extern/TensorRT-Model-Optimizer/docs/source/guides/_pytorch_quantization.rst`
 - AutoCast ONNX mixed precision: `extern/TensorRT-Model-Optimizer/docs/source/guides/8_autocast.rst`
 - TensorRT “Working with Quantized Types” (explicit vs implicit, Q/DQ behavior): https://docs.nvidia.com/deeplearning/tensorrt/latest/inference-library/work-quantized-types.html
-

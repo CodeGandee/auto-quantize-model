@@ -40,6 +40,28 @@ They correspond to the shared subsets in `datasets/vlm-quantize-calib/`:
 
 ## How to regenerate
 
+The simplest way to regenerate everything in this folder (all-layers + LM-only,
+small/medium/large) is the 3-phase runner:
+
+```bash
+pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+```
+
+To write outputs under `tmp/` instead of publishing into this folder:
+
+```bash
+OUTPUT_MODE=tmp pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+```
+
+To regenerate only the **LM-only** INT8 runs via Hydra:
+
+```bash
+pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
+  output_layout=publish \
+  quant_pair=wint8_aint8 \
+  dataset.size=small,medium,large
+```
+
 ## What scripts produced these
 
 These artifacts were generated via the 3-phase runner:
@@ -49,7 +71,8 @@ These artifacts were generated via the 3-phase runner:
 That runner calls the underlying drivers:
 
 - All-layers INT8: `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py --quant-format int8`
-- LM-only INT8: `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py`
+- LM-only INT8 (Hydra): `scripts/qwen/qwen3_lm_sensitivity.py output_layout=publish quant_pair=wint8_aint8`
+  - Legacy wrapper (still works): `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py`
 
 From the repo root:
 

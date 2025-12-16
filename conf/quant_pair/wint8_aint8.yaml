@@ -1,0 +1,14 @@
+name: wint8_aint8
+weight: int8
+activation: int8
+format_name: INT8_LM_DEFAULT_CFG
+experimental: false
+
+# Legacy/published compatibility:
+# - Existing committed artifacts use scheme name `int8_autoquant_lm_default`.
+# - Published INT8 LM-only runs live under:
+#     models/qwen3_vl_4b_instruct/layer-analysis/weight-int8-act-int8/
+#     qwen3_vl_4b_autoquant_int8_lm_{small,medium,large}/
+scheme_name: int8_autoquant_lm_default
+coverage_mode: lm_default
+publish_run_dir: qwen3_vl_4b_autoquant_int8_lm_${dataset.size}

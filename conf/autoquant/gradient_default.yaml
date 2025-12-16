@@ -1,0 +1,16 @@
+method: gradient
+
+# Runtime defaults for the runner.
+device: cuda
+batch_size: 8
+
+# AutoQuant constraint (effective weight bits budget). Kept configurable because
+# different (W,A) pairs have different implicit costs.
+effective_bits: 8.0
+
+# AutoQuant score size in samples (not steps). The runner converts this to
+# steps based on the calibration batch size.
+score_size: 128
+
+# Logging.
+verbose: true
