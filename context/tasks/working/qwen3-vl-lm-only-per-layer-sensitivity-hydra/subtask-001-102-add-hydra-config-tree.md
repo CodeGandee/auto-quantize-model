@@ -35,6 +35,7 @@ This subtask focuses on `conf/` structure and composition (defaults + overrides)
   - `conf/quant_pair/wfp4_afp8.yaml`, `conf/quant_pair/wfp4_afp16.yaml`
   - `conf/quant_pair/wfp8_afp8.yaml`, `conf/quant_pair/wfp8_afp16.yaml`
   - `conf/quant_pair/wint8_afp16.yaml`, `conf/quant_pair/wint8_afp8.yaml`
+  - Legacy/published parity: `conf/quant_pair/wint8_aint8.yaml`
 - AutoQuant defaults:
   - `conf/autoquant/gradient_default.yaml`
 - Output layout presets (iteration vs publish):
@@ -92,3 +93,22 @@ This subtask focuses on `conf/` structure and composition (defaults + overrides)
   - Record canonical example commands to be copied into docs in Subtask 1.6:
     - Single run for one pair and one dataset size
     - Multirun over pairs × sizes
+
+## Status
+
+Completed.
+
+## What was done
+
+- Added a dedicated Hydra entrypoint config to avoid coupling to unrelated defaults:
+  - `conf/qwen3_lm_sensitivity.yaml` (includes `hydra.run.dir` and `hydra.sweep.dir` under `tmp/model-experiments/...`).
+- Added Qwen3-VL model configs:
+  - `conf/model/qwen3_vl_4b_instruct/arch/qwen3_vl_4b_instruct.default.yaml`
+  - `conf/model/qwen3_vl_4b_instruct/infer/qwen3_vl_4b_instruct.default.yaml`
+- Added captions calibration dataset config with a `size` selector and sample-count mapping:
+  - `conf/dataset/vlm_coco2017_captions.yaml`
+- Added a `quant_pair` group for one-pair-per-run sweeps and a legacy parity pair:
+  - `conf/quant_pair/*.yaml` (including `wint8_aint8` for published INT8 LM-only folder compatibility)
+- Added AutoQuant and output layout groups:
+  - `conf/autoquant/gradient_default.yaml`
+  - `conf/output_layout/{tmp,publish}.yaml`

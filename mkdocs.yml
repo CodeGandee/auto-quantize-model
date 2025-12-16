@@ -1,0 +1,27 @@
+site_name: auto-quantize-model
+site_description: Hydra-driven model quantization workflows and analysis artifacts.
+
+docs_dir: docs
+# Keep generated site output out of Git.
+site_dir: tmp/mkdocs-site
+
+theme:
+  name: material
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.highlight
+
+nav:
+  - Home: index.md
+  - Workflows:
+      - Layer Sensitivity (Hydra): workflows/layer-sensitivity-hydra.md
+      - Qwen3-VL LM-only Sensitivity: workflows/qwen3-vl-lm-only-sensitivity.md
+  - Reference:
+      - Qwen3 Sensitivity Config: reference/qwen3-lm-sensitivity-config.md

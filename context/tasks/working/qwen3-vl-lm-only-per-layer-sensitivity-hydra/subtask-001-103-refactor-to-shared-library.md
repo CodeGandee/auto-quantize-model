@@ -68,3 +68,22 @@ This subtask does not require Hydra integration; it prepares the codebase so Hyd
 ## Notes
 
 - Prefer to keep the shared library free of Hydra-specific imports; pass in plain Python values so the runner can adapt configurations cleanly.
+
+## Status
+
+Completed.
+
+## What was done
+
+- Added shared, framework-agnostic ModelOpt AutoQuant helpers:
+  - `src/auto_quantize_model/modelopt_autoquant.py` (format resolution, score-step sizing, manifest + report writers)
+- Added Qwen LM-only sensitivity implementation code:
+  - `src/auto_quantize_model/qwen/autoquant_sensitivity.py` (captions dataset/dataloader, LM loss + forward steps, LM-only AutoQuant runner, LM extraction heuristics)
+  - `src/auto_quantize_model/qwen/__init__.py`
+- Refactored the legacy Qwen3 INT8 LM-only driver into a thin wrapper on shared code (no `sys.path` hacks):
+  - `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py`
+- Added package typing marker so downstream scripts can be type-checked when importing `auto_quantize_model`:
+  - `src/auto_quantize_model/py.typed`
+- Added unit tests for pure helpers (no model weights / no GPU required):
+  - `tests/unit/test_modelopt_autoquant.py`
+  - `tests/unit/test_qwen_autoquant_sensitivity.py`

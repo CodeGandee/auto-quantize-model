@@ -100,3 +100,25 @@ We run **one (W,A) pair per AutoQuant run** (one quantization format in `quantiz
 - If `W=INT8, A=FP8` is unsupported, consider whether we:
   - Drop it entirely, or
   - Keep it as an “experimental custom config” behind an explicit Hydra flag.
+
+## Status
+
+Completed.
+
+## What was done
+
+- Encoded the mapping as stable, Hydra-referenceable format names in `src/auto_quantize_model/modelopt_configs.py`.
+  - Added `resolve_quant_config(format_name)` for early validation (built-in preset vs `CUSTOM_QUANT_CONFIGS`).
+  - Added/standardized custom configs needed by the mapping:
+    - `FP8_WEIGHT_ONLY_CFG`
+    - `INT8_WEIGHT_ONLY_CFG`
+    - `MXFP4_WEIGHT_ONLY_CFG` (guarded by `hasattr(mtq, "MXFP4_DEFAULT_CFG")`)
+    - `NVFP4_WEIGHT_ONLY_CFG` (optional/guarded)
+    - `INT8_WEIGHT_FP8_ACT_CFG` (experimental)
+- Added unit coverage for format resolution/availability checks:
+  - `tests/unit/test_modelopt_configs.py`
+
+## Notes / caveats
+
+- Some ModelOpt presets are build-dependent; FP4-related configs are guarded so imports don’t break when a preset is missing.
+- A legacy baseline (`W=INT8, A=INT8`) is supported for artifact parity via `INT8_LM_DEFAULT_CFG` (used by `conf/quant_pair/wint8_aint8.yaml`), but it is not part of the FP8/FP16 activation sweep set.

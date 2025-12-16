@@ -69,6 +69,10 @@ Completed.
 - Hydra INT8 LM-only runs (`quant_pair=wint8_aint8`) were executed for `dataset.size=small,medium,large` (written to `tmp/model-experiments/...`) to validate end-to-end execution.
 - A new published analysis folder was generated:
   - `models/qwen3_vl_4b_instruct/layer-analysis/weight-fp8-act-fp16/` (LM-only, `quant_pair=wfp8_afp16`, `dataset.size=small`).
+  - Includes `models/qwen3_vl_4b_instruct/layer-analysis/weight-fp8-act-fp16/README.md`.
+- Validation uncovered and fixed two compatibility issues:
+  - ModelOpt `auto_quantize()` in our env does not accept a `method=` kwarg; the LM-only wrapper now uses `forward_step`/`loss_func` to select behavior.
+  - Markdown report formatting was stabilized to avoid churn when regenerating existing manifests (`8.0000` / scientific score formatting).
 
 ## Notes / caveats
 
