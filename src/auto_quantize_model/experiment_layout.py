@@ -40,6 +40,7 @@ def resolve_publish_output_dir(
     activation: str,
     model_name: str,
     quant_pair_name: str,
+    quant_granularity_name: str,
     dataset_size: str,
     pair_dir_override: Optional[str] = None,
     run_dir_override: Optional[str] = None,
@@ -53,4 +54,5 @@ def resolve_publish_output_dir(
         dataset_size=dataset_size,
         run_dir_override=run_dir_override,
     )
-    return root_dir / pair_dir / run_dir
+    granularity_dir = str(quant_granularity_name)
+    return root_dir / pair_dir / granularity_dir / run_dir

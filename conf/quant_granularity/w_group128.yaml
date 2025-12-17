@@ -1,0 +1,7 @@
+name: w_group128
+
+quant_cfg_overrides:
+  "*weight_quantizer":
+    block_sizes:
+      -1: 128
+

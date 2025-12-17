@@ -7,11 +7,12 @@ from typing import Any, Mapping, Optional
 
 import hydra  # type: ignore[import-untyped]
 import torch
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from auto_quantize_model.experiment_layout import resolve_publish_output_dir, resolve_scheme_name
 from auto_quantize_model.modelopt_autoquant import AutoQuantSchemeConfig, write_layer_sensitivity_json, write_layer_sensitivity_md
 from auto_quantize_model.modelopt_configs import resolve_quant_config
+from auto_quantize_model.modelopt_quant_overrides import apply_quant_cfg_overrides
 from auto_quantize_model.qwen.autoquant_sensitivity import run_qwen3_vl_lm_autoquant_sensitivity
 
 
@@ -42,12 +43,18 @@ def _resolve_output_dir(cfg: DictConfig) -> Path:
         root_dir = Path(str(cfg.output_layout.root_dir)).expanduser()
         pair_override = cfg.quant_pair.get("publish_pair_dir")
         run_override = cfg.quant_pair.get("publish_run_dir")
+        granularity_name = (
+            str(cfg.quant_granularity.name)
+            if cfg.get("quant_granularity") is not None and cfg.quant_granularity.get("name") is not None
+            else "default"
+        )
         return resolve_publish_output_dir(
             root_dir,
             weight=str(cfg.quant_pair.weight),
             activation=str(cfg.quant_pair.activation),
             model_name=str(cfg.model.name),
             quant_pair_name=str(cfg.quant_pair.name),
+            quant_granularity_name=granularity_name,
             dataset_size=str(cfg.dataset.size),
             pair_dir_override=str(pair_override) if pair_override is not None else None,
             run_dir_override=str(run_override) if run_override is not None else None,
@@ -80,6 +87,54 @@ def _build_scheme(cfg: DictConfig) -> AutoQuantSchemeConfig:
         coverage_fraction=coverage_fraction,
         quant_formats=[fmt_name],
     )
+
+
+def _resolve_quant_granularity(cfg: DictConfig) -> tuple[str, dict[str, Any]]:
+    quant_granularity = cfg.get("quant_granularity")
+    if quant_granularity is None:
+        return "default", {}
+
+    name_value = quant_granularity.get("name")
+    name = str(name_value) if name_value is not None else "default"
+
+    overrides_node = quant_granularity.get("quant_cfg_overrides") or {}
+    if OmegaConf.is_config(overrides_node):
+        overrides_value = OmegaConf.to_container(overrides_node, resolve=True)
+    else:
+        overrides_value = overrides_node
+
+    if overrides_value is None:
+        return name, {}
+    if not isinstance(overrides_value, dict):
+        raise TypeError(
+            "quant_granularity.quant_cfg_overrides must be a mapping; "
+            f"got {type(overrides_value)!r}."
+        )
+
+    overrides: dict[str, Any] = {}
+    for key, value in overrides_value.items():
+        if not isinstance(key, str):
+            raise TypeError(
+                "quant_granularity.quant_cfg_overrides keys must be strings; "
+                f"got key {key!r} of type {type(key)!r}."
+            )
+        overrides[key] = value
+
+    return name, overrides
+
+
+def _summarize_quantizer(value: Any) -> dict[str, Any]:
+    if not isinstance(value, Mapping):
+        return {"value_type": type(value).__name__}
+
+    summary: dict[str, Any] = {}
+    if "type" in value:
+        summary["type"] = value.get("type")
+    if "axis" in value:
+        summary["axis"] = value.get("axis")
+    if "block_sizes" in value:
+        summary["block_sizes"] = value.get("block_sizes")
+    return summary
 
 
 def _load_manifest(path: Path) -> Mapping[str, Any]:
@@ -143,6 +198,27 @@ def main(cfg: DictConfig) -> None:
     if not torch.cuda.is_available() and str(cfg.autoquant.device).startswith("cuda"):
         print("[WARN] CUDA is not available; running on CPU will be extremely slow.")
 
+    granularity_name, quant_cfg_overrides = _resolve_quant_granularity(cfg)
+    base_format_name = str(cfg.quant_pair.format_name)
+    base_cfg = resolve_quant_config(base_format_name)
+    effective_cfg = apply_quant_cfg_overrides(base_cfg, quant_cfg_overrides)
+    effective_quant_cfg = effective_cfg.get("quant_cfg") if isinstance(effective_cfg, dict) else {}
+    weight_summary = _summarize_quantizer(
+        effective_quant_cfg.get("*weight_quantizer") if isinstance(effective_quant_cfg, dict) else None
+    )
+    input_summary = _summarize_quantizer(
+        effective_quant_cfg.get("*input_quantizer") if isinstance(effective_quant_cfg, dict) else None
+    )
+
+    print(
+        "[INFO] Quantization config: "
+        f"format={base_format_name} quant_granularity={granularity_name}"
+    )
+    if quant_cfg_overrides:
+        print(f"[INFO] quant_cfg_overrides keys: {sorted(list(quant_cfg_overrides.keys()))}")
+    print(f"[INFO] Effective *weight_quantizer: {weight_summary}")
+    print(f"[INFO] Effective *input_quantizer: {input_summary}")
+
     model_dir = Path(str(cfg.model.path))
     captions_path = Path(str(cfg.dataset.captions_path))
 
@@ -151,6 +227,7 @@ def main(cfg: DictConfig) -> None:
         model_dir=model_dir,
         captions_path=captions_path,
         scheme=scheme,
+        quantization_formats=[effective_cfg],
         max_calib_samples=max_calib_samples,
         calib_seq_len=int(cfg.dataset.calib_seq_len),
         batch_size=int(cfg.autoquant.batch_size),
@@ -159,6 +236,18 @@ def main(cfg: DictConfig) -> None:
         dataset_size=str(cfg.dataset.size) if cfg.dataset.get("size") is not None else None,
         dataset_root=Path(str(cfg.dataset.root)) if cfg.dataset.get("root") is not None else None,
     )
+
+    manifest["quantization"] = {
+        "base_format_name": base_format_name,
+        "quant_granularity": {
+            "name": granularity_name,
+            "quant_cfg_overrides": quant_cfg_overrides,
+        },
+        "effective_quantizer_summary": {
+            "*weight_quantizer": weight_summary,
+            "*input_quantizer": input_summary,
+        },
+    }
 
     torch.save(state_dict, state_path)
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")

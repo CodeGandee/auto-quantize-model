@@ -11,6 +11,9 @@ defaults:
   # Weight/activation precision-pair selection, assigned into `quant_pair`.
   - /quant_pair: wfp8_afp8
 
+  # Quantization granularity overlay selection, assigned into `quant_granularity`.
+  - /quant_granularity: default
+
   # AutoQuant scoring/config defaults, assigned into `autoquant`.
   - /autoquant: gradient_default
 
@@ -39,15 +42,15 @@ hydra:
   # Single-run output directory settings.
   run:
     # Per-run working directory (also becomes the process CWD due to `hydra.job.chdir=true`).
-    dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/${quant_pair.name}/${dataset.size}/${now:%Y-%m-%d_%H-%M-%S}
+    dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/${quant_pair.name}/${quant_granularity.name}/${dataset.size}/${now:%Y-%m-%d_%H-%M-%S}
 
   # Multirun sweep output directory settings.
   sweep:
     # Root directory for a multirun sweep.
-    dir: ${hydra:runtime.cwd}/tmp/model-experiments/${experiment}/${model.name}/multirun/${now:%Y-%m-%d_%H-%M-%S}
+    dir: tmp/model-experiments/${experiment}/${model.name}/multirun/${now:%Y-%m-%d_%H-%M-%S}
 
     # Per-job subdirectory under `hydra.sweep.dir`.
-    subdir: ${quant_pair.name}/${dataset.size}
+    subdir: ${quant_pair.name}/${quant_granularity.name}/${dataset.size}
 
   # Hydra job settings.
   job:

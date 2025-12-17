@@ -35,9 +35,12 @@ def test_resolve_publish_output_dir_defaults() -> None:
         activation="fp8",
         model_name="qwen3_vl_4b_instruct",
         quant_pair_name="wfp8_afp8",
+        quant_granularity_name="default",
         dataset_size="medium",
     )
-    assert out_dir == root / "weight-fp8-act-fp8" / "qwen3_vl_4b_instruct_autoquant_wfp8_afp8_lm_medium"
+    assert out_dir == (
+        root / "weight-fp8-act-fp8" / "default" / "qwen3_vl_4b_instruct_autoquant_wfp8_afp8_lm_medium"
+    )
 
 
 def test_resolve_publish_output_dir_overrides() -> None:
@@ -48,10 +51,13 @@ def test_resolve_publish_output_dir_overrides() -> None:
         activation="int8",
         model_name="qwen3_vl_4b_instruct",
         quant_pair_name="wint8_aint8",
+        quant_granularity_name="recipe_match_channel_token",
         dataset_size="small",
         run_dir_override="qwen3_vl_4b_autoquant_int8_lm_small",
     )
-    assert out_dir == root / "weight-int8-act-int8" / "qwen3_vl_4b_autoquant_int8_lm_small"
+    assert out_dir == (
+        root / "weight-int8-act-int8" / "recipe_match_channel_token" / "qwen3_vl_4b_autoquant_int8_lm_small"
+    )
 
     out_dir = resolve_publish_output_dir(
         root,
@@ -59,8 +65,9 @@ def test_resolve_publish_output_dir_overrides() -> None:
         activation="fp8",
         model_name="unused",
         quant_pair_name="unused",
+        quant_granularity_name="default",
         dataset_size="unused",
         pair_dir_override="custom-pair",
         run_dir_override="custom-run",
     )
-    assert out_dir == root / "custom-pair" / "custom-run"
+    assert out_dir == root / "custom-pair" / "default" / "custom-run"

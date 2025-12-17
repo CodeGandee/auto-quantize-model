@@ -1,0 +1,11 @@
+# Match the granularity/dynamic behavior described in `context/design/qwen3-target-recipe.md`.
+name: recipe_match_channel_token
+
+quant_cfg_overrides:
+  "*weight_quantizer":
+    axis: 0
+  "*input_quantizer":
+    type: dynamic
+    block_sizes:
+      -1: null
+

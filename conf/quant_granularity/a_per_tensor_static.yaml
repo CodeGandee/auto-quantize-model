@@ -1,0 +1,7 @@
+name: a_per_tensor_static
+
+quant_cfg_overrides:
+  "*input_quantizer":
+    type: static
+    axis: null
+

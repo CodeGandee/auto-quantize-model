@@ -1,0 +1,8 @@
+name: a_per_token_dynamic
+
+quant_cfg_overrides:
+  "*input_quantizer":
+    type: dynamic
+    block_sizes:
+      -1: null
+

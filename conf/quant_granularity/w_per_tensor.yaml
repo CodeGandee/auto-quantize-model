@@ -1,0 +1,6 @@
+name: w_per_tensor
+
+quant_cfg_overrides:
+  "*weight_quantizer":
+    axis: null
+

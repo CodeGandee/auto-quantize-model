@@ -240,6 +240,9 @@ CUDA_TOOLKIT_ROOT_DIR = "${CONDA_PREFIX}/targets/x86_64-linux"
 CUDA_HOME = "${CONDA_PREFIX}/targets/x86_64-linux"
 CUDA_PATH = "${CONDA_PREFIX}/targets/x86_64-linux"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.pixi.environments]
 # Keep the existing environment behaviour as the CUDA 12.4 setup.
 default = { features = ["cu124"], solve-group = "cu124" }

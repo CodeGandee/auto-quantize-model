@@ -11,7 +11,7 @@ from __future__ import annotations
 import fnmatch
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple, cast
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -173,10 +173,13 @@ def autoquant_lm(
     pad_token_id: Optional[int],
     *,
     verbose: bool = True,
+    quantization_formats: Optional[List[Dict[str, Any]]] = None,
 ) -> Tuple[torch.nn.Module, Mapping[str, Any]]:
     """Run ModelOpt AutoQuant on a language model submodule."""
 
-    quantization_formats = resolve_quantization_formats(scheme.quant_formats)
+    resolved_quantization_formats = (
+        quantization_formats if quantization_formats is not None else resolve_quantization_formats(scheme.quant_formats)
+    )
 
     calib_batches: List[Mapping[str, torch.Tensor]] = list(calib_loader)
     if not calib_batches:
@@ -217,7 +220,7 @@ def autoquant_lm(
     quantized_model, state_dict = mtq.auto_quantize(
         lm_model,
         constraints={"effective_bits": scheme.auto_quantize_bits},
-        quantization_formats=quantization_formats,
+        quantization_formats=resolved_quantization_formats,
         data_loader=calib_batches,
         forward_step=forward_step,
         loss_func=loss_fn,
@@ -239,10 +242,13 @@ def autoquant_causal_lm(
     *,
     disabled_layers: Optional[List[str]] = None,
     verbose: bool = True,
+    quantization_formats: Optional[List[Dict[str, Any]]] = None,
 ) -> Tuple[torch.nn.Module, Mapping[str, Any]]:
     """Run ModelOpt AutoQuant on a model that returns `logits`."""
 
-    quantization_formats = resolve_quantization_formats(scheme.quant_formats)
+    resolved_quantization_formats = (
+        quantization_formats if quantization_formats is not None else resolve_quantization_formats(scheme.quant_formats)
+    )
 
     calib_batches: List[Mapping[str, torch.Tensor]] = list(calib_loader)
     if not calib_batches:
@@ -284,7 +290,7 @@ def autoquant_causal_lm(
     quantized_model, state_dict = mtq.auto_quantize(
         model,
         constraints={"effective_bits": scheme.auto_quantize_bits},
-        quantization_formats=quantization_formats,
+        quantization_formats=resolved_quantization_formats,
         data_loader=calib_batches,
         forward_step=forward_step,
         loss_func=loss_fn,
@@ -302,6 +308,7 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
     model_dir: Path,
     captions_path: Path,
     scheme: AutoQuantSchemeConfig,
+    quantization_formats: Optional[List[Dict[str, Any]]] = None,
     max_calib_samples: int,
     calib_seq_len: int,
     batch_size: int,
@@ -325,11 +332,14 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
     if torch_dtype is None:
         torch_dtype = torch.bfloat16 if torch_device.type == "cuda" else torch.float32
 
-    full_model = AutoModelForImageTextToText.from_pretrained(
-        str(model_dir),
-        torch_dtype=torch_dtype,
-        device_map=None,
-        trust_remote_code=True,
+    full_model = cast(
+        torch.nn.Module,
+        AutoModelForImageTextToText.from_pretrained(
+            str(model_dir),
+            torch_dtype=torch_dtype,
+            device_map=None,
+            trust_remote_code=True,
+        ),
     ).to(torch_device)
     full_model.eval()
 
@@ -418,6 +428,7 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
         device=torch_device,
         pad_token_id=tokenizer.pad_token_id,
         disabled_layers=disabled_layers,
+        quantization_formats=quantization_formats,
     )
 
     manifest = build_quant_manifest(

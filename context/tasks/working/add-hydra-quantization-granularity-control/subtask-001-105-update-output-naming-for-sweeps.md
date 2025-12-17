@@ -22,17 +22,21 @@ Out of scope:
 
 ## TODOs
 
-- [ ] Job-001-105-001 Update `conf/preset/qwen3_lm_sensitivity.yaml`:
+- [x] Job-001-105-001 Update `conf/preset/qwen3_lm_sensitivity.yaml`:
   - `hydra.run.dir` includes `${quant_granularity.name}`.
   - `hydra.sweep.subdir` includes `${quant_granularity.name}`.
-- [ ] Job-001-105-002 Update publish layout naming in `src/auto_quantize_model/experiment_layout.py` to incorporate granularity:
+- [x] Job-001-105-002 Update publish layout naming in `src/auto_quantize_model/experiment_layout.py` to incorporate granularity:
   - Decide between a new directory layer (preferred) vs suffixes.
   - Keep existing `weight-<w>-act-<a>` organization intact.
-- [ ] Job-001-105-003 Ensure `scripts/qwen/qwen3_lm_sensitivity.py` uses the updated layout helper API in publish mode.
-- [ ] Job-001-105-004 Validate the resulting paths are stable and readable for large sweeps (avoid deeply nested, overly verbose names).
+- [x] Job-001-105-003 Ensure `scripts/qwen/qwen3_lm_sensitivity.py` uses the updated layout helper API in publish mode.
+- [x] Job-001-105-004 Validate the resulting paths are stable and readable for large sweeps (avoid deeply nested, overly verbose names).
+
+## Resulting path semantics
+
+- Hydra tmp runs: `${quant_pair.name}/${quant_granularity.name}/${dataset.size}/...`
+- Publish layout: `.../weight-<w>-act-<a>/<quant_granularity.name>/<model>_autoquant_<pair>_lm_<dataset.size>/`
 
 ## Notes
 
 - Output naming is part of the user-facing API; treat it as stable once merged.
 - Prefer path semantics that remain meaningful when browsing results manually (weight/act grouping first, then granularity, then dataset size).
-

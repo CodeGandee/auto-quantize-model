@@ -28,16 +28,22 @@ Out of scope:
 
 ## TODOs
 
-- [ ] Job-001-104-001 Decide how the runner passes “effective quantization formats” to the AutoQuant call:
+- [x] Job-001-104-001 Decide how the runner passes “effective quantization formats” to the AutoQuant call:
   - extend `AutoQuantSchemeConfig` to carry overrides, or
   - apply overrides directly in the runner and pass dicts downstream, bypassing name resolution.
-- [ ] Job-001-104-002 Implement the runner-side overlay application using the helper from Subtask 1.3.
-- [ ] Job-001-104-003 Ensure the effective config dict is used by `mtq.auto_quantize` (not only base names).
-- [ ] Job-001-104-004 Record base + overlay metadata into the manifest JSON (and ensure report-only regeneration preserves it).
-- [ ] Job-001-104-005 Add a small “print the effective config summary” log line (key fields only) to make it easy to debug sweeps from console logs.
+- [x] Job-001-104-002 Implement the runner-side overlay application using the helper from Subtask 1.3.
+- [x] Job-001-104-003 Ensure the effective config dict is used by `mtq.auto_quantize` (not only base names).
+- [x] Job-001-104-004 Record base + overlay metadata into the manifest JSON (and ensure report-only regeneration preserves it).
+- [x] Job-001-104-005 Add a small “print the effective config summary” log line (key fields only) to make it easy to debug sweeps from console logs.
+
+## Implementation notes
+
+- Runner applies overlays in `scripts/qwen/qwen3_lm_sensitivity.py` and passes the resolved dict via `quantization_formats=[...]`.
+- Downstream support added in `src/auto_quantize_model/qwen/autoquant_sensitivity.py` (optional `quantization_formats` override).
+- Manifest writes a new top-level key `manifest["quantization"]` with base format + overlay metadata and a small effective-quantizer summary.
+- Scheme naming was left unchanged; collisions are avoided by including `quant_granularity.name` in run/publish directory layouts (Subtask 1.5).
 
 ## Notes
 
 - Keep manifests stable: downstream scripts may rely on manifest keys, so put new metadata under a new top-level key rather than reshaping existing ones.
 - Ensure YAML → Python conversion is handled before passing to ModelOpt (OmegaConf structures can surprise you).
-

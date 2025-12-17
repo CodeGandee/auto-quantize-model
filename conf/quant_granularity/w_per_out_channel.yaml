@@ -1,0 +1,6 @@
+name: w_per_out_channel
+
+quant_cfg_overrides:
+  "*weight_quantizer":
+    axis: 0
+
