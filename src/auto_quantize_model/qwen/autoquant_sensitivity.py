@@ -8,6 +8,7 @@ to run ModelOpt AutoQuant on the extracted language model component.
 
 from __future__ import annotations
 
+import fnmatch
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
@@ -21,6 +22,7 @@ from auto_quantize_model.modelopt_autoquant import (
     AutoQuantSchemeConfig,
     build_quant_manifest,
     compute_num_score_steps,
+    create_causal_lm_loss_func,
     resolve_quantization_formats,
 )
 
@@ -227,6 +229,74 @@ def autoquant_lm(
     return quantized_model, state_dict
 
 
+def autoquant_causal_lm(
+    model: torch.nn.Module,
+    scheme: AutoQuantSchemeConfig,
+    calib_loader: Iterable[Mapping[str, torch.Tensor]],
+    batch_size: int,
+    device: torch.device,
+    pad_token_id: Optional[int],
+    *,
+    disabled_layers: Optional[List[str]] = None,
+    verbose: bool = True,
+) -> Tuple[torch.nn.Module, Mapping[str, Any]]:
+    """Run ModelOpt AutoQuant on a model that returns `logits`."""
+
+    quantization_formats = resolve_quantization_formats(scheme.quant_formats)
+
+    calib_batches: List[Mapping[str, torch.Tensor]] = list(calib_loader)
+    if not calib_batches:
+        raise RuntimeError("Calibration dataloader is empty.")
+
+    def _batch_without_labels(batch: Mapping[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+        return {key: value.to(device) for key, value in batch.items() if key != "labels"}
+
+    if scheme.auto_quantize_method == "gradient":
+
+        def forward_step(model: torch.nn.Module, batch: Mapping[str, torch.Tensor]) -> Any:
+            return model(**_batch_without_labels(batch))
+
+        loss_fn: Optional[Callable[[Any, Mapping[str, torch.Tensor]], torch.Tensor]] = create_causal_lm_loss_func(
+            device=device,
+            pad_token_id=pad_token_id,
+        )
+
+    elif scheme.auto_quantize_method == "kl_div":
+
+        def forward_step(model: torch.nn.Module, batch: Mapping[str, torch.Tensor]) -> Any:
+            output = model(**_batch_without_labels(batch))
+            return output.logits
+
+        loss_fn = None
+
+    else:
+        raise ValueError(
+            f"Unsupported auto_quantize_method: {scheme.auto_quantize_method}. "
+            "Expected 'gradient' or 'kl_div'."
+        )
+
+    num_score_steps = compute_num_score_steps(
+        scheme.auto_quantize_score_size,
+        batch_size=max(batch_size, 1),
+        num_batches=len(calib_batches),
+    )
+
+    quantized_model, state_dict = mtq.auto_quantize(
+        model,
+        constraints={"effective_bits": scheme.auto_quantize_bits},
+        quantization_formats=quantization_formats,
+        data_loader=calib_batches,
+        forward_step=forward_step,
+        loss_func=loss_fn,
+        num_calib_steps=len(calib_batches),
+        num_score_steps=num_score_steps,
+        disabled_layers=disabled_layers,
+        verbose=bool(verbose),
+    )
+
+    return quantized_model, state_dict
+
+
 def run_qwen3_vl_lm_autoquant_sensitivity(
     *,
     model_dir: Path,
@@ -266,12 +336,26 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
     )
     tokenizer.padding_side = "left"
 
-    language_model = extract_language_model_from_vl(full_model)
+    def _estimate_linear_weight_numel(disabled_patterns: List[str]) -> Tuple[int, int]:
+        total = 0
+        disabled = 0
 
-    lm_head = getattr(full_model, "lm_head", None)
-    if lm_head is None:
-        raise RuntimeError("Expected full Qwen3-VL model to have an `lm_head` attribute.")
-    lm_head = lm_head.to(torch_device)
+        for name, module in full_model.named_modules():
+            if not isinstance(
+                module,
+                (torch.nn.Linear, torch.nn.Conv1d, torch.nn.Conv2d, torch.nn.Conv3d),
+            ):
+                continue
+            weight = getattr(module, "weight", None)
+            if not isinstance(weight, torch.Tensor):
+                continue
+
+            numel = weight.numel()
+            total += numel
+            if any(fnmatch.fnmatch(name, pattern) for pattern in disabled_patterns):
+                disabled += numel
+
+        return total, disabled
 
     calib_loader = build_lm_calib_dataloader(
         captions_path=captions_path,
@@ -281,18 +365,44 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
         max_length=calib_seq_len,
     )
 
-    quantized_lm, state_dict = autoquant_lm(
-        lm_model=language_model,
+    disabled_layers: Optional[List[str]] = None
+    coverage_mode = str(scheme.coverage_mode)
+    if coverage_mode == "lm_only":
+        # Keep the vision tower unquantized, but include it in sensitivity reports
+        # by allowing ModelOpt to register NONE-only recipes for these layers.
+        disabled_layers = ["model.visual*"]
+    elif coverage_mode == "full":
+        disabled_layers = None
+    else:
+        raise ValueError(
+            f"Unsupported coverage_mode: {coverage_mode!r}. Expected 'lm_only' or 'full'."
+        )
+
+    if disabled_layers:
+        total_weight, disabled_weight = _estimate_linear_weight_numel(disabled_layers)
+        if total_weight > 0 and 0 < disabled_weight < total_weight:
+            # AutoQuant's effective_bits constraint is applied over the entire model. When we disable
+            # (i.e., leave unquantized) some layers (e.g., vision), adjust the overall constraint so
+            # the remaining layers can still target `scheme.auto_quantize_bits` on average.
+            target_bits = float(scheme.auto_quantize_bits)
+            adjusted_bits = (
+                (disabled_weight * 16.0) + ((total_weight - disabled_weight) * target_bits)
+            ) / float(total_weight)
+            adjusted_bits = min(16.0, adjusted_bits + 1e-3)
+            scheme = scheme_with_overrides(scheme, effective_bits=adjusted_bits)
+
+    quantized_model, state_dict = autoquant_causal_lm(
+        model=full_model,
         scheme=scheme,
         calib_loader=calib_loader,
         batch_size=max(batch_size, 1),
         device=torch_device,
-        lm_head=lm_head,
         pad_token_id=tokenizer.pad_token_id,
+        disabled_layers=disabled_layers,
     )
 
     manifest = build_quant_manifest(
-        model=quantized_lm,
+        model=quantized_model,
         scheme=scheme,
         state_dict=state_dict,
         model_id=str(model_dir),

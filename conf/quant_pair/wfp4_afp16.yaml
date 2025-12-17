@@ -8,7 +8,7 @@ weight: fp4
 activation: fp16
 
 # ModelOpt quantization format name (built-in preset or `CUSTOM_QUANT_CONFIGS` key).
-format_name: MXFP4_WEIGHT_ONLY_CFG
+format_name: NVFP4_WEIGHT_ONLY_CFG
 
 # Whether this pair is considered experimental (runner may warn).
 experimental: false

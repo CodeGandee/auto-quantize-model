@@ -1,7 +1,7 @@
-About: ModelOpt AutoQuant per-layer sensitivity scoring (default algorithm)
+About: ModelOpt AutoQuant per-layer sensitivity scoring (gradient default + KL-div)
 
 ## HEADER
-- **Purpose**: Answer “what algorithm does ModelOpt use by default for per-layer sensitivity?” and document the exact scoring formula used by `modelopt.torch.quantization.auto_quantize(method="gradient")`.
+- **Purpose**: Answer “what algorithm does ModelOpt use by default for per-layer sensitivity?” and document the scoring formulas used by `modelopt.torch.quantization.auto_quantize(method="gradient" | "kl_div")`.
 - **Status**: Draft (source-backed)
 - **Date**: 2025-12-16
 - **Owner**: AI assistant (Codex CLI)
@@ -22,11 +22,20 @@ This is explicit in the API signature and method selection logic:
 
 - `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/model_quant.py` (`auto_quantize(..., method: str = "gradient", ...)` and the `if method == "gradient": searcher = AutoQuantizeGradientSearcher()` branch)
 
-## 2. What “gradient” sensitivity means in ModelOpt (the actual score)
+## 2. Sensitivity Analysis Algorithms
 
-ModelOpt’s gradient method estimates per-layer “sensitivity” as an approximation of loss increase caused by quantizing that layer, using a 2nd-order Taylor expansion around the unquantized output and substituting Fisher information for the Hessian (see `AutoQuantizeGradientSearcher` docstring in `algorithms.py`).
+ModelOpt AutoQuant supports two sensitivity scoring methods:
 
-### 2.1 Math (KaTeX notation)
+- `method="gradient"`: gradient/Fisher-based (default; requires backward / a loss).
+- `method="kl_div"`: KL-divergence-based (label-free; forward-only logits).
+
+### 2.1 Gradient-based sensitivity scoring (`method="gradient"`, default)
+
+ModelOpt’s gradient method estimates per-layer “sensitivity” as an approximation of loss increase caused by quantizing that layer, using a 2nd-order Taylor expansion around the unquantized output and substituting Fisher information for the Hessian (see `AutoQuantizeGradientSearcher` docstring in `algorithms.py`). Importantly, the “output” being perturbed here is an intermediate module output activation, not necessarily the model’s final output logits.
+
+> **Fisher information (intuition + why it’s used here)**: In log-likelihood settings, Fisher information is a measure of how “sharp” the loss landscape is—i.e., how sensitive the loss is to small changes in some quantity. Formally, if $g = \partial L / \partial Y$ then $\mathcal{I} = \mathbb{E}[g g^\top]$ (expected outer product of gradients). Intuitively, larger $\mathcal{I}$ means that small perturbations to $Y$ are expected to cause larger changes in the loss (higher sensitivity). For negative log-likelihood losses, and under standard regularity conditions, the expected Hessian equals Fisher ($\mathbb{E}[H] = \mathcal{I}$), so Fisher is a convenient positive semi-definite curvature proxy for $H$; a common simplification is a diagonal Fisher approximation using $\mathbb{E}[g_i^2]$, which leads directly to the implemented weighting term “squared gradient times squared perturbation”.
+
+#### Shared notation (KaTeX notation)
 
 Let:
 - each scoring sample (batch) $b$ contain model inputs $x^{(b)}$ and targets $y^{(b)}$ (for example, token IDs for language modeling, or class labels for classification).
@@ -56,10 +65,15 @@ $$
 > Source (vision auto-quant example): `extern/TensorRT-Model-Optimizer/examples/onnx_ptq/torch_quant_to_onnx.py:116` uses multiclass cross-entropy as the scoring objective.
 
 Other supervised losses are also valid (e.g., mean-squared error for regression), as long as they produce a single scalar objective that is differentiable w.r.t. the model’s intermediate activations being scored.
-- $Y$ be the (unquantized) output tensor of the chosen score module for a given batch.
+- A **score module** is the `nn.Module` whose output activation is used for sensitivity scoring. By default, the score module is the quantized module itself (so $Y$ is a layer output), but it can be overridden to a different module via `score_module_rules` (e.g., score at an MoE MLP output). In general, $Y$ is not the final model output unless the score module is itself the final output module.
+- $Y$ be the (unquantized) output tensor of the score module for a given batch.
 - $Y_r$ be the output tensor when the same module is evaluated under a candidate quantization recipe $r$.
 - $\Delta Y_r = Y_r - Y$ be the output perturbation introduced by recipe $r$.
-- $G^{(b)} = \frac{\partial L^{(b)}}{\partial Y^{(b)}}$ be the gradient of the objective w.r.t. the chosen score-module output for batch $b$ (this is score-module-specific; different score modules generally have different gradients).
+- $G^{(b)} = \frac{\partial L^{(b)}}{\partial Y^{(b)}}$ be the gradient of the objective w.r.t. the chosen score module output for batch $b$ (this is score-module-specific; different score modules generally have different gradients).
+
+#### Score formula (Taylor/Fisher approximation)
+
+> **Implementation names (ModelOpt variable mapping)**: In the gradient scorer, $Y$ is `output` from the score module run with “no quant” (`hparam.active = NONE`); $\Delta Y_r$ is cached as `output_diff` (computed as quantized output minus unquantized output for each candidate recipe); and $G^{(b)}$ arrives as `grad_output[0]` in the score module backward hook. Source: `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`AutoQuantizeGradientSearcher._estimate_auto_quantize_scores`, `auto_quantize_score_estimate_forward`, `backward_hook`).
 
 ModelOpt’s gradient-based per-batch score for recipe $r$ is the elementwise squared product, summed over all tensor elements:
 
@@ -100,21 +114,7 @@ $$
 
 The implementation uses a finite-sample estimate and drops constant factors, yielding the practical scoring rule “larger $S_r$ ⇒ more sensitive”.
 
-## 2.2 Implementation correspondence (ModelOpt variable names)
-
-ModelOpt implements the per-recipe score in `_get_auto_quantize_score(grad_output, output_diff)` (see the citation directly under the $s_r$ equation above).
-
-Symbol mapping:
-- $G^{(b)} = \frac{\partial L^{(b)}}{\partial Y^{(b)}}$ corresponds to `grad_output` in the backward hook.
-- $\Delta Y_r$ corresponds to `output_diff`, cached as “quantized output minus unquantized output” for each candidate recipe $r$.
-
-Source locations:
-- Score formula: `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`_get_auto_quantize_score`)
-- Reference losses used in ModelOpt example workflows:
-  - LLM PTQ flow uses the model’s built-in causal-LM cross-entropy: `extern/TensorRT-Model-Optimizer/examples/llm_ptq/hf_ptq.py`
-  - Vision example uses multiclass cross-entropy: `extern/TensorRT-Model-Optimizer/examples/onnx_ptq/torch_quant_to_onnx.py`
-
-## 3. How the score is computed (what ModelOpt actually does)
+#### How the score is computed (what ModelOpt actually does)
 
 In `AutoQuantizeGradientSearcher._estimate_auto_quantize_scores(...)`:
 
@@ -129,94 +129,13 @@ Important implications:
 - Sensitivity is measured in **activation/output space** (gradients w.r.t. a score-module output), not in weight space (no $\,\partial L / \partial W\,$ is used for scoring).
 - “Higher score” means “more sensitive to quantization” for that layer/recipe.
 
-## 3.1 Mermaid: AutoQuantize end-to-end flow (calibrate → score → search)
-
-```mermaid
-flowchart TD
-    A["mtq.auto_quantize(model, ..., method=gradient (default))"] --> B{"method"}
-    B -->|gradient| G["AutoQuantizeGradientSearcher"]
-    B -->|kl_div| K["AutoQuantizeKLDivSearcher"]
-    G --> C["before_search(): insert QuantRecipeHparam using grouping rules"]
-    K --> C
-    C --> D["Calibrate quantizers for each recipe (skip NONE)"]
-    D --> E{"checkpoint has candidate_stats?"}
-    E -->|yes| F["Skip scoring; restore candidate_stats"]
-    E -->|no| S["estimate_sensitivity_scores()"]
-    S --> H["initialize_candidate_stats(): formats + scores + costs"]
-    F --> R["run_search(): pick recipe per group under effective_bits"]
-    H --> R
-    R --> O["Apply best recipe; fold PQS to weights; return (model, state)"]
-```
-
-Notes (source):
-- Calibration loop is in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`_AutoQuantizeBaseSearcher.before_search()`).
-- Sensitivity scoring is `AutoQuantizeGradientSearcher.estimate_sensitivity_scores()` / `AutoQuantizeKLDivSearcher.estimate_sensitivity_scores()`.
-- Search differs by method: gradient uses an LP solver; KLDiv uses a threshold-based binary search (see `run_search_with_stats` in each searcher).
-
-## 3.2 Mermaid: Gradient (“Taylor/Fisher”) sensitivity scoring mechanics
-
-```mermaid
-flowchart TD
-    A["Start: estimate_sensitivity_scores(method=gradient)"] --> B["model.eval()"]
-    B --> C["Pick grad_ckpt_context + is_param_grad_enabled (optional custom support)"]
-    C --> D["For each score_module with _hparams_for_scoring: patch forward() + register backward_hook()"]
-    D --> E["Enable minimal param grads (to get activation grads) + install clear-grad hooks"]
-    E --> F["Repeat for num_score_steps batches"]
-    F --> G["Run forward_backward_step(model, batch)"]
-    G --> H["Patched score_module.forward(): set hparam.active=NONE; Y=orig_forward(input)"]
-    H --> I{"torch.is_grad_enabled()?"}
-    I -->|no| J["Return Y (skip caching ΔY to save memory)"]
-    I -->|yes| K["Under no_grad(): for each hparam + recipe!=NONE: set active=recipe; Yq=orig_forward(input); cache ΔY=Yq-Y"]
-    K --> L["Return Y"]
-    G --> M["loss.backward()"]
-    M --> N["backward_hook(score_module): grad_output=∂L/∂Y; score += Σ(grad_output^2 * ΔY^2)"]
-    N --> F
-    F --> P["Cleanup: restore forward(), remove hooks, restore requires_grad"]
-    P --> Q["Scores live in QuantRecipeHparam._importance_dict; get_score() sums per score_module"]
-```
-
-Key modelopt details reflected above (source-backed):
-- Score modules are not always the quantized modules: ModelOpt can estimate a group’s sensitivity at a higher-level “score module” (e.g., MoE MLP output) via `score_module_rules`; the hparam attaches itself to `score_module._hparams_for_scoring` (see `QuantRecipeHparam.__init__` and `_AutoQuantizeBaseSearcher.insert_hparams_after_merge_rules()` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
-- The exact score function is `sum((grad_output^2) * (ΔY^2))` (`_get_auto_quantize_score` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
-
-## 4. Alternative algorithm: `method="kl_div"` (label-free)
-
-ModelOpt also supports `method="kl_div"`:
-- It measures sensitivity via **KL divergence** between unquantized and quantized model outputs (logits), and does not require labels/backward.
-- It uses a different search strategy (threshold-based binary search) than the gradient method (linear programming).
-
-See:
-- `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/model_quant.py` (method selection)
-- `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`AutoQuantizeKLDivSearcher`)
-
-## 4.1 Mermaid: KL-divergence sensitivity scoring mechanics (label-free)
-
-```mermaid
-flowchart TD
-    A["Start: estimate_sensitivity_scores(method=kl_div)"] --> B["model.eval(); inference_mode()"]
-    B --> C["Repeat for num_score_steps batches"]
-    C --> D["Set all QuantRecipeHparam.active = NONE"]
-    D --> E["logits_unquant = forward_step(model, batch)"]
-    E --> F["prob_unquant = prob(logits_unquant)"]
-    F --> G["For each configurable QuantRecipeHparam"]
-    G --> H["For each recipe != NONE"]
-    H --> I["Set hparam.active = recipe; logits_quant = forward_step(model, batch)"]
-    I --> J["score += KL(prob_unquant || logits_quant)"]
-    J --> H
-    H --> K["Reset hparam.active = NONE"]
-    K --> G
-    G --> C
-    C --> L["Scores stored in QuantRecipeHparam._importance_dict"]
-```
-
-## 4.2 Pseudocode (matches ModelOpt source structure)
-
-### 4.2.1 High-level: `auto_quantize(...)` selects the scoring algorithm
+#### Pseudocode: AutoQuantize end-to-end flow (calibrate → score → search)
 
 ```text
-function AUTO_QUANTIZE(model, quantization_formats, data_loader, forward_step, loss_func?, forward_backward_step?, method="gradient"):
-    model = apply_mode(model, "auto_quantize")  # inserts modelopt hparam machinery
-    disable_all_quantizers(model)               # AutoQuantize enables as-needed
+function AUTO_QUANTIZE(model, constraints, quantization_formats, data_loader, forward_step,
+                       loss_func?, forward_backward_step?, method="gradient", checkpoint?):
+    model = apply_mode(model, mode="auto_quantize")        # inserts modelopt hparam machinery
+    disable_all_quantizers(model)                          # AutoQuantize enables as-needed
 
     if method == "gradient":
         searcher = AutoQuantizeGradientSearcher()
@@ -226,81 +145,136 @@ function AUTO_QUANTIZE(model, quantization_formats, data_loader, forward_step, l
         error("Invalid method")
 
     searcher.before_search():
-        search_recipes = quantization_formats + [NONE]
-        attach QuantRecipeHparam to quant_modules (grouped by quant_grouping_rules) and to score_modules (via score_module_rules)
-        for each recipe != NONE:
+        recipes = normalize(quantization_formats) + [NONE]
+        insert QuantRecipeHparam on quant_modules grouped by quant_grouping_rules
+        (gradient only) optionally score at score_modules via score_module_rules
+
+        for recipe in recipes where recipe != NONE:
             set all hparams active = recipe
             calibrate_quantizers(model, algorithm=recipe.algorithm, num_calib_steps)
-        if checkpoint had candidate_stats:
-            skip scoring
-        else:
-            searcher.estimate_sensitivity_scores()
-            searcher.initialize_candidate_stats()  # formats / scores / costs per hparam
 
-    searcher.run_search(): pick best recipe per hparam under effective_bits constraint
-    fold_pre_quant_scale_to_weights(model)
+        if checkpoint has candidate_stats:
+            restore candidate_stats; skip scoring
+        else:
+            estimate_sensitivity_scores()                  # method-specific
+            initialize_candidate_stats()                    # formats / scores / costs per hparam
+            save checkpoint
+
+    searcher.run_search():
+        pick one recipe per hparam under effective_bits constraint
+        apply selected recipes to model
+        fold_pre_quant_scale_to_weights(model)
+
     return model, searcher.state_dict()
 ```
 
-### 4.2.2 Gradient scoring: `score += Σ (∂L/∂Y)^2 * (ΔY)^2`
+Notes (source):
+- Calibration loop is in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`_AutoQuantizeBaseSearcher.before_search()`).
+- Sensitivity scoring is `AutoQuantizeGradientSearcher.estimate_sensitivity_scores()` / `AutoQuantizeKLDivSearcher.estimate_sensitivity_scores()`.
+- Search differs by method: gradient uses an LP solver; KLDiv uses a threshold-based binary search (see `run_search_with_stats` in each searcher).
+
+#### Pseudocode: Gradient (“Taylor/Fisher”) sensitivity scoring mechanics
 
 ```text
-function ESTIMATE_SENSITIVITY_SCORES_GRADIENT(model, data_loader, forward_step, loss_func or forward_backward_step, num_score_steps):
+function ESTIMATE_SENSITIVITY_SCORES_GRADIENT(model, data_loader, forward_step,
+                                              loss_func or forward_backward_step,
+                                              num_score_steps):
     model.eval()
 
     (grad_ckpt_context, is_param_grad_enabled) = maybe_select_custom_support(model)
-
     with grad_ckpt_context(model) if provided:
-        score_modules = { m | m has _hparams_for_scoring and some hparam is configurable }
+        score_modules = {m | hasattr(m, "_hparams_for_scoring") and any(hparam.is_configurable)}
 
         for each score_module in score_modules:
             patch score_module.forward(input):
-                for hparam in score_module._hparams_for_scoring:
-                    if hparam.configurable:
-                        hparam.active = NONE
+                set all configurable hparams active = NONE
                 Y = original_forward(input)
                 if torch.is_grad_enabled() is false:
                     return Y
-                for hparam in score_module._hparams_for_scoring:
-                    for recipe in hparam.choices where recipe != NONE:
-                        hparam.active = recipe
-                        Yq = original_forward(input)
-                        cache ΔY[hparam][recipe] = (Yq - Y)  # handle tuple outputs by subtracting first element
-                    hparam.active = NONE
+                under no_grad():
+                    for each configurable hparam:
+                        for each recipe in hparam.choices where recipe != NONE:
+                            hparam.active = recipe
+                            Yq = original_forward(input)
+                            cache ΔY[hparam][recipe] = Yq - Y   # handle tuple outputs as needed
+                        hparam.active = NONE
                 return Y
 
-            register backward_hook(score_module, grad_output):
-                for each (hparam, recipe) in cached ΔY:
-                    importance[hparam][recipe][score_module] += sum((grad_output^2) * (ΔY[hparam][recipe]^2))
+            register backward_hook(score_module):
+                grad_output = ∂L/∂Y
+                for each cached (hparam, recipe, ΔY):
+                    importance[hparam][recipe][score_module] += Σ(grad_output^2 * ΔY^2)
 
         for each parameter p in model.parameters:
-            p.requires_grad = is_param_grad_enabled(p.name, model)  # often only enough to enable embeddings
+            p.requires_grad = is_param_grad_enabled(p.name, model)  # minimize grad compute
             install hook to clear p.grad ASAP
 
         repeat num_score_steps:
             run forward_backward_step(model, batch)  # or forward_step + loss_func + loss.backward()
 
-        restore original forwards, remove hooks, restore parameter requires_grad
+        restore original forwards, remove hooks, restore requires_grad
 ```
 
-### 4.2.3 KL-div scoring: `score += KL(p_unquant || p_quant)`
+Key modelopt details reflected above (source-backed):
+- Score modules are not always the quantized modules: ModelOpt can estimate a group’s sensitivity at a higher-level “score module” (e.g., MoE MLP output) via `score_module_rules`; the hparam attaches itself to `score_module._hparams_for_scoring` (see `QuantRecipeHparam.__init__` and `_AutoQuantizeBaseSearcher.insert_hparams_after_merge_rules()` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
+- The exact score function is `sum((grad_output^2) * (ΔY^2))` (`_get_auto_quantize_score` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
+
+### 2.2 KL-divergence sensitivity scoring (`method="kl_div"`, label-free)
+
+ModelOpt also supports `method="kl_div"`:
+- It measures sensitivity via **KL divergence** between unquantized and quantized model outputs (logits), and does not require labels/backward.
+- It uses a different search strategy (threshold-based binary search) than the gradient method (linear programming).
+
+#### Math (KaTeX notation)
+
+Let:
+- $z^{(b)}$ be the model logits for batch $b$ (the output of your `forward_step(model, batch)` for this method).
+- $p^{(b)} = \mathrm{softmax}(z^{(b)})$ be the unquantized output distribution (computed once per batch).
+- $z^{(b)}_r$ be the logits when evaluating under a candidate quantization recipe $r$.
+- $q^{(b)}_r = \mathrm{softmax}(z^{(b)}_r)$ be the corresponding quantized output distribution.
+
+ModelOpt’s per-batch KL-div score for recipe $r$ is:
+
+$$
+s_r^{(b)} \;=\; D_{\mathrm{KL}}\!\left(p^{(b)} \,\|\, q^{(b)}_r\right)
+\;=\; \sum_i p^{(b)}_i \left(\log p^{(b)}_i - \log q^{(b)}_{r,i}\right)
+$$
+
+Across `num_score_steps` batches, ModelOpt accumulates:
+
+$$
+S_r \;=\; \sum_{b=1}^{B} s_r^{(b)}
+$$
+
+> **Implementation note (why ModelOpt computes only `-p*log q`)**: Since $p^{(b)}$ is fixed for a given batch, the term $\sum_i p^{(b)}_i \log p^{(b)}_i$ does not depend on recipe $r$. ModelOpt therefore scores using only the cross-entropy term $-\sum_i p^{(b)}_i \log q^{(b)}_{r,i}$ (see `_get_kl_div_loss`), which is equivalent for ranking recipes.
+
+> **Implementation names (ModelOpt variable mapping)**: $p^{(b)}$ is `prob_unquant`; $z^{(b)}_r$ is `logits_quant`; and `score = _get_kl_div_loss(prob_unquant, logits_quant, ...)` is accumulated into `hparam._importance_dict[recipe][hparam.score_modules[0]]`. Source: `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`AutoQuantizeKLDivSearcher.estimate_sensitivity_scores`, `_get_prob_from_logits`, `_get_kl_div_loss`).
+
+See:
+- `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/model_quant.py` (method selection)
+- `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py` (`AutoQuantizeKLDivSearcher`)
+
+#### Pseudocode: KL-divergence sensitivity scoring mechanics (label-free)
 
 ```text
 function ESTIMATE_SENSITIVITY_SCORES_KLDIV(model, data_loader, forward_step, num_score_steps):
     model.eval()
-    for batch in first num_score_steps batches:
-        set all QuantRecipeHparam.active = NONE
-        logits_u = forward_step(model, batch)          # must return logits
-        prob_u = PROB(logits_u)                        # ModelOpt uses helper to handle LM head / TP cases
-        for each configurable hparam:
-            for recipe in hparam.choices where recipe != NONE:
-                hparam.active = recipe
-                logits_q = forward_step(model, batch)
-                importance[hparam][recipe][score_module0] += KL(prob_u || logits_q)
-            hparam.active = NONE
+    inference_mode():
+        for batch in first num_score_steps batches:
+            set all configurable QuantRecipeHparam.active = NONE
+            logits_unquant = forward_step(model, batch)     # must return logits
+            prob_unquant = softmax(logits_unquant)          # handles TP via helper
+
+            for each configurable QuantRecipeHparam hparam:
+                for each recipe in hparam.choices where recipe != NONE:
+                    hparam.active = recipe
+                    logits_quant = forward_step(model, batch)
+                    score = KL(prob_unquant || logits_quant)  # implemented as -Σ p*log softmax(logits_quant)
+                    importance[hparam][recipe][hparam.score_modules[0]] += score
+                hparam.active = NONE
 ```
 
-## 5. Minimal usage snippet (explicitly pin the method)
+## 3. Minimal usage snippet (explicitly pin the method)
 
 ```python
 import modelopt.torch.quantization as mtq
