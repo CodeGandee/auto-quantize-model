@@ -48,7 +48,12 @@ Source (ModelOpt): `QuantizerAttributeConfig.axis` docstring in https://github.c
 
 ## 3) Per-block / group-wise quantization: `block_sizes`
 
-`block_sizes` configures blockwise quantization: a fixed number of elements share each scale (group quantization). ModelOpt describes it as:
+`block_sizes` is used in two distinct ways in ModelOpt:
+
+- As true “block/group quantization”: integer block sizes (e.g. `{-1: 128}`) mean a fixed number of elements share each scale factor (group quantization).
+- As a per-axis/per-token shorthand: `None` values (e.g. `{-1: None}`) are treated as a special representation and are converted into an `axis` at runtime by `TensorQuantizer._block_sizes_to_axis` (this is how some “per-token” configs are expressed).
+
+ModelOpt describes the true block/group quantization version as:
 
 - Keys: axes to block over (e.g. `-1` for last dimension).
 - Values: block size along that axis (integer) or `None` for “max possible” (used for some per-token patterns).
@@ -58,7 +63,13 @@ Examples from the ModelOpt docs in source:
 
 - `{"block_sizes": {-1: 32}}` → static calibrated block quant over the last axis in blocks of 32.
 - `{"block_sizes": {-1: 32, "type": "dynamic"}}` → dynamic block quant over the last axis (no calibration stats).
-- `{"block_sizes": {-1: None, "type": "dynamic"}}` → “per-token” dynamic quantization pattern (amax shared along last dim).
+
+Per-token dynamic quantization in ModelOpt is typically expressed by setting the quantizer attribute `type="dynamic"` and using `block_sizes` with `None` values that get converted to an `axis` during forward, for example:
+
+```python
+# Common “per-token” pattern used by ModelOpt presets (shape-dependent, but widely used for Linear inputs).
+{"type": "dynamic", "block_sizes": {-1: None}}
+```
 
 Source (ModelOpt): `QuantizerAttributeConfig.block_sizes` docstring in https://github.com/NVIDIA/TensorRT-Model-Optimizer/blob/5a4242faf4147fb0688bb73e10ca30b8ad3aabb3/modelopt/torch/quantization/config.py
 
