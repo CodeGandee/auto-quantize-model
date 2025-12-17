@@ -1,0 +1,14 @@
+# Quant-pair identifier used in output naming and Hydra overrides.
+name: wfp8_aint4
+
+# Weight precision category for this run.
+weight: fp8
+
+# Activation precision category for this run.
+activation: int4
+
+# ModelOpt quantization format name (built-in preset or `CUSTOM_QUANT_CONFIGS` key).
+format_name: FP8_WEIGHT_INT4_ACT_CFG
+
+# Whether this pair is considered experimental (runner may warn).
+experimental: true

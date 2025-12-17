@@ -1,0 +1,1541 @@
+{
+  "scheme": {
+    "name": "wfp8_aint8_autoquant_lm",
+    "auto_quantize_bits": 8.74530701482171,
+    "auto_quantize_method": "gradient",
+    "auto_quantize_score_size": 128,
+    "coverage_mode": "lm_only",
+    "coverage_fraction": 1.0,
+    "quant_formats": [
+      "FP8_WEIGHT_INT8_ACT_CFG"
+    ]
+  },
+  "model": {
+    "id": "/workspace/code/auto-quantize-model/models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct"
+  },
+  "dataset": {
+    "name": "vlm_coco2017_captions",
+    "size": "medium",
+    "root": "/workspace/code/auto-quantize-model/datasets/vlm-quantize-calib",
+    "captions_path": "/workspace/code/auto-quantize-model/datasets/vlm-quantize-calib/coco2017_captions_medium.txt",
+    "max_calib_samples": 128,
+    "num_calib_samples": 128,
+    "calib_seq_len": 512,
+    "batch_size": 8,
+    "num_calib_batches": 16
+  },
+  "autoquant_state": {
+    "keys": [
+      "candidate_stats",
+      "best",
+      "constraints"
+    ],
+    "constraints": {
+      "effective_bits": 8.744307014821711
+    },
+    "score": 420.57508313265396,
+    "is_satisfied": true
+  },
+  "layer_sensitivity": [
+    {
+      "layer": "model.language_model.layers.6.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 60.70931100845337,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.6.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 59.8847998380661,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.12.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 46.69531035423279,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.1.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 41.24566435813904,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.14.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 36.392948389053345,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.16.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 23.520620584487915,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.15.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 14.808959603309631,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.9.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 14.732271552085876,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.3.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 14.169245541095734,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.10.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 13.547469019889832,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.4.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 12.584681391716003,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.13.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 10.647358298301697,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.2.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.860002130270004,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.18.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.227121710777283,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.0.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.662961333990097,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.11.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.088062971830368,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.5.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 5.85795184969902,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.7.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 4.718995690345764,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.8.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 4.6069416999816895,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.4.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 3.530121333897114,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.3.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 3.2114989645779133,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.2.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.67932603135705,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.7.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.9162103682756424,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.16.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.5312488675117493,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.5.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.407709615305066,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.1.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.9543056050315499,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.14.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.9210832603275776,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.15.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.8993844501674175,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.13.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.740686072036624,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.12.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.7034446401521564,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.24.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.5921924002468586,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.11.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.5207581901922822,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.23.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.413493262603879,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.17.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.403254896402359,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.35.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.40089084580540657,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.8.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.38845125399529934,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.10.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.3806587024591863,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.9.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.37391048995777965,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.25.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.3672871310263872,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.19.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.2823881274089217,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.17.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.2727016811259091,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.22.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.2519168769940734,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.26.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.18629924952983856,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.21.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.14959267806261778,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.20.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.14345681155100465,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.18.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.14181300182826817,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.28.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.11787586053833365,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.27.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.08962297067046165,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.19.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.08446077676489949,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.20.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.07398378022480756,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.0.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.06939112802501768,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.21.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.04438109847251326,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.35.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.044327690498903394,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.34.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.03607290249783546,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.23.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.03518239420372993,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.30.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.03455907863099128,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.22.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.032849100476596504,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.24.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.03251475701108575,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.29.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.030096029513515532,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.25.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.027461026853416115,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "lm_head",
+      "num_bits": 8.0,
+      "sensitivity": 0.01788647857028991,
+      "size_cost": 194478080.0
+    },
+    {
+      "layer": "model.language_model.layers.26.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.017769304162357002,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.34.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.014301912306109443,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.27.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00959269113081973,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.31.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.009386057092342526,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.32.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.006733806832926348,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.28.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.005104287483845837,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.29.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.003367469151271507,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.33.mlp.down_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.0030504282331094146,
+      "size_cost": 12451840.0
+    },
+    {
+      "layer": "model.language_model.layers.30.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.001800981419364689,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.31.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.0011069153169955825,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.32.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.000978531554210349,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.33.mlp.gate_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.0007725418126938166,
+      "size_cost": 24903680.0
+    },
+    {
+      "layer": "model.language_model.layers.35.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.0005043926194048254,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.15.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00036865942547592567,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.6.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00035497376245530177,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.16.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.000209203794838686,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.22.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00018733815966243128,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.34.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00017973766148315917,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.0.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00017666741146626919,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.21.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.000163728167649424,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.23.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00016362406449843547,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.13.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00015191244483503397,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.3.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00014561213897934522,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.14.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00013888203829992563,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.24.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00011783934826326004,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.9.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00011673639750142684,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.4.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00010696128066456367,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.10.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00010222990283637046,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.30.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00010107973224648958,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.16.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00010009702390334496,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.5.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 0.00010006031857301423,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.32.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 9.955435274378033e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.7.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 9.87346685974444e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.8.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 9.636557672365598e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.34.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 9.025845247379038e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.28.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.762202662637719e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.19.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.512871545462986e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.22.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.422359542237245e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.18.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.33234031460961e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.26.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.21969414346313e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.17.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.920786617887643e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.20.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.835804996147999e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.14.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.727217968067635e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.31.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.606880416233253e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.25.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.558453330602788e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.15.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 7.222843015597391e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.33.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 6.85610622213062e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.11.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 6.494484443919646e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.27.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 6.241177203492043e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.2.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 6.039839206550823e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.29.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 5.888844520995917e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.13.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 4.9909357585420366e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.12.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 4.5466609094546584e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.0.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 3.6452165375067125e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.1.self_attn.q_proj",
+      "num_bits": 8.0,
+      "sensitivity": 3.172315425103989e-05,
+      "size_cost": 7864320.0
+    },
+    {
+      "layer": "model.language_model.layers.33.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 3.124580314306513e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.10.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 3.042781611384271e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.23.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.610158981042332e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.32.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.26089174475419e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.35.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.2168156647239812e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.29.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.1421881115202268e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.27.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.074861799883365e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.26.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 2.050135447007051e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.31.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.9167574805578624e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.6.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.882054976931613e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.8.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.841643069155907e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.28.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.758725449008125e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.30.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.6106206885524443e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.24.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.5540398294433544e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.17.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.457610738953008e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.18.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.4097668611157133e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.19.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.3658088619195041e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.25.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.3106653398153867e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.7.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.283528638396092e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.9.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.2261993674655969e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.5.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.1403172180735055e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.12.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.080521710150606e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.4.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 1.0046395857443713e-05,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.20.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 9.328673343134142e-06,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.21.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.641501864303791e-06,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.11.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 8.095612969327703e-06,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.1.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 6.603246447411948e-06,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.3.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 5.929343615207472e-06,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.language_model.layers.2.self_attn.o_proj",
+      "num_bits": 8.0,
+      "sensitivity": 4.129045464651426e-06,
+      "size_cost": 5242880.0
+    },
+    {
+      "layer": "model.visual.patch_embed.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1572864.0
+    },
+    {
+      "layer": "model.visual.blocks.0.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.0.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.0.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.0.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.1.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.1.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.1.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.1.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.2.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.2.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.2.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.2.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.3.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.3.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.3.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.3.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.4.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.4.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.4.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.4.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.5.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.5.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.5.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.5.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.6.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.6.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.6.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.6.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.7.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.7.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.7.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.7.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.8.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.8.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.8.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.8.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.9.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.9.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.9.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.9.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.10.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.10.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.10.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.10.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.11.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.11.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.11.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.11.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.12.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.12.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.12.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.12.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.13.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.13.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.13.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.13.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.14.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.14.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.14.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.14.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.15.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.15.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.15.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.15.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.16.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.16.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.16.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.16.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.17.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.17.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.17.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.17.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.18.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.18.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.18.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.18.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.19.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.19.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.19.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.19.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.20.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.20.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.20.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.20.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.21.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.21.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.21.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.21.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.22.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.22.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.22.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.22.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.23.attn.qkv",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 3145728.0
+    },
+    {
+      "layer": "model.visual.blocks.23.attn.proj",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 1048576.0
+    },
+    {
+      "layer": "model.visual.blocks.23.mlp.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.blocks.23.mlp.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 4194304.0
+    },
+    {
+      "layer": "model.visual.merger.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 16777216.0
+    },
+    {
+      "layer": "model.visual.merger.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 10485760.0
+    },
+    {
+      "layer": "model.visual.deepstack_merger_list.0.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 16777216.0
+    },
+    {
+      "layer": "model.visual.deepstack_merger_list.0.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 10485760.0
+    },
+    {
+      "layer": "model.visual.deepstack_merger_list.1.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 16777216.0
+    },
+    {
+      "layer": "model.visual.deepstack_merger_list.1.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 10485760.0
+    },
+    {
+      "layer": "model.visual.deepstack_merger_list.2.linear_fc1",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 16777216.0
+    },
+    {
+      "layer": "model.visual.deepstack_merger_list.2.linear_fc2",
+      "num_bits": 16.0,
+      "sensitivity": 0.0,
+      "size_cost": 10485760.0
+    }
+  ]
+}

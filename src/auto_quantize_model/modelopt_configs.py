@@ -249,6 +249,80 @@ def _build_int4_weight_fp8_act_cfg() -> Dict[str, Any]:
     return cfg
 
 
+def _build_int4_weight_int8_act_cfg() -> Dict[str, Any]:
+    """Build an experimental INT4-weight + INT8-activation config."""
+    if hasattr(mtq, "INT4_BLOCKWISE_WEIGHT_ONLY_CFG"):
+        cfg: Dict[str, Any] = deepcopy(mtq.INT4_BLOCKWISE_WEIGHT_ONLY_CFG)
+    elif hasattr(mtq, "INT4_AWQ_CFG"):
+        cfg = deepcopy(mtq.INT4_AWQ_CFG)
+    else:
+        raise AttributeError("ModelOpt does not expose an INT4 quantization preset in this build.")
+
+    quant_cfg = cfg.get("quant_cfg", {})
+    int8_input_cfg = deepcopy(getattr(mtq, "INT8_DEFAULT_CFG")["quant_cfg"]["*input_quantizer"])
+    int8_input_cfg["enable"] = True
+    quant_cfg["*input_quantizer"] = int8_input_cfg
+    return cfg
+
+
+def _build_int4_weight_int4_act_cfg() -> Dict[str, Any]:
+    """Build an experimental INT4-weight + INT4-activation config."""
+    if hasattr(mtq, "INT4_BLOCKWISE_WEIGHT_ONLY_CFG"):
+        cfg: Dict[str, Any] = deepcopy(mtq.INT4_BLOCKWISE_WEIGHT_ONLY_CFG)
+    elif hasattr(mtq, "INT4_AWQ_CFG"):
+        cfg = deepcopy(mtq.INT4_AWQ_CFG)
+    else:
+        raise AttributeError("ModelOpt does not expose an INT4 quantization preset in this build.")
+
+    quant_cfg = cfg.get("quant_cfg", {})
+    quant_cfg["*input_quantizer"] = {"num_bits": 4, "axis": None, "enable": True}
+    return cfg
+
+
+def _build_int8_weight_int4_act_cfg() -> Dict[str, Any]:
+    """Build an experimental INT8-weight + INT4-activation config."""
+    cfg: Dict[str, Any] = deepcopy(mtq.INT8_DEFAULT_CFG)
+    quant_cfg = cfg.get("quant_cfg", {})
+    quant_cfg["*input_quantizer"] = {"num_bits": 4, "axis": None, "enable": True}
+    return cfg
+
+
+def _build_fp8_weight_int8_act_cfg() -> Dict[str, Any]:
+    """Build an experimental FP8-weight + INT8-activation config."""
+    cfg: Dict[str, Any] = deepcopy(mtq.FP8_DEFAULT_CFG)
+    quant_cfg = cfg.get("quant_cfg", {})
+    int8_input_cfg = deepcopy(getattr(mtq, "INT8_DEFAULT_CFG")["quant_cfg"]["*input_quantizer"])
+    int8_input_cfg["enable"] = True
+    quant_cfg["*input_quantizer"] = int8_input_cfg
+    return cfg
+
+
+def _build_fp8_weight_int4_act_cfg() -> Dict[str, Any]:
+    """Build an experimental FP8-weight + INT4-activation config."""
+    cfg: Dict[str, Any] = deepcopy(mtq.FP8_DEFAULT_CFG)
+    quant_cfg = cfg.get("quant_cfg", {})
+    quant_cfg["*input_quantizer"] = {"num_bits": 4, "axis": None, "enable": True}
+    return cfg
+
+
+def _build_nvfp4_weight_int8_act_cfg() -> Dict[str, Any]:
+    """Build an experimental NVFP4-weight + INT8-activation config."""
+    cfg: Dict[str, Any] = deepcopy(mtq.NVFP4_DEFAULT_CFG)
+    quant_cfg = cfg.get("quant_cfg", {})
+    int8_input_cfg = deepcopy(getattr(mtq, "INT8_DEFAULT_CFG")["quant_cfg"]["*input_quantizer"])
+    int8_input_cfg["enable"] = True
+    quant_cfg["*input_quantizer"] = int8_input_cfg
+    return cfg
+
+
+def _build_nvfp4_weight_int4_act_cfg() -> Dict[str, Any]:
+    """Build an experimental NVFP4-weight + INT4-activation config."""
+    cfg: Dict[str, Any] = deepcopy(mtq.NVFP4_DEFAULT_CFG)
+    quant_cfg = cfg.get("quant_cfg", {})
+    quant_cfg["*input_quantizer"] = {"num_bits": 4, "axis": None, "enable": True}
+    return cfg
+
+
 FP8_ALL_LAYERS_CFG: Dict[str, Any] = _build_fp8_all_layers_cfg()
 INT8_LM_DEFAULT_CFG: Dict[str, Any] = _build_int8_lm_default_cfg()
 INT8_ALL_LAYERS_CFG: Dict[str, Any] = _build_int8_all_layers_cfg()
@@ -259,6 +333,25 @@ INT4_WEIGHT_FP8_ACT_CFG: Dict[str, Any] | None = (
     _build_int4_weight_fp8_act_cfg()
     if (hasattr(mtq, "INT4_BLOCKWISE_WEIGHT_ONLY_CFG") or hasattr(mtq, "INT4_AWQ_CFG"))
     else None
+)
+INT4_WEIGHT_INT8_ACT_CFG: Dict[str, Any] | None = (
+    _build_int4_weight_int8_act_cfg()
+    if (hasattr(mtq, "INT4_BLOCKWISE_WEIGHT_ONLY_CFG") or hasattr(mtq, "INT4_AWQ_CFG"))
+    else None
+)
+INT4_WEIGHT_INT4_ACT_CFG: Dict[str, Any] | None = (
+    _build_int4_weight_int4_act_cfg()
+    if (hasattr(mtq, "INT4_BLOCKWISE_WEIGHT_ONLY_CFG") or hasattr(mtq, "INT4_AWQ_CFG"))
+    else None
+)
+INT8_WEIGHT_INT4_ACT_CFG: Dict[str, Any] = _build_int8_weight_int4_act_cfg()
+FP8_WEIGHT_INT8_ACT_CFG: Dict[str, Any] = _build_fp8_weight_int8_act_cfg()
+FP8_WEIGHT_INT4_ACT_CFG: Dict[str, Any] = _build_fp8_weight_int4_act_cfg()
+NVFP4_WEIGHT_INT8_ACT_CFG: Dict[str, Any] | None = (
+    _build_nvfp4_weight_int8_act_cfg() if hasattr(mtq, "NVFP4_DEFAULT_CFG") else None
+)
+NVFP4_WEIGHT_INT4_ACT_CFG: Dict[str, Any] | None = (
+    _build_nvfp4_weight_int4_act_cfg() if hasattr(mtq, "NVFP4_DEFAULT_CFG") else None
 )
 NVFP4_WEIGHT_ONLY_CFG: Dict[str, Any] | None = (
     _build_nvfp4_weight_only_cfg() if hasattr(mtq, "NVFP4_DEFAULT_CFG") else None
@@ -276,10 +369,21 @@ CUSTOM_QUANT_CONFIGS: Dict[str, Dict[str, Any]] = {
     "INT8_WEIGHT_ONLY_CFG": INT8_WEIGHT_ONLY_CFG,
     "FP8_WEIGHT_ONLY_CFG": FP8_WEIGHT_ONLY_CFG,
     "INT8_WEIGHT_FP8_ACT_CFG": INT8_WEIGHT_FP8_ACT_CFG,
+    "INT8_WEIGHT_INT4_ACT_CFG": INT8_WEIGHT_INT4_ACT_CFG,
+    "FP8_WEIGHT_INT8_ACT_CFG": FP8_WEIGHT_INT8_ACT_CFG,
+    "FP8_WEIGHT_INT4_ACT_CFG": FP8_WEIGHT_INT4_ACT_CFG,
 }
 
 if INT4_WEIGHT_FP8_ACT_CFG is not None:
     CUSTOM_QUANT_CONFIGS["INT4_WEIGHT_FP8_ACT_CFG"] = INT4_WEIGHT_FP8_ACT_CFG
+if INT4_WEIGHT_INT8_ACT_CFG is not None:
+    CUSTOM_QUANT_CONFIGS["INT4_WEIGHT_INT8_ACT_CFG"] = INT4_WEIGHT_INT8_ACT_CFG
+if INT4_WEIGHT_INT4_ACT_CFG is not None:
+    CUSTOM_QUANT_CONFIGS["INT4_WEIGHT_INT4_ACT_CFG"] = INT4_WEIGHT_INT4_ACT_CFG
+if NVFP4_WEIGHT_INT8_ACT_CFG is not None:
+    CUSTOM_QUANT_CONFIGS["NVFP4_WEIGHT_INT8_ACT_CFG"] = NVFP4_WEIGHT_INT8_ACT_CFG
+if NVFP4_WEIGHT_INT4_ACT_CFG is not None:
+    CUSTOM_QUANT_CONFIGS["NVFP4_WEIGHT_INT4_ACT_CFG"] = NVFP4_WEIGHT_INT4_ACT_CFG
 if NVFP4_WEIGHT_ONLY_CFG is not None:
     CUSTOM_QUANT_CONFIGS["NVFP4_WEIGHT_ONLY_CFG"] = NVFP4_WEIGHT_ONLY_CFG
 if MXFP4_WEIGHT_ONLY_CFG is not None:
