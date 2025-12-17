@@ -198,6 +198,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             autoquant_state=manifest["autoquant_state"],
             out_path=sensitivity_md_path,
             model_id=model_id,
+            dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
         )
         write_layer_sensitivity_json(
             manifest=manifest,
@@ -233,6 +234,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             calib_seq_len=args.calib_seq_len,
             batch_size=args.batch_size,
             device=args.device,
+            dataset_name=args.captions_path.stem,
         )
     except Exception as exc:  # noqa: BLE001
         print(f"[ERROR] AutoQuant run failed: {exc}", file=sys.stderr)
@@ -258,6 +260,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         autoquant_state=manifest["autoquant_state"],
         out_path=sensitivity_md_path,
         model_id=model_id,
+        dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
     )
     write_layer_sensitivity_json(
         manifest=manifest,

@@ -129,6 +129,7 @@ def main(cfg: DictConfig) -> None:
             autoquant_state=manifest["autoquant_state"],
             out_path=sensitivity_md_path,
             model_id=model_id,
+            dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
         )
         write_layer_sensitivity_json(
             manifest=manifest,
@@ -154,6 +155,9 @@ def main(cfg: DictConfig) -> None:
         calib_seq_len=int(cfg.dataset.calib_seq_len),
         batch_size=int(cfg.autoquant.batch_size),
         device=str(cfg.autoquant.device),
+        dataset_name=str(cfg.dataset.name) if cfg.dataset.get("name") is not None else None,
+        dataset_size=str(cfg.dataset.size) if cfg.dataset.get("size") is not None else None,
+        dataset_root=Path(str(cfg.dataset.root)) if cfg.dataset.get("root") is not None else None,
     )
 
     torch.save(state_dict, state_path)
@@ -168,6 +172,7 @@ def main(cfg: DictConfig) -> None:
         autoquant_state=manifest["autoquant_state"],
         out_path=sensitivity_md_path,
         model_id=model_id,
+        dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
     )
     write_layer_sensitivity_json(
         manifest=manifest,

@@ -307,6 +307,9 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
     batch_size: int,
     device: str,
     torch_dtype: Optional[torch.dtype] = None,
+    dataset_name: Optional[str] = None,
+    dataset_size: Optional[str] = None,
+    dataset_root: Optional[Path] = None,
 ) -> Tuple[Dict[str, Any], Mapping[str, Any]]:
     """Load Qwen3-VL, extract LM, run AutoQuant, and return the manifest/state."""
 
@@ -364,6 +367,22 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
         max_samples=max_calib_samples,
         max_length=calib_seq_len,
     )
+    try:
+        num_calib_samples = len(calib_loader.dataset)  # type: ignore[arg-type]
+    except Exception:
+        num_calib_samples = None
+
+    dataset_meta: Dict[str, Any] = {
+        "name": dataset_name or captions_path.stem,
+        "size": dataset_size,
+        "root": str(dataset_root) if dataset_root is not None else None,
+        "captions_path": str(captions_path),
+        "max_calib_samples": int(max_calib_samples),
+        "num_calib_samples": int(num_calib_samples) if num_calib_samples is not None else None,
+        "calib_seq_len": int(calib_seq_len),
+        "batch_size": int(batch_size),
+        "num_calib_batches": len(calib_loader),
+    }
 
     disabled_layers: Optional[List[str]] = None
     coverage_mode = str(scheme.coverage_mode)
@@ -407,6 +426,7 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
         state_dict=state_dict,
         model_id=str(model_dir),
     )
+    manifest["dataset"] = {key: value for key, value in dataset_meta.items() if value is not None}
     return manifest, state_dict
 
 

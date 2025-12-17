@@ -198,6 +198,7 @@ def write_layer_sensitivity_md(
     autoquant_state: Mapping[str, Any],
     out_path: Path,
     model_id: Optional[str] = None,
+    dataset: Optional[Mapping[str, Any]] = None,
 ) -> None:
     """Write a Markdown summary of per-layer AutoQuant sensitivity."""
 
@@ -227,6 +228,46 @@ def write_layer_sensitivity_md(
     if model_id is not None:
         md_file.new_line("")
         md_file.new_line(f"**Model:** `{model_id}`")
+
+    if dataset:
+        md_file.new_header(level=2, title="Dataset", add_table_of_contents="n")
+        md_file.new_line("")
+
+        dataset_name = dataset.get("name")
+        if dataset_name is not None:
+            md_file.new_line(f"- **Name:** `{dataset_name}`")
+
+        dataset_size = dataset.get("size")
+        if dataset_size is not None:
+            md_file.new_line(f"- **Size:** `{dataset_size}`")
+
+        captions_path = dataset.get("captions_path")
+        if captions_path is not None:
+            md_file.new_line(f"- **Captions path:** `{captions_path}`")
+
+        root = dataset.get("root")
+        if root is not None:
+            md_file.new_line(f"- **Root:** `{root}`")
+
+        max_calib_samples = dataset.get("max_calib_samples")
+        num_calib_samples = dataset.get("num_calib_samples")
+        if max_calib_samples is not None or num_calib_samples is not None:
+            md_file.new_line(
+                f"- **Calibration samples:** `{num_calib_samples}` / `{max_calib_samples}` "
+                "(used / max)"
+            )
+
+        calib_seq_len = dataset.get("calib_seq_len")
+        if calib_seq_len is not None:
+            md_file.new_line(f"- **Calibration seq len:** `{calib_seq_len}`")
+
+        batch_size = dataset.get("batch_size")
+        if batch_size is not None:
+            md_file.new_line(f"- **Batch size:** `{batch_size}`")
+
+        num_calib_batches = dataset.get("num_calib_batches")
+        if num_calib_batches is not None:
+            md_file.new_line(f"- **Calibration batches:** `{num_calib_batches}`")
 
     constraints = autoquant_state.get("constraints") or {}
     eff_bits = None
@@ -340,6 +381,7 @@ def write_layer_sensitivity_json(
 
     scheme = manifest.get("scheme", {})
     model_meta = manifest.get("model", {})
+    dataset_meta = manifest.get("dataset", {})
     autoquant_state = manifest.get("autoquant_state", {})
     layer_sensitivity = manifest.get("layer_sensitivity", {})
 
@@ -394,6 +436,7 @@ def write_layer_sensitivity_json(
     payload: Dict[str, Any] = {
         "scheme": scheme,
         "model": model_meta,
+        "dataset": dataset_meta,
         "autoquant_state": autoquant_state,
         "layer_sensitivity": rows,
     }
