@@ -31,7 +31,7 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
   dataset.size=small
 ```
 
-Publish artifacts under `models/qwen3_vl_4b_instruct/layer-analysis/` (default publish layout):
+Publish artifacts under the built-in publish layout `models/qwen3_vl_4b_instruct/layer-analysis/`:
 
 ```bash
 pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
@@ -40,7 +40,7 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
   dataset.size=small
 ```
 
-To write directly into a custom publish directory (recommended when matching a repo-specific layout):
+To write directly into the repo’s timestamped LM-only layout (recommended for committed runs):
 
 ```bash
 pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
@@ -57,6 +57,16 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
   output_layout=publish \
   quant_pair=wfp4_afp8,wfp8_afp8,wfp8_afp16,wint8_afp16 \
   dataset.size=small,medium,large
+```
+
+If you want the sweep to land in the timestamped LM-only layout, set `runner.output_dir` using Hydra interpolations:
+
+```bash
+pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
+  output_layout=tmp \
+  runner.output_dir=models/qwen3_vl_4b_instruct/layer-analysis/lm-only/${now:%Y-%m-%d_%H-%M-%S}/${quant_pair.name}/${dataset.size} \
+  quant_pair=wfp8_afp8,wint8_aint8_lm_only \
+  dataset.size=small,medium
 ```
 
 ## Available precision pairs

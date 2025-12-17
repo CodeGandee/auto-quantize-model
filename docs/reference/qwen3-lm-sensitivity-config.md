@@ -80,7 +80,8 @@ Optional compatibility overrides (used for matching published folder layouts):
 - `quant_pair.scheme_name`: overrides the AutoQuant scheme name (affects manifest/state filenames).
 - `quant_pair.publish_pair_dir`: overrides the `weight-<w>-act-<a>` folder name in publish mode.
 - `quant_pair.publish_run_dir`: overrides the run directory name in publish mode.
-- `quant_pair.coverage_mode` / `quant_pair.coverage_fraction`: stored in the scheme metadata (does not affect execution).
+- `quant_pair.coverage_mode`: controls whether the run is LM-only (`lm_only`, disables `model.visual*`) or full-model (`full`).
+- `quant_pair.coverage_fraction`: reserved metadata for partial-coverage experiments (may not affect execution in all runners).
 
 Coverage notes:
 

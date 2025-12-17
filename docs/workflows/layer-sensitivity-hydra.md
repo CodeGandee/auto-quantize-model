@@ -52,11 +52,17 @@ pixi run -e <env> python scripts/qwen/qwen3_lm_sensitivity.py \
 The runner supports two output modes:
 
 - `output_layout=tmp`: write into the Hydra run directory under `tmp/model-experiments/...` (good for iteration).
-- `output_layout=publish`: write into a stable, publishable folder under `models/<model>/layer-analysis/...`.
+- `output_layout=publish`: write into the built-in publish layout under `models/<model>/layer-analysis/...` (the default structure is `weight-<w>-act-<a>/<run_dir>`).
 
 See the per-run resolution logic and override fields in the config reference page.
 
 If you want a fully deterministic output directory (e.g. matching a repo-specific publish layout), prefer `runner.output_dir=/abs/or/rel/path` over `output_layout=publish`.
+
+In this repo we often commit results into a timestamped layout like:
+
+- `models/qwen3_vl_4b_instruct/layer-analysis/lm-only/<ts>/<quant_pair>/...`
+
+That layout is typically produced by setting `runner.output_dir=...` and leaving `output_layout=tmp`.
 
 ## Regenerate reports without rerunning AutoQuant
 
