@@ -4,7 +4,7 @@
 
 - Implement a Hydra-configurable workflow to run **Qwen3‑VL LM-only** per-layer sensitivity analysis across weight/activation precision pairs: **W∈{FP4, FP8, INT8} × A∈{FP8, FP16}**, refactoring existing ModelOpt AutoQuant drivers in this repo into reusable library code and thin Hydra runners.
 
-Related implementation plan (background + rationale): `context/plans/plan-qwen3-vl-lm-only-per-layer-sensitivity-hydra.md`.
+Related implementation plan (background + rationale): `context/plans/done/plan-qwen3-vl-lm-only-per-layer-sensitivity-hydra.md`.
 
 ## 1. Qwen3-VL LM-only per-layer sensitivity (Hydra)
 
@@ -40,37 +40,37 @@ Short description: Turn the existing Qwen3 sensitivity scripts into a Hydra-driv
 
 Goal: Decide the exact mapping for “FP4/FP8/INT8 weights” and “FP8/FP16 activations” to ModelOpt quantization configs (including any required custom configs), and document/encode that mapping so Hydra configs are unambiguous.
 
-- Subtask spec: `context/tasks/working/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-101-confirm-precision-pair-mapping.md`
+- Subtask spec: `context/tasks/done/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-101-confirm-precision-pair-mapping.md`
 
 #### 1.2 Add Hydra config tree for Qwen3 LM-only sensitivity
 
 Goal: Add `conf/` entries for the Qwen3 model, captions calibration subsets, AutoQuant defaults, and a user-facing “quant_pair” (or “format_set”) knob so we can sweep configurations without editing Python code.
 
-- Subtask spec: `context/tasks/working/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-102-add-hydra-config-tree.md`
+- Subtask spec: `context/tasks/done/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-102-add-hydra-config-tree.md`
 
 #### 1.3 Refactor existing Qwen sensitivity logic into shared library code
 
 Goal: Extract/centralize model loading, LM-only extraction, calibration dataloaders, AutoQuant invocation, and report writing into `src/auto_quantize_model/` so both Hydra and legacy scripts can reuse it.
 
-- Subtask spec: `context/tasks/working/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-103-refactor-to-shared-library.md`
+- Subtask spec: `context/tasks/done/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-103-refactor-to-shared-library.md`
 
 #### 1.4 Implement the Hydra runner CLI for LM-only sensitivity
 
 Goal: Provide a `@hydra.main` entry point that composes configs, runs the LM-only sensitivity pass, supports `report_only`, and writes artifacts to the configured output layout.
 
-- Subtask spec: `context/tasks/working/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-104-implement-hydra-runner.md`
+- Subtask spec: `context/tasks/done/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-104-implement-hydra-runner.md`
 
 #### 1.5 Migrate existing Qwen3 sensitivity scripts/wrappers to Hydra
 
 Goal: Keep current scripts working (or cleanly deprecate them) while switching the “official” workflow to Hydra, including a Hydra-based replacement for the 3-phase bash runner.
 
-- Subtask spec: `context/tasks/working/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-105-migrate-existing-scripts.md`
+- Subtask spec: `context/tasks/done/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-105-migrate-existing-scripts.md`
 
 #### 1.6 Validate, publish artifacts, add tests and docs
 
 Goal: Regenerate the existing INT8 LM-only sensitivity outputs via Hydra for parity, run at least one new precision pair, publish artifacts under `models/.../layer-analysis/`, and add unit tests for non-GPU helpers.
 
-- Subtask spec: `context/tasks/working/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-106-validate-and-document.md`
+- Subtask spec: `context/tasks/done/qwen3-vl-lm-only-per-layer-sensitivity-hydra/subtask-001-106-validate-and-document.md`
 
 ### TODOs
 

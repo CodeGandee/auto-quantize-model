@@ -219,6 +219,86 @@ Key modelopt details reflected above (source-backed):
 - Score modules are not always the quantized modules: ModelOpt can estimate a group’s sensitivity at a higher-level “score module” (e.g., MoE MLP output) via `score_module_rules`; the hparam attaches itself to `score_module._hparams_for_scoring` (see `QuantRecipeHparam.__init__` and `_AutoQuantizeBaseSearcher.insert_hparams_after_merge_rules()` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
 - The exact score function is `sum((grad_output^2) * (ΔY^2))` (`_get_auto_quantize_score` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
 
+#### How `method="gradient"` uses scores during search (binary LP / MILP formulation)
+
+Once per-layer/per-recipe scores are estimated, ModelOpt solves a constrained mixed-precision selection problem.
+Despite the name “LP solver”, the implementation uses **binary decision variables** (`LpBinary`) via PuLP/CBC
+(`LPS` in `extern/TensorRT-Model-Optimizer/modelopt/torch/opt/searcher.py`), i.e., a 0-1 linear program (MILP).
+
+**Setup (what is being optimized):**
+
+Let there be $M$ configurable quantization groups (ModelOpt’s `QuantRecipeHparam`s after applying grouping rules).
+For group $m \in \{1,\dots,M\}$, let $\mathcal{R}_m$ be the set of candidate recipes, including `NONE`
+(unquantized) and any formats you passed via `quantization_formats`.
+
+For each $(m, r)$ pair, ModelOpt defines:
+
+- a **score** $s_{m,r}$ = estimated loss increase proxy for selecting recipe $r$ for group $m$ (from scoring),
+- a **cost** $c_{m,r}$ = estimated compressed weight “size” contribution of group $m$ under recipe $r$.
+
+Costs are computed from parameter counts and recipe “compression”:
+
+- Let $w_m$ be the total number of weight elements in the group (see `_AutoQuantizeBaseSearcher._get_total_weight_size`).
+- Each recipe $r$ has a compression factor $\alpha_r \in (0,1]$ where $\alpha_r = \texttt{recipe.compression}$ and
+  $\text{effective\_bits}(r) = 16\alpha_r$ (see `QuantRecipe` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
+- Then $c_{m,r} = w_m \alpha_r$ (see `QuantRecipeHparam.get_cost`).
+
+The overall “effective bits” target $B$ (your `constraints={"effective_bits": B}`) is converted into a total
+budget:
+
+$$
+W \;=\; \sum_{m=1}^{M} w_m
+\quad,\quad
+ C_{\max} \;=\; W \cdot \frac{B}{16}
+$$
+
+This matches the code’s `max_weight_size = total_weight_size * (effective_bits/16)` in
+`_AutoQuantizeBaseSearcher.run_search()`.
+
+**Decision variables (one recipe per group):**
+
+Introduce binary variables $z_{m,r} \in \{0,1\}$ that indicate which recipe is chosen:
+
+$$
+\sum_{r \in \mathcal{R}_m} z_{m,r} = 1 \quad \forall m
+$$
+
+**Objective (minimize total estimated loss increase):**
+
+$$
+\min_{z} \quad \sum_{m=1}^{M}\sum_{r \in \mathcal{R}_m} s_{m,r}\, z_{m,r}
+$$
+
+**Constraint (meet the effective-bits / size budget):**
+
+$$
+\sum_{m=1}^{M}\sum_{r \in \mathcal{R}_m} c_{m,r}\, z_{m,r} \;\le\; C_{\max}
+$$
+
+Equivalently, substituting $c_{m,r} = w_m \alpha_r$ and $\text{effective\_bits}(r)=16\alpha_r$:
+
+$$
+\sum_{m=1}^{M}\sum_{r \in \mathcal{R}_m} w_m \cdot \text{effective\_bits}(r) \cdot z_{m,r}
+\;\le\;
+B \cdot \sum_{m=1}^{M} w_m
+$$
+
+So the constraint enforces a **parameter-count-weighted average effective bits** $\le B$.
+
+**Why summing scores across groups is the right objective here (approximation):**
+
+The gradient score $s_{m,r}$ is derived from a second-order Taylor/Fisher approximation of loss increase due to
+the activation perturbation caused by quantizing group $m$ under recipe $r$. Under the simplifying assumptions
+used by the method (diagonal Fisher/Hessian approximation and ignoring cross-terms), the total loss increase
+from quantizing many groups is approximated as the **sum** of per-group loss increases. This is what makes a
+sum-of-scores objective reasonable as a proxy for “best overall mixed precision”.
+
+**Implementation detail (monotonicity smoothing):**
+
+ModelOpt clamps per-group candidate scores to be monotone non-increasing as formats become less aggressive
+(more bits) via `score = min(score, prev_score)` while iterating recipes in compression order
+(`_AutoQuantizeBaseSearcher.initialize_candidate_stats` in `extern/TensorRT-Model-Optimizer/modelopt/torch/quantization/algorithms.py`).
+
 ### 2.2 KL-divergence sensitivity scoring (`method="kl_div"`, label-free)
 
 ModelOpt also supports `method="kl_div"`:
@@ -306,3 +386,111 @@ quantized_model, state = mtq.auto_quantize(
     method="kl_div",
 )
 ```
+
+## 4. Appendix
+
+### 4.1 How do I run gradient-based sensitivity scoring without ground-truth labels?
+
+#### 4.1.1 Requirement: a differentiable scalar loss
+
+ModelOpt’s gradient method requires a backward pass. Concretely, it needs a scalar loss
+$L$ so it can compute gradients $\partial L / \partial Y$ for score-module outputs
+and accumulate the score $\sum (\partial L / \partial Y)^2 (\Delta Y)^2$.
+
+This does **not** mean you must have externally provided “ground-truth labels” like a
+classification dataset. It means you must define *some* differentiable objective that
+produces non-zero gradients.
+
+#### 4.1.2 Self-supervised labels for causal LMs (text-only calibration)
+
+A common way to obtain a loss without external labels is self-supervision. For an
+autoregressive (causal) language model, any raw text sequence can be used for next-token
+prediction:
+
+- Tokenize the text into `input_ids = [t1, t2, ..., tT]`
+- Define `labels = input_ids` (optionally masking padding with an ignore index)
+- Compute the standard shifted cross-entropy loss:
+
+$$
+L \;=\; -\frac{1}{T-1}\sum_{k=1}^{T-1} \log p_\theta\!\left(t_{k+1}\mid t_{\le k}\right)
+$$
+
+So even when your “calibration data” is just unlabeled text, you can still run
+`method="gradient"` by providing a `loss_func` that computes this causal LM loss.
+
+#### 4.1.3 How this repo’s COCO-caption sensitivity runs create labels
+
+Our LM-only Qwen sensitivity flows use COCO caption text lines as calibration inputs and
+synthesize labels from the tokenized inputs:
+
+- The dataset returns `labels = input_ids.clone()` (self-supervision): `src/auto_quantize_model/qwen/autoquant_sensitivity.py`.
+- The AutoQuant runner passes a `loss_func` that computes shifted causal cross-entropy from
+  model outputs + `batch["labels"]`: `src/auto_quantize_model/modelopt_autoquant.py` (`create_causal_lm_loss_func`)
+  and `src/auto_quantize_model/qwen/autoquant_sensitivity.py` (`create_lm_loss_func`).
+
+#### 4.1.4 When to use `method="kl_div"` instead
+
+If your model/task doesn’t have a natural self-supervised objective from inputs alone (or you
+explicitly want label-free scoring), use `method="kl_div"` instead; it is forward-only and
+scores recipes using KL divergence between unquantized and quantized logits.
+
+### 4.2 Are gradient-based sensitivity scores comparable across layers (and can I pick the top-N)?
+
+#### 4.2.1 What the “unnormalized” score represents
+
+For `method="gradient"`, ModelOpt’s raw score for a (group, recipe) is a sum over:
+
+- all score steps/batches used during scoring, and
+- all elements of the score-module output tensor.
+
+Concretely (up to constant factors), it accumulates:
+
+$$
+s_{m,r} \;\propto\; \sum_{b}\sum_{i}\left(\frac{\partial L^{(b)}}{\partial Y^{(b)}_{m,i}}\right)^2
+\left(\Delta Y^{(b)}_{m,i}(r)\right)^2
+$$
+
+So “unnormalized” mainly means it scales with the amount of data scored (`num_score_steps`) and the number of
+elements in the score-module output. This is expected: larger groups can contribute more to total loss change.
+
+#### 4.2.2 When comparing scores across groups is meaningful
+
+Comparing scores across groups is meaningful **within a single AutoQuant run** (same model, same loss, same
+calibration traffic, same `num_score_steps`), because all $s_{m,r}$ values are computed on the same scale and are
+intended to be proxies for comparable quantities: per-group expected loss increase from quantization.
+
+ModelOpt itself relies on cross-group comparability: the gradient search objective is the sum of selected
+per-group scores (see the MILP formulation above).
+
+#### 4.2.3 When absolute score magnitudes are not comparable
+
+Absolute score values should not be compared across runs when any of the following change:
+
+- `num_score_steps`, batch size, or sequence length / token count (changes the amount of summed signal),
+- the loss definition or scaling (e.g., mean vs sum reductions, mixed precision scaling),
+- the dataset distribution (different calibration prompts),
+- score-module placement (e.g., using a higher-level score module in one run but not another).
+
+In those cases, re-rank within each run or compute normalized diagnostics (e.g., per-token or per-sample scaling)
+if you need cross-run comparisons.
+
+#### 4.2.4 “Top-N most sensitive layers” vs “best use of extra bits”
+
+If you want to keep **exactly $N$ layers/groups** in higher precision, a simple heuristic is to rank by the score
+for the most aggressive candidate recipe and keep the top-$N$ groups unquantized (or in a higher-bit format).
+
+However, if your real goal is “best accuracy for a fixed memory/bit budget”, raw score ranking is not ideal
+because it ignores cost trade-offs. A more relevant quantity is the **marginal score reduction per marginal cost**
+when moving a group from a low-bit recipe $r_\text{low}$ to a higher-precision recipe $r_\text{high}$:
+
+$$
+\text{benefit}_m \;=\; s_{m,r_\text{low}} - s_{m,r_\text{high}}
+\quad,\quad
+\text{extra\_cost}_m \;=\; c_{m,r_\text{high}} - c_{m,r_\text{low}}
+$$
+
+Then prioritize larger $\text{benefit}_m / \text{extra\_cost}_m$ (“loss saved per extra bit/byte”).
+
+In practice, the simplest and most principled approach is to let ModelOpt solve the full constrained selection
+problem by providing multiple candidate formats in `quantization_formats=[...]` and setting
+`constraints={"effective_bits": ...}`; the MILP objective already encodes the global trade-off.
