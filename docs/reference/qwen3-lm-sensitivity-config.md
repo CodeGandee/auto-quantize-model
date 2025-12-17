@@ -48,6 +48,8 @@ Common fields:
 - `dataset.max_calib_samples`: optional override; if null, the runner uses `dataset.size_to_max_samples[dataset.size]`
 - `dataset.calib_seq_len`: tokenization max length
 
+The run manifest also records dataset metadata under `manifest["dataset"]`, and both `per-layer-sensitivity.md` and `per-layer-sensitivity.json` surface this information (dataset name/path, max vs used calibration samples, etc.).
+
 Override example:
 
 ```bash
@@ -68,8 +70,8 @@ quant_pair=<name>
 Common fields in each `conf/quant_pair/*.yaml`:
 
 - `quant_pair.name`: identifier used in output naming and defaults.
-- `quant_pair.weight`: `fp4|fp8|int8`
-- `quant_pair.activation`: `fp8|fp16|int8` (the `int8` activation is for legacy parity only).
+- `quant_pair.weight`: `fp4|fp8|int4|int8`
+- `quant_pair.activation`: `fp8|fp16|int4|int8`
 - `quant_pair.format_name`: ModelOpt format name (either built-in `mtq.*` or a key in `CUSTOM_QUANT_CONFIGS`).
 - `quant_pair.experimental`: when true, the runner prints a warning.
 
@@ -79,6 +81,11 @@ Optional compatibility overrides (used for matching published folder layouts):
 - `quant_pair.publish_pair_dir`: overrides the `weight-<w>-act-<a>` folder name in publish mode.
 - `quant_pair.publish_run_dir`: overrides the run directory name in publish mode.
 - `quant_pair.coverage_mode` / `quant_pair.coverage_fraction`: stored in the scheme metadata (does not affect execution).
+
+Coverage notes:
+
+- `coverage_mode=lm_only` disables quantization for the vision tower (`model.visual*`) while still including vision layers in the report table as `NONE(...)` recipes.
+- `coverage_mode=full` allows both vision and LM layers to be quantized (subject to ModelOpt operator support).
 
 ## AutoQuant
 
@@ -110,6 +117,8 @@ The runner resolves the final output directory as:
 3. Else if `output_layout.mode == publish`: write under:
    - `${output_layout.root_dir}/weight-<weight>-act-<activation>/<run_dir>`
    - with optional overrides from `quant_pair.publish_pair_dir` / `quant_pair.publish_run_dir`.
+
+If you are committing results into a custom layout (e.g. `models/<model>/layer-analysis/lm-only/<ts>/<pair>/...`), set `runner.output_dir` to that folder and keep `output_layout=tmp` (so Hydra still controls the job working directory and logs).
 
 ## Adding a new quant pair
 

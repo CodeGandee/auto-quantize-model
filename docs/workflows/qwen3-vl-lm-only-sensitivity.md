@@ -6,6 +6,11 @@ The Hydra entry point is:
 
 - `scripts/qwen/qwen3_lm_sensitivity.py`
 
+## What “LM-only” means here
+
+- The runner loads the full Qwen3-VL model, but disables vision tower quantization (`model.visual*`), and calibrates/scoring uses **text-only** batches.
+- Reports still list **all layers** (including vision) so that downstream tooling can reason about the entire model; vision layers should appear as `NONE(...)` with near-zero sensitivity in LM-only runs.
+
 ## Prerequisites
 
 - Qwen3-VL checkpoint exists at `models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct` (see `models/qwen3_vl_4b_instruct/bootstrap.sh`).
@@ -26,12 +31,22 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
   dataset.size=small
 ```
 
-Publish artifacts under `models/qwen3_vl_4b_instruct/layer-analysis/`:
+Publish artifacts under `models/qwen3_vl_4b_instruct/layer-analysis/` (default publish layout):
 
 ```bash
 pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
   output_layout=publish \
   quant_pair=wfp8_afp16 \
+  dataset.size=small
+```
+
+To write directly into a custom publish directory (recommended when matching a repo-specific layout):
+
+```bash
+pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
+  output_layout=tmp \
+  runner.output_dir=models/qwen3_vl_4b_instruct/layer-analysis/lm-only/$(date +%F_%H-%M-%S)/wfp8_afp8 \
+  quant_pair=wfp8_afp8 \
   dataset.size=small
 ```
 
@@ -48,13 +63,21 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
 
 These are defined in `conf/quant_pair/` and can be selected via `quant_pair=<name>`:
 
-- `wfp4_afp8`: FP4 weights (MXFP4) + FP8 activations (W4A8).
+- `wfp4_afp8`: FP4 weights (NVFP4) + FP8 activations (W4A8).
 - `wfp4_afp16`: FP4 weight-only (input quantizer disabled).
 - `wfp8_afp8`: FP8 weights + FP8 activations.
 - `wfp8_afp16`: FP8 weight-only.
+- `wfp4_aint4`: FP4 weights + INT4 activations (**experimental**).
+- `wfp4_aint8`: FP4 weights + INT8 activations (**experimental**).
+- `wfp8_aint4`: FP8 weights + INT4 activations (**experimental**).
+- `wfp8_aint8`: FP8 weights + INT8 activations (**experimental**).
+- `wint4_aint4`: INT4 weights + INT4 activations (**experimental**).
+- `wint4_aint8`: INT4 weights + INT8 activations (**experimental**).
+- `wint8_aint4`: INT8 weights + INT4 activations (**experimental**).
+- `wint8_aint8_lm_only`: INT8 weights + INT8 activations (LM-only, non-legacy).
 - `wint8_afp16`: INT8 weight-only.
 - `wint8_afp8`: INT8 weights + FP8 activations (**experimental**).
-- `wint8_aint8`: legacy/published parity pair for INT8 default LLM config.
+- `wint8_aint8`: legacy/published parity pair for INT8 default LLM config (kept for compatibility).
 
 ## Report-only mode
 

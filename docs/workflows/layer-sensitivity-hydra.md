@@ -15,6 +15,10 @@ Each run writes:
 - `per-layer-sensitivity.json`: machine-readable report.
 - `*_autoquant_state.pt`: raw AutoQuant state (typically ignored by Git under `models/...`).
 
+Notes:
+
+- The manifest JSON includes `scheme`, `model`, and `dataset` metadata. The Markdown report also includes a `## Dataset` section (paths, size, and calibration sample counts).
+
 ## Common Hydra patterns
 
 Single run:
@@ -51,6 +55,8 @@ The runner supports two output modes:
 - `output_layout=publish`: write into a stable, publishable folder under `models/<model>/layer-analysis/...`.
 
 See the per-run resolution logic and override fields in the config reference page.
+
+If you want a fully deterministic output directory (e.g. matching a repo-specific publish layout), prefer `runner.output_dir=/abs/or/rel/path` over `output_layout=publish`.
 
 ## Regenerate reports without rerunning AutoQuant
 
