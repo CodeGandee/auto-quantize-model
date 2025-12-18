@@ -153,6 +153,12 @@ def _load_manifest(path: Path) -> Mapping[str, Any]:
     return payload
 
 
+def _write_composed_config_yaml(cfg: DictConfig, output_dir: Path) -> Path:
+    path = output_dir / "composed-config.yaml"
+    path.write_text(OmegaConf.to_yaml(cfg, resolve=True), encoding="utf-8")
+    return path
+
+
 @hydra.main(config_path="../../conf", config_name="preset/qwen3_lm_sensitivity", version_base=None)
 def main(cfg: DictConfig) -> None:
     scheme = _build_scheme(cfg)
@@ -160,10 +166,12 @@ def main(cfg: DictConfig) -> None:
     output_dir = _resolve_output_dir(cfg)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    composed_config_path = _write_composed_config_yaml(cfg, output_dir)
+
     manifest_path = output_dir / f"{scheme.name}_quant_manifest.json"
     state_path = output_dir / f"{scheme.name}_autoquant_state.pt"
-    sensitivity_md_path = output_dir / "per-layer-sensitivity.md"
-    sensitivity_json_path = output_dir / "per-layer-sensitivity.json"
+    sensitivity_md_path = output_dir / "layer-sensitivity-report.md"
+    sensitivity_json_path = output_dir / "layer-sensitivity-report.json"
 
     if bool(cfg.quant_pair.get("experimental", False)):
         print(f"[WARN] quant_pair {cfg.quant_pair.name!r} is marked experimental.")
@@ -173,6 +181,11 @@ def main(cfg: DictConfig) -> None:
             raise FileNotFoundError(f"Report-only mode requested but manifest JSON not found: {manifest_path}")
 
         manifest = _load_manifest(manifest_path)
+        if isinstance(manifest, dict):
+            manifest.setdefault(
+                "run_config",
+                {"composed_yaml_path": str(composed_config_path.relative_to(output_dir))},
+            )
         model_id: Optional[str] = None
         model_meta = manifest.get("model") or {}
         if isinstance(model_meta, dict):
@@ -185,6 +198,8 @@ def main(cfg: DictConfig) -> None:
             out_path=sensitivity_md_path,
             model_id=model_id,
             dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
+            quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+            run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
         )
         write_layer_sensitivity_json(
             manifest=manifest,
@@ -248,6 +263,9 @@ def main(cfg: DictConfig) -> None:
             "*input_quantizer": input_summary,
         },
     }
+    manifest["run_config"] = {
+        "composed_yaml_path": str(composed_config_path.relative_to(output_dir)),
+    }
 
     torch.save(state_dict, state_path)
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
@@ -262,6 +280,8 @@ def main(cfg: DictConfig) -> None:
         out_path=sensitivity_md_path,
         model_id=model_id,
         dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
+        quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+        run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
     )
     write_layer_sensitivity_json(
         manifest=manifest,

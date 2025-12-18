@@ -59,4 +59,4 @@ pixi run -e rtx5090-vllm python \
 ```
 
 Outputs include `*_autoquant_state.pt`, `*_quant_manifest.json`, and
-`per-layer-sensitivity.{md,json}` under the selected `tmp/` subdirectory.
+`layer-sensitivity-report.{md,json}` under the selected `tmp/` subdirectory.

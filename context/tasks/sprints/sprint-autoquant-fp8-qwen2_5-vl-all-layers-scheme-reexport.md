@@ -33,7 +33,7 @@ Related context:
   - Verify `fp8_autoquant_all_layers_fp8_coco2017` contents:
     - `layer-sensitivity/fp8_autoquant_all_layers_fp8_quant_manifest.json`
     - `fp8_autoquant_all_layers_fp8_autoquant_state.pt`
-    - `per-layer-sensitivity.md`
+    - `layer-sensitivity-report.md`
   - Ensure `sensitivity_ranking` in the manifest matches expectations from Subtask 4.4 (least-sensitive layers first).
 - [x] Sprint-A02: Document the mapping from coverage manifests to `disabled_layers`
   - For each `fp8_autoquant_all_layers_topXX_coco2017/layer-sensitivity/*_coverage_from_baseline.json`, validate that:
@@ -83,8 +83,8 @@ Related context:
     - Copy or regenerate:
       - `*_quant_manifest.json` for the scheme.
       - AutoQuant state (`*_autoquant_state.pt`).
-      - `per-layer-sensitivity.md` and coverage manifest into `layer-sensitivity/`.
-  - Implemented: the new driver runs `mtq.auto_quantize` on the full Qwen2.5-VL model with `quantization_formats=[FP8_ALL_LAYERS_CFG]`, `disabled_layers` from the coverage manifest, and a VLM calibration stream; it exports a self-contained HF checkpoint plus scheme-specific `*_quant_manifest.json`, `*_autoquant_state.pt`, `per-layer-sensitivity.md`, and copies of the baseline and coverage manifests into `--out-dir/layer-sensitivity/`.
+      - `layer-sensitivity-report.md` and coverage manifest into `layer-sensitivity/`.
+  - Implemented: the new driver runs `mtq.auto_quantize` on the full Qwen2.5-VL model with `quantization_formats=[FP8_ALL_LAYERS_CFG]`, `disabled_layers` from the coverage manifest, and a VLM calibration stream; it exports a self-contained HF checkpoint plus scheme-specific `*_quant_manifest.json`, `*_autoquant_state.pt`, `layer-sensitivity-report.md`, and copies of the baseline and coverage manifests into `--out-dir/layer-sensitivity/`.
 - [x] Sprint-A06: Add a wrapper script to sweep all all-layers coverage points
   - New script (or extend existing one):
     - `scripts/qwen/run_qwen2_5_vl_3b_autoquant_all_layers_schemes.sh`

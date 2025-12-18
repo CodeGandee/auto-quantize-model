@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
 import torch
-from mdutils import MdUtils
+import yaml  # type: ignore[import-untyped]
 from torch.utils.data import DataLoader, Dataset
 from transformers import (
     AutoConfig,
@@ -36,6 +36,7 @@ from transformers import (
 )
 
 import modelopt.torch.quantization as mtq
+from auto_quantize_model.modelopt_autoquant import write_layer_sensitivity_json, write_layer_sensitivity_md
 from auto_quantize_model.modelopt_configs import CUSTOM_QUANT_CONFIGS
 from modelopt.torch.export import export_hf_checkpoint
 from modelopt.torch.export.model_utils import get_language_model_from_vl
@@ -533,216 +534,6 @@ def build_quant_manifest(
     return manifest
 
 
-def write_layer_sensitivity_md(
-    layer_sensitivity: Mapping[str, Mapping[str, Any]],
-    scheme: AutoQuantSchemeConfig,
-    autoquant_state: Mapping[str, Any],
-    out_path: Path,
-    model_id: Optional[str] = None,
-) -> None:
-    """
-    Write a Markdown summary of per-layer AutoQuant sensitivity.
-
-    The table includes, for each layer quant_recipe key:
-    layer name, candidate formats, scores, and costs.
-    """
-    md_file = MdUtils(
-        file_name=str(out_path.with_suffix("")),
-        title=f"AutoQuant Layer Sensitivity ({scheme.name})",
-    )
-
-    md_file.new_paragraph(f"**Scheme:** `{scheme.name}`")
-    if model_id:
-        md_file.new_paragraph(f"**Model:** `{model_id}`")
-    constraints = autoquant_state.get("constraints") or {}
-    eff_bits = constraints.get("effective_bits")
-    score = autoquant_state.get("score")
-    is_satisfied = autoquant_state.get("is_satisfied")
-
-    if eff_bits is not None:
-        md_file.new_paragraph(f"**Effective bits (from search):** `{eff_bits:.4f}`")
-    if score is not None:
-        md_file.new_paragraph(f"**Total AutoQuant score:** `{score:.6e}`")
-    if is_satisfied is not None:
-        md_file.new_paragraph(
-            f"**Constraint satisfied:** `{bool(is_satisfied)}`",
-        )
-
-    md_file.new_header(
-        level=2,
-        title="Per-layer sensitivity table",
-        add_table_of_contents="n",
-    )
-
-    md_file.new_paragraph(
-        "- **Layer**: Name of the quant_recipe handle for a group of "
-        "quantizable modules (e.g., attention or MLP projections).\n"
-        "- **Num Bits**: Effective number of bits allocated for the "
-        "quantized recipe(s) considered at this layer.\n"
-        "- **Sensitivity**: AutoQuant sensitivity score for the "
-        "quantized recipe(s). Higher values indicate that quantizing this "
-        "layer is more harmful to model quality.\n"
-        "- **Size Cost**: Approximate compressed weight size contribution of "
-        "the layer under the corresponding recipe(s). Higher values indicate "
-        "more memory usage.\n"
-        "\n"
-        "Note: In the JSON manifest, layer keys end with "
-        "`.quant_recipe` (e.g., `language_model.layers.0.mlp.gate_proj.quant_recipe`). "
-        "This suffix is added by ModelOpt to represent the AutoQuant hyperparameter "
-        "attached to that module. In this table we strip the `.quant_recipe` suffix "
-        "for readability; the underlying module path is the part before that suffix."
-    )
-
-    headers = ["Layer", "Num Bits", "Sensitivity", "Size Cost"]
-    rows: List[str] = []
-    row_entries: List[tuple[str, List[str], List[float], List[float]]] = []
-
-    for layer_name, entry in layer_sensitivity.items():
-        entry = layer_sensitivity[layer_name]
-        formats = entry.get("formats", [])
-        scores = entry.get("scores", [])
-        costs = entry.get("costs", [])
-
-        # Filter out the unquantized NONE(...) recipe when reporting sensitivity.
-        filtered: List[tuple[str, float, float]] = []
-        for fmt, score, cost in zip(formats, scores, costs):
-            if fmt.startswith("NONE("):
-                continue
-            filtered.append((fmt, float(score), float(cost)))
-
-        # If the layer was fixed to NONE (no quantized candidates), keep the
-        # NONE row so the report still includes every layer.
-        if not filtered:
-            for fmt, score, cost in zip(formats, scores, costs):
-                filtered.append((str(fmt), float(score), float(cost)))
-
-        if not filtered:
-            continue
-
-        fmt_values = [f for f, _, _ in filtered]
-        score_values = [s for _, s, _ in filtered]
-        cost_values = [c for _, _, c in filtered]
-
-        row_entries.append((layer_name, fmt_values, score_values, cost_values))
-
-    # Sort layers from highest to lowest sensitivity (max score per layer).
-    row_entries.sort(key=lambda x: max(x[2]) if x[2] else 0.0, reverse=True)
-
-    for layer_name, fmt_values, score_values, cost_values in row_entries:
-        # Derive effective bits from format strings (e.g., "...effective-bits: 8.0)").
-        num_bits_values: List[float] = []
-        for fmt in fmt_values:
-            marker = "effective-bits:"
-            bits_val: Optional[float] = None
-            if marker in fmt:
-                try:
-                    suffix = fmt.split(marker, 1)[1]
-                    num_str = suffix.split(")", 1)[0].strip()
-                    bits_val = float(num_str)
-                except Exception:
-                    bits_val = None
-            if bits_val is not None:
-                num_bits_values.append(bits_val)
-
-        num_bits_str = ", ".join(f"{b:.1f}" for b in num_bits_values) if num_bits_values else ""
-        scores_str = ", ".join(f"{s:.3e}" for s in score_values)
-        costs_str = ", ".join(f"{c:.3e}" for c in cost_values)
-
-        # Strip the AutoQuant-specific 'quant_recipe' suffix for readability.
-        display_name = layer_name.replace(".quant_recipe", "")
-
-        rows.extend([display_name, num_bits_str, scores_str, costs_str])
-
-    # Ensure there is a blank line before the table so Markdown
-    # previewers render it correctly.
-    md_file.new_line("")
-
-    md_file.new_table(
-        columns=4,
-        rows=len(row_entries) + 1,
-        text=headers + rows,
-        text_align="left",
-    )
-
-    md_file.create_md_file()
-
-
-def write_layer_sensitivity_json(
-    manifest: Mapping[str, Any],
-    out_path: Path,
-) -> None:
-    """
-    Write a JSON summary of per-layer AutoQuant sensitivity.
-
-    The structure mirrors the Markdown table but is machine-readable:
-    - Top-level keys: scheme, model, autoquant_state, layer_sensitivity.
-    - Each entry in layer_sensitivity has: layer, num_bits, sensitivity, size_cost.
-    """
-    scheme = manifest.get("scheme", {})
-    model_meta = manifest.get("model", {})
-    autoquant_state = manifest.get("autoquant_state", {})
-    layer_sensitivity = manifest.get("layer_sensitivity", {})
-
-    rows: List[Dict[str, Any]] = []
-    for name, entry in layer_sensitivity.items():
-        formats = entry.get("formats") or []
-        scores = entry.get("scores") or []
-        costs = entry.get("costs") or []
-
-        filtered: List[Tuple[str, float, float]] = []
-        for fmt, score, cost in zip(formats, scores, costs):
-            fmt_str = str(fmt)
-            if fmt_str.startswith("NONE("):
-                continue
-            filtered.append((fmt_str, float(score), float(cost)))
-
-        if not filtered:
-            for fmt, score, cost in zip(formats, scores, costs):
-                filtered.append((str(fmt), float(score), float(cost)))
-
-        if not filtered:
-            continue
-
-        num_bits_vals: List[float] = []
-        for fmt_str, _, _ in filtered:
-            marker = "effective-bits:"
-            if marker in fmt_str:
-                try:
-                    suffix = fmt_str.split(marker, 1)[1]
-                    num_str = suffix.split(")", 1)[0].strip()
-                    num_bits_vals.append(float(num_str))
-                except Exception:
-                    continue
-
-        display_name = name.replace(".quant_recipe", "")
-
-        # Use the first values to match the scalar view in the Markdown table.
-        num_bits = num_bits_vals[0] if num_bits_vals else None
-        sensitivity = filtered[0][1] if filtered else None
-        size_cost = filtered[0][2] if filtered else None
-
-        rows.append(
-            {
-                "layer": display_name,
-                "num_bits": num_bits,
-                "sensitivity": sensitivity,
-                "size_cost": size_cost,
-            }
-        )
-
-    rows.sort(key=lambda item: item["sensitivity"] if item["sensitivity"] is not None else 0.0, reverse=True)
-
-    payload: Dict[str, Any] = {
-        "scheme": scheme,
-        "model": model_meta,
-        "autoquant_state": autoquant_state,
-        "layer_sensitivity": rows,
-    }
-
-    with out_path.open("w", encoding="utf-8") as file:
-        json.dump(payload, file, indent=2)
-
-
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -940,15 +731,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             )
             return 1
 
-        sensitivity_md_path = args.output_dir / "per-layer-sensitivity.md"
+        sensitivity_md_path = args.output_dir / "layer-sensitivity-report.md"
         write_layer_sensitivity_md(
             layer_sensitivity=manifest["layer_sensitivity"],
             scheme=scheme,
             autoquant_state=manifest["autoquant_state"],
             out_path=sensitivity_md_path,
+            quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+            run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
         )
         print(
-            "[INFO] Report-only mode: regenerated per-layer sensitivity Markdown at "
+            "[INFO] Report-only mode: regenerated layer sensitivity report at "
             f"{sensitivity_md_path}"
         )
         return 0
@@ -1055,21 +848,72 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         model_id=str(args.model_dir),
     )
 
+    num_calib_samples: Optional[int] = None
+    try:
+        dataset_len = len(calib_loader.dataset)  # type: ignore[arg-type]
+        num_calib_samples = min(int(dataset_len), int(args.max_calib_samples))
+    except Exception:
+        num_calib_samples = None
+
+    manifest["dataset"] = {
+        "captions_path": str(args.captions_path),
+        "vlm_calib_db": str(args.vlm_calib_db),
+        "coco_root": str(args.coco_root),
+        "calib_seq_len": int(args.calib_seq_len),
+        "batch_size": int(args.batch_size),
+        "num_calib_samples": num_calib_samples,
+        "max_calib_samples": int(args.max_calib_samples),
+    }
+    manifest["quantization"] = {
+        "base_format_name": scheme.quant_formats[0] if scheme.quant_formats else None,
+        "format_names": list(scheme.quant_formats),
+    }
+
+    composed_config_path = args.output_dir / "composed-config.yaml"
+    composed_config = {
+        "script": str(Path(__file__).name),
+        "scheme": asdict(scheme),
+        "args": {
+            "scheme_name": str(args.scheme_name),
+            "model_dir": str(args.model_dir),
+            "output_dir": str(args.output_dir),
+            "captions_path": str(args.captions_path),
+            "vlm_calib_db": str(args.vlm_calib_db),
+            "coco_root": str(args.coco_root),
+            "max_calib_samples": int(args.max_calib_samples),
+            "calib_seq_len": int(args.calib_seq_len),
+            "batch_size": int(args.batch_size),
+            "device": str(args.device),
+            "auto_quantize_score_size": args.auto_quantize_score_size,
+            "report_only": bool(args.report_only),
+            "export_dir": str(args.export_dir) if args.export_dir is not None else None,
+        },
+        "dataset": manifest.get("dataset"),
+        "quantization": manifest.get("quantization"),
+    }
+    composed_config_path.write_text(
+        yaml.safe_dump(composed_config, sort_keys=False),
+        encoding="utf-8",
+    )
+    manifest["run_config"] = {"composed_yaml_path": composed_config_path.name}
+
     with manifest_path.open("w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
-    # Per-layer sensitivity Markdown summary.
-    sensitivity_md_path = args.output_dir / "per-layer-sensitivity.md"
+    # Layer sensitivity Markdown report.
+    sensitivity_md_path = args.output_dir / "layer-sensitivity-report.md"
     write_layer_sensitivity_md(
         layer_sensitivity=manifest["layer_sensitivity"],
         scheme=scheme,
         autoquant_state=manifest["autoquant_state"],
         out_path=sensitivity_md_path,
         model_id=str(args.model_dir),
+        quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+        run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
     )
 
-    # Per-layer sensitivity JSON summary.
-    sensitivity_json_path = args.output_dir / "per-layer-sensitivity.json"
+    # Layer sensitivity JSON report.
+    sensitivity_json_path = args.output_dir / "layer-sensitivity-report.json"
     write_layer_sensitivity_json(
         manifest=manifest,
         out_path=sensitivity_json_path,

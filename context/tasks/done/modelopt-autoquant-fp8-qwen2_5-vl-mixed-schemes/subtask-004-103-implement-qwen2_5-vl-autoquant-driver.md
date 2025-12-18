@@ -40,7 +40,7 @@ This subtask adds the LM-only AutoQuant FP8 driver:
 - Wired ModelOpt AutoQuant for FP8 formats on the LM-only module and produced a JSON manifest per run that records which layers are quantized along with the scheme metadata and AutoQuant state keys, written to `--output-dir`.
 - Added support for custom quantization configs through `auto_quantize_model.modelopt_configs.CUSTOM_QUANT_CONFIGS`, including an `FP8_ALL_LAYERS_CFG` that removes default name-pattern exclusions and enables all-layer FP8 sensitivity analysis.
 - Implemented a VLM-aware calibration path for the all-layers scheme using COCO2017 image+caption pairs and `CocoVlmDataset`, so both language and vision blocks receive non-zero AutoQuant sensitivity scores.
-- Added a `--report-only` CLI flag and a `per-layer-sensitivity.md` generator that reads the manifest’s `layer_sensitivity` and `autoquant_state` sections and emits a sorted Markdown table summarizing effective bits, sensitivity scores, and costs per layer without rerunning AutoQuant.
+- Added a `--report-only` CLI flag and a `layer-sensitivity-report.md` generator that reads the manifest’s `layer_sensitivity` and `autoquant_state` sections and emits a sorted Markdown table summarizing effective bits, sensitivity scores, and costs per layer without rerunning AutoQuant.
 
 ## Test plan: sanity-check AutoQuant layer sensitivity
 

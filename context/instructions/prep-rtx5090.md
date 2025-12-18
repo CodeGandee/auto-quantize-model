@@ -24,7 +24,7 @@ Per-layer quantization sensitivity analysis for Qwen2.5‑VL / Qwen3‑VL (FP8 o
 is done with NVIDIA ModelOpt `auto_quantize` drivers under `models/qwen*/helpers/`.
 Run them in this env and write outputs under `tmp/` (for example
 `tmp/qwen3_vl_4b_autoquant_all_layers_int8_large/`), then compare
-`per-layer-sensitivity.{md,json}` across schemes.
+`layer-sensitivity-report.{md,json}` across schemes.
 
 ## Know your tools in the RTX 5090 env
 

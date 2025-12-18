@@ -35,8 +35,8 @@ They correspond to the shared subsets in `datasets/vlm-quantize-calib/`:
 
 - `*_autoquant_state.pt`: serialized AutoQuant state (ignored by Git).
 - `*_quant_manifest.json`: chosen formats + per-layer metadata.
-- `per-layer-sensitivity.md`: human-readable per-layer report.
-- `per-layer-sensitivity.json`: machine-readable per-layer report.
+- `layer-sensitivity-report.md`: human-readable report.
+- `layer-sensitivity-report.json`: machine-readable report.
 
 ## What scripts produced these
 
@@ -52,4 +52,3 @@ That runner calls the underlying drivers:
 Note: the all-layers driver also exports a quantized HF checkpoint; those large
 artifacts are stored under `models/qwen2_5_vl_3b_instruct/quantized/` and are
 ignored by Git.
-

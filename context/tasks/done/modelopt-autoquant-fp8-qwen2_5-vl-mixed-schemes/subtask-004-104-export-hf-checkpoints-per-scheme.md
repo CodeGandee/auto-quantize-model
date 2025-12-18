@@ -17,7 +17,7 @@ Before exporting any HF checkpoints, we rely on the mixed-precision layer sensit
   - Note: everything under `models/qwen2_5_vl_3b_instruct/quantized/` is treated as a local artifact directory and is ignored by Git.
 - **INT8 per-layer sensitivity runs** (added later) store analysis artifacts separately under the model’s committed analysis tree:
   - `models/qwen2_5_vl_3b_instruct/layer-analysis/weight-int8-act-int8/`
-  - Only `.pt` files (serialized AutoQuant state) are ignored by Git; the reports/manifests (`per-layer-sensitivity.{md,json}`, `*_quant_manifest.json`) are intended to be committed.
+  - Only `.pt` files (serialized AutoQuant state) are ignored by Git; the reports/manifests (`layer-sensitivity-report.{md,json}`, `*_quant_manifest.json`) are intended to be committed.
 
 **AutoQuant outputs and manifests**
 
@@ -26,7 +26,7 @@ Before exporting any HF checkpoints, we rely on the mixed-precision layer sensit
 - The driver uses this `state_dict` plus a walk over the quantized model (`named_modules()` + `is_quantized_linear`) to build a quantization manifest (JSON) with:
   - A `layer_sensitivity` section that maps each logical block (`...quant_recipe`) to candidate formats, scores, and costs.
   - A `sensitivity_ranking` list that sorts layers by importance (e.g., max sensitivity score) so that **top-X% quantized schemes can be derived later without rerunning AutoQuant**.
-- A companion Markdown report (`per-layer-sensitivity.md`) summarizes this manifest as a per-layer sensitivity table, sorted by score and focused on FP8 vs BF16/FP16 decisions.
+- A companion Markdown report (`layer-sensitivity-report.md`) summarizes this manifest as a layer sensitivity table, sorted by score and focused on FP8 vs BF16/FP16 decisions.
 
 **Calibration data used for AutoQuant**
 
@@ -94,7 +94,7 @@ Stage 2: LM-only schemes (CANCEL)
 
 Stage 1 (all-layers FP8 analysis) has been implemented and exercised:
 
-- Ran the all-layers AutoQuant baseline (`fp8_autoquant_all_layers_fp8`) with `FP8_ALL_LAYERS_CFG`, producing a full-sensitivity manifest, AutoQuant state, and `per-layer-sensitivity.md` under:
+- Ran the all-layers AutoQuant baseline (`fp8_autoquant_all_layers_fp8`) with `FP8_ALL_LAYERS_CFG`, producing a full-sensitivity manifest, AutoQuant state, and `layer-sensitivity-report.md` under:
   - `tmp/modelopt-autoquant-fp8/all-layers-full-sensitivity/`, and
   - `models/qwen2_5_vl_3b_instruct/quantized/fp8_autoquant_all_layers_fp8_coco2017/layer-sensitivity/`.
 - Extended the AutoQuant driver to export a self-contained HF checkpoint for the baseline at:

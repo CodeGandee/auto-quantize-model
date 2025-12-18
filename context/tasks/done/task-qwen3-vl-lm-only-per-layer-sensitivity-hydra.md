@@ -30,7 +30,7 @@ Short description: Turn the existing Qwen3 sensitivity scripts into a Hydra-driv
 - Shared, reusable implementation code (no more copy-paste across scripts):
   - `src/auto_quantize_model/...` helpers for Qwen LM-only sensitivity
 - Reproducible artifacts per run (written to either `tmp/` or published under `models/.../layer-analysis/`):
-  - `*_quant_manifest.json`, `per-layer-sensitivity.md`, `per-layer-sensitivity.json`
+  - `*_quant_manifest.json`, `layer-sensitivity-report.md`, `layer-sensitivity-report.json`
 - Updated docs for regeneration and folder structure:
   - `models/qwen3_vl_4b_instruct/layer-analysis/README.md`
 

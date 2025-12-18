@@ -48,7 +48,7 @@ Common fields:
 - `dataset.max_calib_samples`: optional override; if null, the runner uses `dataset.size_to_max_samples[dataset.size]`
 - `dataset.calib_seq_len`: tokenization max length
 
-The run manifest also records dataset metadata under `manifest["dataset"]`, and both `per-layer-sensitivity.md` and `per-layer-sensitivity.json` surface this information (dataset name/path, max vs used calibration samples, etc.).
+The run manifest also records dataset metadata under `manifest["dataset"]`, and both `layer-sensitivity-report.md` and `layer-sensitivity-report.json` surface this information (dataset name/path, max vs used calibration samples, etc.).
 
 Override example:
 

@@ -91,7 +91,7 @@ These are defined in `conf/quant_pair/` and can be selected via `quant_pair=<nam
 
 ## Report-only mode
 
-To regenerate `per-layer-sensitivity.md` and `per-layer-sensitivity.json` from an existing manifest:
+To regenerate `layer-sensitivity-report.md` and `layer-sensitivity-report.json` from an existing manifest:
 
 ```bash
 pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \

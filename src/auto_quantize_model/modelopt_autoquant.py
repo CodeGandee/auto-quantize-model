@@ -6,7 +6,7 @@ model-specific driver scripts (e.g., Qwen AutoQuant sensitivity runners):
 
 - Quantization format resolution via `auto_quantize_model.modelopt_configs`.
 - AutoQuant `forward_step` and loss function builders.
-- Quantization manifest construction and per-layer sensitivity report writers.
+- Quantization manifest construction and layer sensitivity report writers.
 
 The helpers here are intentionally framework-agnostic (no Hydra) so they can be
 used from both CLI scripts and Hydra runners.
@@ -24,7 +24,10 @@ from mdutils import MdUtils  # type: ignore[import-untyped]
 
 from auto_quantize_model.modelopt_configs import resolve_quant_config
 
-from modelopt.torch.quantization.utils import is_quantized_linear  # type: ignore[import-untyped]
+from modelopt.torch.quantization.utils import (  # type: ignore[import-untyped]
+    is_quantized,
+    is_quantized_linear,
+)
 
 
 @dataclass(frozen=True)
@@ -125,7 +128,12 @@ def build_quant_manifest(
 
     layers: Dict[str, Dict[str, Any]] = {}
     for name, module in model.named_modules():
-        if is_quantized_linear(module):
+        if not name:
+            continue
+        if is_quantized_linear(module) or (
+            isinstance(module, (torch.nn.Conv1d, torch.nn.Conv2d, torch.nn.Conv3d))
+            and is_quantized(module)
+        ):
             layers[name] = {
                 "quantized": True,
                 "module_type": type(module).__name__,
@@ -199,8 +207,86 @@ def write_layer_sensitivity_md(
     out_path: Path,
     model_id: Optional[str] = None,
     dataset: Optional[Mapping[str, Any]] = None,
+    quantization: Optional[Mapping[str, Any]] = None,
+    run_config: Optional[Mapping[str, Any]] = None,
 ) -> None:
-    """Write a Markdown summary of per-layer AutoQuant sensitivity."""
+    """Write a Markdown summary of AutoQuant layer sensitivity."""
+
+    def _kv_table(title: str, entries: Sequence[tuple[str, str]]) -> None:
+        md_file.new_header(level=2, title=title, add_table_of_contents="n")
+        md_file.new_line("")
+        table_text: List[str] = ["Key", "Value"]
+        for key, value in entries:
+            table_text.extend([key, value])
+        md_file.new_table(
+            columns=2,
+            rows=len(entries) + 1,
+            text=table_text,
+            text_align="left",
+        )
+
+    def _code_block(language: str, text: str) -> None:
+        md_file.new_line("")
+        md_file.new_line(f"```{language}")
+        for line in text.rstrip().splitlines():
+            md_file.new_line(line)
+        md_file.new_line("```")
+
+    def _format_json_inline(value: Any) -> str:
+        try:
+            return json.dumps(value, sort_keys=True)
+        except Exception:
+            return str(value)
+
+    def _summarize_quantization(meta: Mapping[str, Any]) -> Dict[str, Any]:
+        base_format = meta.get("base_format_name") or meta.get("format_name")
+
+        weight_dtype = meta.get("weight_dtype")
+        act_dtype = meta.get("act_dtype")
+        pair = meta.get("quant_pair")
+        if isinstance(pair, Mapping):
+            weight_dtype = pair.get("weight", weight_dtype)
+            act_dtype = pair.get("activation", act_dtype)
+
+        granularity_name: Optional[str] = None
+        overrides: Any = None
+        granularity = meta.get("quant_granularity")
+        if isinstance(granularity, Mapping):
+            granularity_name = granularity.get("name")  # type: ignore[assignment]
+            overrides = granularity.get("quant_cfg_overrides")
+        else:
+            granularity_name = meta.get("granularity") or meta.get("granularity_name") or meta.get("variant_name")
+            overrides = meta.get("quant_cfg_overrides")
+
+        summary: Dict[str, Any] = {}
+        if base_format is not None:
+            summary["base_format_name"] = base_format
+        if weight_dtype is not None or act_dtype is not None:
+            summary["weight_dtype"] = weight_dtype
+            summary["act_dtype"] = act_dtype
+        if granularity_name is not None:
+            summary["granularity"] = granularity_name
+        if overrides is not None:
+            summary["quant_cfg_overrides"] = overrides
+        return summary
+
+    def _read_composed_yaml(meta: Mapping[str, Any]) -> tuple[str | None, str | None]:
+        yaml_text = meta.get("composed_yaml")
+        if isinstance(yaml_text, str) and yaml_text.strip():
+            return yaml_text, meta.get("composed_yaml_path") if isinstance(meta.get("composed_yaml_path"), str) else None
+
+        path_value = meta.get("composed_yaml_path") or meta.get("composed_config_path") or meta.get("path")
+        if not isinstance(path_value, str) or not path_value.strip():
+            return None, None
+
+        config_path = Path(path_value)
+        if not config_path.is_absolute():
+            config_path = out_path.parent / config_path
+
+        try:
+            return config_path.read_text(encoding="utf-8"), config_path.name
+        except Exception:
+            return None, config_path.name
 
     def _format_effective_bits(value: Any) -> str:
         if value is None:
@@ -218,57 +304,6 @@ def write_layer_sensitivity_md(
         except Exception:
             return str(value)
 
-    md_file = MdUtils(
-        file_name=str(out_path.with_suffix("")),
-        title=f"AutoQuant Layer Sensitivity ({scheme.name})",
-    )
-
-    md_file.new_line("")
-    md_file.new_line(f"**Scheme:** `{scheme.name}`")
-    if model_id is not None:
-        md_file.new_line("")
-        md_file.new_line(f"**Model:** `{model_id}`")
-
-    if dataset:
-        md_file.new_header(level=2, title="Dataset", add_table_of_contents="n")
-        md_file.new_line("")
-
-        dataset_name = dataset.get("name")
-        if dataset_name is not None:
-            md_file.new_line(f"- **Name:** `{dataset_name}`")
-
-        dataset_size = dataset.get("size")
-        if dataset_size is not None:
-            md_file.new_line(f"- **Size:** `{dataset_size}`")
-
-        captions_path = dataset.get("captions_path")
-        if captions_path is not None:
-            md_file.new_line(f"- **Captions path:** `{captions_path}`")
-
-        root = dataset.get("root")
-        if root is not None:
-            md_file.new_line(f"- **Root:** `{root}`")
-
-        max_calib_samples = dataset.get("max_calib_samples")
-        num_calib_samples = dataset.get("num_calib_samples")
-        if max_calib_samples is not None or num_calib_samples is not None:
-            md_file.new_line(
-                f"- **Calibration samples:** `{num_calib_samples}` / `{max_calib_samples}` "
-                "(used / max)"
-            )
-
-        calib_seq_len = dataset.get("calib_seq_len")
-        if calib_seq_len is not None:
-            md_file.new_line(f"- **Calibration seq len:** `{calib_seq_len}`")
-
-        batch_size = dataset.get("batch_size")
-        if batch_size is not None:
-            md_file.new_line(f"- **Batch size:** `{batch_size}`")
-
-        num_calib_batches = dataset.get("num_calib_batches")
-        if num_calib_batches is not None:
-            md_file.new_line(f"- **Calibration batches:** `{num_calib_batches}`")
-
     constraints = autoquant_state.get("constraints") or {}
     eff_bits = None
     if isinstance(constraints, dict):
@@ -277,35 +312,76 @@ def write_layer_sensitivity_md(
     score = autoquant_state.get("score")
     is_satisfied = autoquant_state.get("is_satisfied")
 
-    md_file.new_line("")
-    md_file.new_line(f"**Effective bits (from search):** `{_format_effective_bits(eff_bits)}`")
-    md_file.new_line("")
-    md_file.new_line(f"**Total AutoQuant score:** `{_format_total_score(score)}`")
-    md_file.new_line("")
-    md_file.new_line(f"**Constraint satisfied:** `{is_satisfied}`")
+    md_file = MdUtils(
+        file_name=str(out_path.with_suffix("")),
+        title=f"AutoQuant Layer Sensitivity ({scheme.name})",
+    )
 
-    md_file.new_header(level=2, title="Per-layer sensitivity table", add_table_of_contents="n")
-    md_file.new_line("")
+    summary_entries: List[tuple[str, str]] = [
+        ("Scheme", f"`{scheme.name}`"),
+        ("Effective bits (from search)", f"`{_format_effective_bits(eff_bits)}`"),
+        ("Total AutoQuant score", f"`{_format_total_score(score)}`"),
+        ("Constraint satisfied", f"`{is_satisfied}`"),
+    ]
+    if model_id is not None:
+        summary_entries.insert(1, ("Model", f"`{model_id}`"))
 
-    md_file.new_line(
-        "- **Layer**: Name of the quant_recipe handle for a group of quantizable modules (e.g., attention or MLP projections)."
-    )
-    md_file.new_line(
-        "- **Num Bits**: Effective number of bits allocated for the quantized recipe(s) considered at this layer."
-    )
-    md_file.new_line(
-        "- **Sensitivity**: AutoQuant sensitivity score for the quantized recipe(s). Higher values indicate that quantizing this layer is more harmful to model quality."
-    )
-    md_file.new_line(
-        "- **Size Cost**: Approximate compressed weight size contribution of the layer under the corresponding recipe(s). Higher values indicate more memory usage."
-    )
-    md_file.new_line("")
-    md_file.new_line(
-        "Note: In the JSON manifest, layer keys may end with "
-        "`.quant_recipe` (e.g., `language_model.layers.0.mlp.gate_proj.quant_recipe`). "
-        "This suffix is added by ModelOpt to represent the AutoQuant hyperparameter "
-        "attached to that module. In this table we strip the `.quant_recipe` suffix "
-        "for readability; the underlying module path is the part before that suffix."
+    _kv_table("Summary", summary_entries)
+
+    if dataset:
+        dataset_entries: List[tuple[str, str]] = []
+        for key, label in (
+            ("name", "Name"),
+            ("size", "Size"),
+            ("root", "Root"),
+            ("captions_path", "Captions path"),
+            ("image_list", "Image list"),
+            ("imgsz", "Image size"),
+            ("calib_seq_len", "Calibration seq len"),
+            ("batch_size", "Batch size"),
+            ("num_calib_batches", "Calibration batches"),
+        ):
+            value = dataset.get(key)
+            if value is not None:
+                dataset_entries.append((label, f"`{value}`"))
+
+        max_calib_samples = dataset.get("max_calib_samples")
+        num_calib_samples = dataset.get("num_calib_samples")
+        if max_calib_samples is not None or num_calib_samples is not None:
+            used_display = num_calib_samples if num_calib_samples is not None else "unknown"
+            max_display = max_calib_samples if max_calib_samples is not None else "unknown"
+            dataset_entries.append(
+                ("Calibration samples (used / max)", f"`{used_display}` / `{max_display}`")
+            )
+
+        if dataset_entries:
+            _kv_table("Dataset", dataset_entries)
+
+    if quantization:
+        summary = _summarize_quantization(quantization)
+        if summary:
+            quant_entries: List[tuple[str, str]] = []
+            if "base_format_name" in summary:
+                quant_entries.append(("Base format", f"`{summary['base_format_name']}`"))
+            if "weight_dtype" in summary or "act_dtype" in summary:
+                quant_entries.append(
+                    ("Dtypes", f"`W={summary.get('weight_dtype')}` / `A={summary.get('act_dtype')}`")
+                )
+            if "granularity" in summary:
+                quant_entries.append(("Granularity", f"`{summary['granularity']}`"))
+            if "quant_cfg_overrides" in summary:
+                quant_entries.append(("Quant cfg overrides", "`see below`"))
+
+            _kv_table("Quantization", quant_entries)
+
+            overrides = summary.get("quant_cfg_overrides")
+            if isinstance(overrides, Mapping) and overrides:
+                _code_block("json", json.dumps(overrides, indent=2, sort_keys=True))
+
+    md_file.new_header(level=2, title="Layer Sensitivity Table", add_table_of_contents="n")
+    md_file.new_paragraph(
+        "Sorted by sensitivity (descending). Layer names are AutoQuant recipe handles; "
+        "a trailing `.quant_recipe` suffix (if present) is stripped for readability."
     )
 
     headers = ["Layer", "Num Bits", "Sensitivity", "Size Cost"]
@@ -370,6 +446,13 @@ def write_layer_sensitivity_md(
         text_align="left",
     )
 
+    if run_config:
+        yaml_text, yaml_name = _read_composed_yaml(run_config)
+        if yaml_text is not None:
+            title_suffix = f" (`{yaml_name}`)" if yaml_name else ""
+            md_file.new_header(level=2, title=f"Composed Config{title_suffix}", add_table_of_contents="n")
+            _code_block("yaml", yaml_text)
+
     md_file.create_md_file()
 
 
@@ -377,11 +460,13 @@ def write_layer_sensitivity_json(
     manifest: Mapping[str, Any],
     out_path: Path,
 ) -> None:
-    """Write a JSON summary of per-layer AutoQuant sensitivity."""
+    """Write a JSON summary of AutoQuant layer sensitivity."""
 
     scheme = manifest.get("scheme", {})
     model_meta = manifest.get("model", {})
     dataset_meta = manifest.get("dataset", {})
+    quantization_meta = manifest.get("quantization", {})
+    run_config_meta = manifest.get("run_config", {})
     autoquant_state = manifest.get("autoquant_state", {})
     layer_sensitivity = manifest.get("layer_sensitivity", {})
 
@@ -437,6 +522,8 @@ def write_layer_sensitivity_json(
         "scheme": scheme,
         "model": model_meta,
         "dataset": dataset_meta,
+        "quantization": quantization_meta,
+        "run_config": run_config_meta,
         "autoquant_state": autoquant_state,
         "layer_sensitivity": rows,
     }

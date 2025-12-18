@@ -30,7 +30,8 @@ By default the FP8 driver writes into:
 - `tmp/qwen3_vl_4b_autoquant_all_layers_fp8/`
   - `fp8_autoquant_all_layers_fp8_autoquant_state.pt` — raw AutoQuant state dict.
   - `fp8_autoquant_all_layers_fp8_quant_manifest.json` — per-layer quantization + sensitivity.
-  - `per-layer-sensitivity.md` — human-readable report built from the manifest.
+  - `layer-sensitivity-report.md` — human-readable report built from the manifest.
+  - `layer-sensitivity-report.json` — machine-readable report built from the manifest.
 
 You can change the output directory via `--output-dir`, and use a different
 directory for INT8 runs if desired.

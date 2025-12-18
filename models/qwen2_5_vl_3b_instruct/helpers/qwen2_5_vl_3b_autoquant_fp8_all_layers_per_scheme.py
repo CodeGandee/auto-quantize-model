@@ -656,8 +656,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     manifest_path = layer_sens_dir / f"{scheme_config.name}_quant_manifest.json"
     state_path = layer_sens_dir / f"{scheme_config.name}_autoquant_state.pt"
-    sensitivity_md_path = layer_sens_dir / "per-layer-sensitivity.md"
-    sensitivity_json_path = layer_sens_dir / "per-layer-sensitivity.json"
+    sensitivity_md_path = layer_sens_dir / "layer-sensitivity-report.md"
+    sensitivity_json_path = layer_sens_dir / "layer-sensitivity-report.json"
 
     with manifest_path.open("w", encoding="utf-8") as file:
         json.dump(manifest, file, indent=2)
@@ -670,6 +670,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         autoquant_state=manifest["autoquant_state"],
         out_path=sensitivity_md_path,
         model_id=str(args.model_dir),
+        quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+        run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
     )
 
     write_layer_sensitivity_json(

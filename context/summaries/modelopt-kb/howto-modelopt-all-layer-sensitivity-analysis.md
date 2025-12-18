@@ -262,7 +262,7 @@ For LLM/VLM experiments in this repository:
   - The all-layers scheme uses COCO2017 image+caption pairs via `CocoVlmDataset`, so both vision and language towers get non-zero sensitivity scores.
 - We write:
   - A JSON manifest with `layer_sensitivity`.
-  - A `per-layer-sensitivity.md` Markdown table (sorted by sensitivity, ignoring `NONE(...)` recipes) for human inspection.
+  - A `layer-sensitivity-report.md` Markdown table (sorted by sensitivity, ignoring `NONE(...)` recipes) for human inspection.
 
 You can reuse this pattern for other large models:
 - Clone the “all-layers config” idea on top of the default config for your target datatype (FP8 / INT8 / NVFP4).
@@ -275,4 +275,3 @@ You can reuse this pattern for other large models:
 - ModelOpt `auto_quantize` API reference: https://nvidia.github.io/TensorRT-Model-Optimizer/reference/generated/modelopt.torch.quantization.model_quant.html
 - NVIDIA blog on PTQ and AutoQuant for LLMs: https://developer.nvidia.com/blog/optimizing-llms-for-performance-and-accuracy-with-post-training-quantization/
 - vLLM + ModelOpt integration docs (for using exported ModelOpt checkpoints): https://docs.vllm.ai/en/latest/features/quantization/modelopt/
-

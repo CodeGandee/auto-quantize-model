@@ -29,8 +29,8 @@ Success looks like:
 - A Hydra-driven runner that can reproduce the existing INT8 LM-only sensitivity run and extend it to the new (W,A) pairs via simple overrides or Hydra multirun.
 - For each (W,A) pair and calibration subset size (small/medium/large), the runner writes a consistent set of artifacts:
   - `*_quant_manifest.json` (AutoQuant candidate stats + summary)
-  - `per-layer-sensitivity.md` (human-readable)
-  - `per-layer-sensitivity.json` (machine-readable)
+  - `layer-sensitivity-report.md` (human-readable)
+  - `layer-sensitivity-report.json` (machine-readable)
   - `*_autoquant_state.pt` (ignored where appropriate)
 - Outputs are organized in a predictable, publishable layout under `models/qwen3_vl_4b_instruct/layer-analysis/weight-<w>-act-<a>/...` (mirroring the existing `weight-int8-act-int8/` convention), with an option to write to `tmp/` during iteration.
 - Existing ad-hoc scripts are refactored into reusable library functions and thin wrappers so configuration and experiment tracking lives in Hydra, not argparse/bash glue.

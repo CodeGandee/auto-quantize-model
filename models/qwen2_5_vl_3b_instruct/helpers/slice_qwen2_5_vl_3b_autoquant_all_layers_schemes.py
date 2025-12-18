@@ -230,7 +230,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             for name in (
                 manifest_path.name,
                 "fp8_autoquant_all_layers_fp8_autoquant_state.pt",
-                "per-layer-sensitivity.md",
+                "layer-sensitivity-report.md",
             ):
                 src_path = layer_sens_src_dir / name
                 if src_path.is_file():
@@ -254,4 +254,3 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

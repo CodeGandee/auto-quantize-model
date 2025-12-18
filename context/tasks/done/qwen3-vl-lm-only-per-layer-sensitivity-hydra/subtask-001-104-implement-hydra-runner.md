@@ -40,7 +40,7 @@ Implement a Hydra-based CLI entry point for Qwen3‑VL **LM-only** per-layer sen
 - [x] Job-001-104-005 Add `report_only` mode
   - Mirror current Qwen3 script behavior:
     - Read `*_quant_manifest.json` from output dir
-    - Regenerate `per-layer-sensitivity.md` and `per-layer-sensitivity.json`
+    - Regenerate `layer-sensitivity-report.md` and `layer-sensitivity-report.json`
 
 - [x] Job-001-104-006 Make multirun sweeps ergonomic
   - Ensure `-m quant_pair=... dataset.size=...` works without modifying code.
@@ -60,7 +60,7 @@ Completed.
   - `scripts/qwen/qwen3_lm_sensitivity.py` (Hydra compose, early validation, AutoQuant run, artifact writing)
 - Implemented runner features needed for experiments and parity:
   - Output layout selection: `output_layout=tmp` vs `output_layout=publish`
-  - `runner.report_only=true` to regenerate `per-layer-sensitivity.{md,json}` from an existing manifest
+  - `runner.report_only=true` to regenerate `layer-sensitivity-report.{md,json}` from an existing manifest
   - `quant_pair.scheme_name`, `quant_pair.publish_run_dir`, `quant_pair.publish_pair_dir` overrides for compatibility with pre-existing published layouts
   - Optional `quant_pair.coverage_mode` / `quant_pair.coverage_fraction` overrides (used for legacy INT8 LM-only parity)
 - Added pure helpers and tests used by the runner:

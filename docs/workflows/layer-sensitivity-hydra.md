@@ -1,6 +1,6 @@
 # Layer sensitivity analysis (Hydra)
 
-This repo uses **Hydra** to configure and run **per-layer sensitivity** analysis with NVIDIA ModelOpt AutoQuant. The key idea is:
+This repo uses **Hydra** to configure and run **layer sensitivity** analysis with NVIDIA ModelOpt AutoQuant. The key idea is:
 
 - Each run selects a **model**, **calibration dataset**, and a **weight/activation precision pair**.
 - AutoQuant produces a **quantization manifest** plus **per-layer sensitivity** reports (Markdown + JSON).
@@ -11,9 +11,10 @@ This repo uses **Hydra** to configure and run **per-layer sensitivity** analysis
 Each run writes:
 
 - `*_quant_manifest.json`: raw AutoQuant outputs + per-layer sensitivity data.
-- `per-layer-sensitivity.md`: human-readable report.
-- `per-layer-sensitivity.json`: machine-readable report.
+- `layer-sensitivity-report.md`: human-readable report.
+- `layer-sensitivity-report.json`: machine-readable report.
 - `*_autoquant_state.pt`: raw AutoQuant state (typically ignored by Git under `models/...`).
+- `composed-config.yaml`: composed Hydra config for the run.
 
 Notes:
 

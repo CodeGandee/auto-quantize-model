@@ -10,9 +10,9 @@ This script:
 - Builds a text-only calibration dataloader from COCO2017 captions.
 - Runs NVIDIA ModelOpt AutoQuant with an INT8 configuration derived from
   ``INT8_LM_DEFAULT_CFG``.
-- Emits per-layer sensitivity artifacts:
-  - ``per-layer-sensitivity.md``
-  - ``per-layer-sensitivity.json``
+- Emits layer sensitivity report artifacts:
+  - ``layer-sensitivity-report.md``
+  - ``layer-sensitivity-report.json``
 
 The resulting artifacts can be compared with FP8 all-layers runs to study
 INT8 (W8A8) behavior for the text tower.
@@ -185,8 +185,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             )
             return 1
 
-        sensitivity_md_path = args.output_dir / "per-layer-sensitivity.md"
-        sensitivity_json_path = args.output_dir / "per-layer-sensitivity.json"
+        sensitivity_md_path = args.output_dir / "layer-sensitivity-report.md"
+        sensitivity_json_path = args.output_dir / "layer-sensitivity-report.json"
         model_id: Optional[str] = None
         model_meta = manifest.get("model") or {}
         if isinstance(model_meta, dict):
@@ -199,13 +199,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             out_path=sensitivity_md_path,
             model_id=model_id,
             dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
+            quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+            run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
         )
         write_layer_sensitivity_json(
             manifest=manifest,
             out_path=sensitivity_json_path,
         )
         print(
-            "[INFO] Report-only mode: regenerated per-layer sensitivity artifacts at "
+            "[INFO] Report-only mode: regenerated layer sensitivity artifacts at "
             f"{args.output_dir}",
         )
         return 0
@@ -249,8 +251,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     with manifest_path.open("w", encoding="utf-8") as file:
         json.dump(manifest, file, indent=2)
 
-    sensitivity_md_path = args.output_dir / "per-layer-sensitivity.md"
-    sensitivity_json_path = args.output_dir / "per-layer-sensitivity.json"
+    sensitivity_md_path = args.output_dir / "layer-sensitivity-report.md"
+    sensitivity_json_path = args.output_dir / "layer-sensitivity-report.json"
     model_meta = manifest.get("model") or {}
     model_id = model_meta.get("id") if isinstance(model_meta, dict) else None
 
@@ -261,6 +263,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         out_path=sensitivity_md_path,
         model_id=model_id,
         dataset=manifest.get("dataset") if isinstance(manifest.get("dataset"), dict) else None,
+        quantization=manifest.get("quantization") if isinstance(manifest.get("quantization"), dict) else None,
+        run_config=manifest.get("run_config") if isinstance(manifest.get("run_config"), dict) else None,
     )
     write_layer_sensitivity_json(
         manifest=manifest,
@@ -270,7 +274,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print("[INFO] AutoQuant INT8 LM-only run completed successfully.")
     print(f"[INFO] Quantization manifest written to: {manifest_path}")
     print(f"[INFO] AutoQuant state written to: {state_path}")
-    print(f"[INFO] Per-layer sensitivity report: {sensitivity_md_path}")
+    print(f"[INFO] Layer sensitivity report: {sensitivity_md_path}")
     return 0
 
 
