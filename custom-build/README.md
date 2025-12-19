@@ -1,18 +1,24 @@
-Custom vLLM wheels
-===================
+Custom build artifacts
+=====================
 
-This directory is for locally built vLLM wheels that come from the
-`extern/vllm` source tree in this repo, typically built via
-`extern/build-vllm.sh` (for example, using the Pixi task
-`pixi run build-vllm-wheel` which writes wheels into `tmp/vllm-build/`).
+This directory follows the "external reference collection directory" pattern:
+it holds symlinks to large, locally built artifacts (wheels, shared libraries,
+build logs) that should not be committed to this repo.
+
+Managed entries:
+
+- `vllm-*.whl` (symlink)
+  - Source: local build from `extern/vllm` (via `extern/build-vllm.sh`)
+  - Used by Pixi tasks like `postinstall-vllm-rtx5090`
+- `onnxruntime_gpu-*.whl` (symlink)
+  - Source: local build from `extern/onnxruntime` (via `extern/build-onnxruntime-cuda-12_8.sh`)
+  - Typical build outputs live under `tmp/` and/or `/workspace/source-builds/`
 
 The `bootstrap.sh` script will:
 
-- Discover a `vllm-*.whl` built from `extern/vllm` in common locations
-  (repo `tmp/vllm-build/`, `extern/vllm/tmp/vllm-build/`, or
-  `/workspace/python-pkgs`).
-- Optionally use an explicit wheel path passed via `--path`.
-- Create or update a symlink in this directory pointing to the chosen wheel.
+- Discover wheels in common build output locations.
+- Optionally use explicit wheel paths passed via flags or env vars.
+- Create or update symlinks in this directory pointing to the chosen wheels.
 
 ## VS Code file watching
 
@@ -31,6 +37,15 @@ workspace settings (repo root `.vscode/settings.json`):
 
 Typical usage (from the repo root):
 
-- `bash custom-build/bootstrap.sh` – auto-discover the latest wheel and link it here.
-- `bash custom-build/bootstrap.sh --path /absolute/path/to/vllm.whl` – link a specific wheel.
-- `bash custom-build/bootstrap.sh --clean` – remove existing vLLM wheel links from this directory.
+- `bash custom-build/bootstrap.sh` – link vLLM and ONNXRuntime wheels if found.
+- `bash custom-build/bootstrap.sh --artifact vllm` – link only the vLLM wheel.
+- `bash custom-build/bootstrap.sh --artifact onnxruntime` – link only the ONNXRuntime wheel.
+- `bash custom-build/bootstrap.sh --vllm-path /abs/vllm-*.whl` – link a specific vLLM wheel.
+- `bash custom-build/bootstrap.sh --onnxruntime-path /abs/onnxruntime_gpu-*.whl` – link a specific ONNXRuntime wheel.
+- `bash custom-build/bootstrap.sh --clean` – remove existing wheel links from this directory.
+
+Environment variables:
+
+- `VLLM_WHEEL_DIR`, `VLLM_WHEEL_PATH` (vLLM discovery)
+- `ONNXR_WHEEL_DIR`, `ONNXR_WHEEL_PATH` (ONNXRuntime discovery)
+- `SOURCE_BUILDS_ROOT` (defaults to `/workspace/source-builds`)

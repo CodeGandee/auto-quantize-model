@@ -136,12 +136,52 @@ detect_local_proxy() {
 	return 1
 }
 
+proxy_works() {
+	local proxy="$1"
+	local debug="${DEBUG_PROXY:-false}"
+
+	if [[ -z "$proxy" ]]; then
+		return 1
+	fi
+	if ! command -v curl >/dev/null 2>&1; then
+		return 1
+	fi
+
+	# Use fast, reliable test URLs that don't redirect
+	local test_urls=(
+		"http://www.google.com/generate_204"
+		"http://captive.apple.com/hotspot-detect.txt"
+		"http://connectivitycheck.gstatic.com/generate_204"
+	)
+
+	for url in "${test_urls[@]}"; do
+		[[ "$debug" == "true" ]] && echo "Debug: Validating existing proxy $proxy with $url" >&2
+		if env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy \
+			curl --silent --max-time 8 --output /dev/null --proxy "$proxy" "$url" 2>/dev/null; then
+			return 0
+		fi
+	done
+
+	return 1
+}
+
 proxy_status=""
 case "$proxy_arg" in
 	auto)
-		# Respect existing proxy configuration
+		# Respect existing proxy configuration, but validate it first.
 		if [[ -n "${HTTP_PROXY:-}" || -n "${HTTPS_PROXY:-}" || -n "${http_proxy:-}" || -n "${https_proxy:-}" ]]; then
-			proxy_status="kept (pre-existing)"
+			pre_proxy="${HTTPS_PROXY:-${HTTP_PROXY:-${https_proxy:-${http_proxy:-}}}}"
+			if proxy_works "$pre_proxy"; then
+				proxy_status="kept (pre-existing, validated: $pre_proxy)"
+			else
+				clear_proxy
+				if proxy_addr=$(detect_local_proxy); then
+					set_proxy "$proxy_addr"
+					proxy_status="pre-existing was broken; detected and set to $proxy_addr"
+				else
+					proxy_status="pre-existing was broken; cleared (no proxy detected)"
+				fi
+			fi
 		elif proxy_addr=$(detect_local_proxy); then
 			set_proxy "$proxy_addr"
 			proxy_status="detected and set to $proxy_addr"
