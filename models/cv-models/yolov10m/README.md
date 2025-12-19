@@ -14,6 +14,11 @@ YOLOv10 is a real-time end-to-end object detector. This ONNX checkpoint is the m
 References:
 - https://arxiv.org/abs/2405.14458
 
+Important note:
+
+- The ONNX checkpoint in `models/cv-models/yolov10m/` is managed independently from the Ultralytics YOLOv10 PyTorch assets under `models/yolo10/`.
+- Even if the model names match (`yolov10m`), do not assume they share identical weights/graphs or that per-layer sensitivity/quantization results transfer 1:1 between them.
+
 ## Content
 
 This directory contains symlinks to externally stored ONNX checkpoints:
