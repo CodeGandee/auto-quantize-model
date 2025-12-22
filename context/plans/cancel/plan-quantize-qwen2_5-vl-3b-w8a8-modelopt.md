@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Use NVIDIA ModelOpt’s LLM PTQ tooling to quantize the local Qwen2.5-VL-3B-Instruct checkpoint to a W8A8 (INT8 weights and activations) configuration, export a reusable checkpoint, and validate basic text and image+text behavior on our GPUs.
-- **Status**: Draft
+- **Status**: Canceled
 - **Date**: 2025-12-05
 - **Dependencies**:
   - `extern/TensorRT-Model-Optimizer/examples/llm_ptq/hf_ptq.py`

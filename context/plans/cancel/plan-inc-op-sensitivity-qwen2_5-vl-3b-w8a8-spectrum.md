@@ -2,12 +2,12 @@
 
 ## HEADER
 - **Purpose**: Use Intel Neural Compressor to analyze per-layer sensitivity of Qwen2.5-VL-3B-Instruct and derive a family of quantized models ranging from fp16/bf16 baseline to increasingly aggressive W8A8 INT8 configurations with different numbers of quantized layers, primarily as a **comparison point** against the existing ModelOpt FP8 / W8A8 flows.
-- **Status**: Draft
+- **Status**: Canceled
 - **Date**: 2025-12-08
 - **Dependencies**:
   - `models/qwen2_5_vl_3b_instruct/` (baseline checkpoint bootstrap + quantized variants)
   - `scripts/qwen/run_qwen2_5_vl_3b_sanity.py`
-  - `context/plans/plan-quantize-qwen2_5-vl-3b-w8a8-modelopt.md`
+  - `context/plans/cancel/plan-quantize-qwen2_5-vl-3b-w8a8-modelopt.md`
   - `extern/neural-compressor/` (INC source and docs)
   - `context/summaries/inc-kb/intro-inc-w8a8-quantization-fp8-int8.md`
   - `context/summaries/inc-kb/howto-inc-layer-sensitivity-for-mixed-precision.md`

@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Add a repeatable, manual-test workflow to run NVIDIA ModelOpt AutoQuant **per-layer sensitivity** analyses for YOLOv10 (`yolov10n/s/m`) across a grid of `(weight dtype, activation dtype, granularity)` using a medium-size COCO calibration subset.
-- **Status**: Implemented
+- **Status**: Done
 - **Date**: 2025-12-18
 - **Dependencies**:
   - `context/instructions/prep-rtx5090-vllm.md`

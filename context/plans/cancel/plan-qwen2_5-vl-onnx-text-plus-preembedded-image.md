@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Implement an ONNX-friendly Qwen2.5‑VL decoder that consumes token IDs plus pre-aligned image embeddings (from a fixed 672×672 vision ONNX) so we can approximate full VLM inference on GPU via ONNX Runtime.
-- **Status**: In Progress
+- **Status**: Canceled
 - **Date**: 2025-12-10
 - **Dependencies**:
   - `models/qwen2_5_vl_3b_instruct/helpers/convert_to_onnx_text_fp16.py`

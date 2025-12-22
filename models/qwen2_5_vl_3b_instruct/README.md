@@ -64,4 +64,4 @@ pixi run -e rtx5090-vllm python \
 These drivers write `layer-sensitivity-report.md` and `layer-sensitivity-report.json`
 under the chosen output directory. For all-layers (vision+text) schemes, see
 `models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_all_layers_per_scheme.py`
-and the plan in `context/plans/plan-int8-per-layer-sensitivity-qwen-vl.md`.
+and the plan in `context/plans/done/plan-int8-per-layer-sensitivity-qwen-vl.md`.

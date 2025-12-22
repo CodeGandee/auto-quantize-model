@@ -10,7 +10,7 @@
   - Python 3.12 environment (Pixi default) with PyTorch CUDA 12.4 wheels
   - vLLM GPU install docs: https://docs.vllm.ai/en/stable/getting_started/installation/gpu.html
   - vLLM ModelOpt quantization docs: https://docs.vllm.ai/en/stable/api/vllm/model_executor/layers/quantization/modelopt.html
-  - ModelOpt HF checkpoint docs and our local Qwen plan: `context/plans/plan-quantize-qwen2_5-vl-3b-w8a8-modelopt.md`
+  - ModelOpt HF checkpoint docs and our local Qwen plan: `context/plans/cancel/plan-quantize-qwen2_5-vl-3b-w8a8-modelopt.md`
 - **Target**: Auto-quantize-model developers and AI assistants who need a vLLM runtime that understands ModelOpt-quantized HF checkpoints.
 
 ---
@@ -111,4 +111,3 @@ sequenceDiagram
 - [ ] **Sanity-check vLLM inference** Use a small FP16/BF16 HF model (e.g., Llama) with vLLM to confirm that inference works on at least one GPU.
 - [ ] **Validate ModelOpt integration** Confirm that `modelopt`/`modelopt_fp4` quantization methods are available in vLLM and run a smoke test against a public ModelOpt HF checkpoint.
 - [ ] **Wire into Qwen workflow** (Optional) Add or update a helper script to run the ModelOpt-quantized Qwen2.5-VL checkpoint via vLLM and document the command in the Qwen quantization plan.
-

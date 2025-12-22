@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Add Hydra-configurable quantization granularity controls (weights + activations) for ModelOpt-based Qwen3 runs, so we can grid-search combinations like (W dtype, A dtype, granularity) without creating bespoke configs for each setting.
-- **Status**: Draft
+- **Status**: Done
 - **Date**: 2025-12-17
 - **Dependencies**:
   - `context/design/qwen3-modelopt-production-options.md`
@@ -187,13 +187,12 @@ sequenceDiagram
 
 ## 4. TODOs (Implementation Steps)
 
-- [ ] **Decide the granularity vocabulary** Define the canonical user-facing names (`per_column`, `per_channel`, `per_group128`, `per_token_dynamic`, etc.) and document their ModelOpt mapping (`axis`, `block_sizes`, `type`).
-- [ ] **Add Hydra config group** Create `conf/quant_granularity/` with `default` plus a minimal initial set of overlays, including a “recipe match” option based on `context/design/qwen3-modelopt-production-options.md`.
-- [ ] **Implement overlay + normalization helper** Add a small function that deep-copies a ModelOpt config dict and merges `quant_cfg_overrides` safely (axis/block_sizes exclusivity, `block_sizes` key normalization).
-- [ ] **Wire granularity into qwen3 runner** Update `scripts/qwen/qwen3_lm_sensitivity.py` to apply the overlay and ensure outputs/scheme names include granularity.
-- [ ] **Update output layout naming** Extend `src/auto_quantize_model/experiment_layout.py` (and any relevant Hydra templates) so published outputs are uniquely keyed by granularity.
-- [ ] **Record settings in manifest** Include base `format_name` + overlay (and optionally resolved `quant_cfg`) in `*_quant_manifest.json`.
-- [ ] **Add unit tests** Add `tests/unit/` coverage for: axis/block_sizes mutual exclusion, block_sizes key normalization, and deterministic naming from `(quant_pair, granularity)`.
-- [ ] **Smoke-test key combinations** In `rtx5090-vllm`, run one or two tiny calibration sweeps to confirm ModelOpt accepts the overridden configs and that outputs don’t collide.
-- [ ] **Document grid-search usage** Update `models/qwen3_vl_4b_instruct/layer-analysis/README.md` with example `-m` sweeps across `quant_pair` and `quant_granularity`.
-
+- [x] **Decide the granularity vocabulary** Define the canonical user-facing names (`per_column`, `per_channel`, `per_group128`, `per_token_dynamic`, etc.) and document their ModelOpt mapping (`axis`, `block_sizes`, `type`).
+- [x] **Add Hydra config group** Create `conf/quant_granularity/` with `default` plus a minimal initial set of overlays, including a “recipe match” option based on `context/design/qwen3-modelopt-production-options.md`.
+- [x] **Implement overlay + normalization helper** Add a small function that deep-copies a ModelOpt config dict and merges `quant_cfg_overrides` safely (axis/block_sizes exclusivity, `block_sizes` key normalization).
+- [x] **Wire granularity into qwen3 runner** Update `scripts/qwen/qwen3_lm_sensitivity.py` to apply the overlay and ensure outputs/scheme names include granularity.
+- [x] **Update output layout naming** Extend `src/auto_quantize_model/experiment_layout.py` (and any relevant Hydra templates) so published outputs are uniquely keyed by granularity.
+- [x] **Record settings in manifest** Include base `format_name` + overlay (and optionally resolved `quant_cfg`) in `*_quant_manifest.json`.
+- [x] **Add unit tests** Add `tests/unit/` coverage for: axis/block_sizes mutual exclusion, block_sizes key normalization, and deterministic naming from `(quant_pair, granularity)`.
+- [x] **Smoke-test key combinations** In `rtx5090-vllm`, run one or two tiny calibration sweeps to confirm ModelOpt accepts the overridden configs and that outputs don’t collide.
+- [x] **Document grid-search usage** Update `models/qwen3_vl_4b_instruct/layer-analysis/README.md` with example `-m` sweeps across `quant_pair` and `quant_granularity`.
