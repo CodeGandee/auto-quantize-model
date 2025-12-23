@@ -17,9 +17,20 @@
 
 ## TODOs
 
-- [ ] Job-001-106-001 Write `summary.md` with baseline vs candidate comparisons and a clear recommendation.
-- [ ] Job-001-106-002 Update `models/cv-models/yolov10m/README.md` (and/or the main task file) with the canonical reproduction commands and pointers to scripts.
+- [x] Job-001-106-001 Write `summary.md` with baseline vs candidate comparisons and a clear recommendation.
+- [x] Job-001-106-002 Update `models/cv-models/yolov10m/README.md` (and/or the main task file) with the canonical reproduction commands and pointers to scripts.
 - [ ] Job-001-106-003 (Optional) Run an INC INT8 PTQ/tuning flow and record accuracy/latency for comparison.
+
+## Outputs (completed)
+
+- Summary:
+  - `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/summary.md`
+- Repro/docs:
+  - `models/cv-models/yolov10m/README.md`
+
+## INC note
+
+- INC cross-check is optional and was not run in this iteration.
 
 ## Notes
 

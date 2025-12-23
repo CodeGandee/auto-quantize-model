@@ -67,9 +67,27 @@ def parse_args() -> argparse.Namespace:
         help="Default channel count when input shape is dynamic.",
     )
     parser.add_argument(
+        "--providers",
+        type=str,
+        nargs="+",
+        default=None,
+        help=(
+            "ONNX Runtime execution providers in priority order. "
+            "When omitted, auto-selects best available (TensorRT > CUDA > CPU)."
+        ),
+    )
+    parser.add_argument(
         "--use-cpu",
         action="store_true",
-        help="Force CPU execution provider.",
+        help="Force CPU execution provider (overrides --providers).",
+    )
+    parser.add_argument(
+        "--disable-cpu-fallback",
+        action="store_true",
+        help=(
+            "Fail instead of silently falling back to CPU if a higher-priority EP "
+            "(e.g., CUDA) is present but cannot initialize."
+        ),
     )
     return parser.parse_args()
 
@@ -136,13 +154,21 @@ def random_tensor(shape: Sequence[int], dtype: np.dtype, rng: np.random.Generato
     return rng.random(size=shape, dtype=np.float32).astype(dtype)
 
 
-def build_providers(use_cpu: bool) -> list[str]:
-    if use_cpu:
+def build_providers(args: argparse.Namespace) -> list[str]:
+    if args.use_cpu:
         return ["CPUExecutionProvider"]
-    available = ort.get_available_providers()
-    if "CUDAExecutionProvider" in available:
-        return ["CUDAExecutionProvider", "CPUExecutionProvider"]
-    return ["CPUExecutionProvider"]
+    available = set(ort.get_available_providers())
+    if args.providers is not None:
+        requested = [str(p) for p in args.providers]
+        filtered = [p for p in requested if p in available]
+        if not filtered:
+            raise RuntimeError(
+                f"None of the requested providers are available. requested={requested}, available={sorted(available)}"
+            )
+        return filtered
+
+    preferred = ["TensorrtExecutionProvider", "CUDAExecutionProvider", "CPUExecutionProvider"]
+    return [p for p in preferred if p in available] or ["CPUExecutionProvider"]
 
 
 def run_inference(model_path: Path, args: argparse.Namespace) -> Path:
@@ -151,9 +177,13 @@ def run_inference(model_path: Path, args: argparse.Namespace) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     default_image_size = default_image_size_for_model(model_name, args.default_image_size)
+    sess_options = ort.SessionOptions()
+    if args.disable_cpu_fallback:
+        sess_options.add_session_config_entry("session.disable_cpu_ep_fallback", "1")
     session = ort.InferenceSession(
         str(model_path),
-        providers=build_providers(args.use_cpu),
+        sess_options=sess_options,
+        providers=build_providers(args),
     )
     rng = np.random.default_rng(args.seed)
 

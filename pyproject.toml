@@ -3,7 +3,7 @@ authors = [{name = "igamenovoer", email = "igamenovoer@xx.com"}]
 dependencies = [
   # Keep ONNX compatible with TensorRT-LLM 1.0.0
   # (uses onnx.helper.float32_to_bfloat16, present in 1.19.x but not 1.20.x).
-  "onnx>=1.20.0,<2",
+  "onnx>=1.19.0,<1.20.0",
   "onnx-graphsurgeon>=0.5.8,<0.6",
   "mdutils>=1.8.1,<2",
   "imageio>=2.37.2,<3",
@@ -40,7 +40,7 @@ setuptools-scm = "*"
 cmake = ">=3.26.1"
 supervision = "*"
 scipy = "*"
-opencv-python = "*"
+opencv-python-headless = "*"
 imageio = "*"
 attrs = "*"
 omegaconf = "*"
@@ -55,6 +55,13 @@ rich = "*"
 pandas = "*"
 huggingface-hub = "*"
 py-cpuinfo = "*"
+onnxslim = ">=0.1.76"
+cppimport = "*"
+mako = "*"
+pybind11 = "*"
+ml-dtypes = "*"
+onnxscript = "*"
+pycocotools = "*"
 
 [tool.pixi.activation.env]
 CUDA_HOME = "${CONDA_PREFIX}"
@@ -67,6 +74,7 @@ NVTOOLSEXT_PATH = "${CONDA_PREFIX}/lib/python3.12/site-packages/nvidia/nvtx"
 setup-tensorrt = "env NVIDIA_TENSORRT_DISABLE_INTERNAL_PIP=0 python -m pip install tensorrt==10.7.0 --extra-index-url https://pypi.nvidia.com"
 build-vllm-wheel = "env VLLM_TAG=v0.8.5 bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
 build-vllm-wheel-rtx5090 = "env VLLM_TAG=autoq-vllm-v0.10.1 TORCH_CUDA_ARCH_LIST=12.0 bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
+build-onnxoptimizer-rtx5090 = "bash extern/build-onnxoptimizer-rtx5090.sh"
 install-vllm-wheel = "bash custom-build/bootstrap.sh --yes && python -m pip install --no-deps custom-build/vllm-*.whl"
 postinstall-vllm-rtx5090 = "python -m pip install --no-deps custom-build/vllm-0.10.2.dev2+g926b2b1d9.d20251208-cp312-cp312-linux_x86_64.whl"
 postinstall-tensorrt-llm-rtx5090 = "python -m pip install --pre tensorrt_llm --extra-index-url https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/nightly/cu128"
@@ -87,6 +95,7 @@ torchvision = "==0.21.0"
 torchaudio = "==2.6.0"
 onnxruntime-gpu = "*"
 cupy-cuda12x = "*"
+nvidia-modelopt = "==0.40.0"
 
 [tool.pixi.feature.cu124.pypi-options]
 index-url = "https://download.pytorch.org/whl/cu124"
@@ -113,7 +122,7 @@ torchaudio = "==2.9.0"
 # See: `extern/howto-build-onnxruntime-with-pixi-cuda-12_8.md`.
 onnxruntime-gpu = { path = "custom-build/onnxruntime_gpu-1.24.0-cp312-cp312-linux_x86_64.whl" }
 cupy-cuda12x = "*"
-nvidia-modelopt = "*"
+nvidia-modelopt = "==0.40.0"
 
 [tool.pixi.feature.rtx5090.pypi-options]
 # Use the stable PyTorch cu128 index for this TensorRT-LLM-aligned stack,
@@ -160,7 +169,7 @@ torchaudio = "*"
 onnxruntime-gpu = "*"
 cupy-cuda12x = "*"
 tensorrt-llm = "==1.0.0"
-nvidia-modelopt = "*"
+nvidia-modelopt = "==0.33.1"
 
 [tool.pixi.feature.rtx5090-trtllm.pypi-options]
 # Use the stable PyTorch cu128 index for this TensorRT-LLM-aligned stack,
@@ -193,7 +202,7 @@ torchvision = "==0.24.1"
 torchaudio = "==2.9.1"
 onnxruntime-gpu = "*"
 cupy-cuda12x = "*"
-nvidia-modelopt = "*"
+nvidia-modelopt = "==0.40.0"
 xformers = ">=0.0.33"
 cloudpickle = "*"
 blake3 = "*"
@@ -257,4 +266,4 @@ rtx5090-inc = { features = ["rtx5090", "rtx5090-inc"], solve-group = "rtx5090-in
 
 [dependency-groups]
 rtx5090-inc = ["neural-compressor>=2.6,<3"]
-rtx5090 = ["onnx>=1.20.0,<2"]
+rtx5090 = ["onnx>=1.19.0,<1.20.0", "brevitas>=0.12.1,<0.13"]

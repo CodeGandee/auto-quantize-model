@@ -17,10 +17,17 @@
 
 ## TODOs
 
-- [ ] Job-001-101-001 Verify the YOLOv10m ONNX checkpoint symlink resolves and the file is readable.
-- [ ] Job-001-101-002 Bootstrap COCO2017 and confirm `datasets/quantize-calib/quant100.txt` entries exist on disk.
-- [ ] Job-001-101-003 Run baseline random inference with ORT (CUDA EP preferred) and save outputs under `tmp/`.
-- [ ] Job-001-101-004 (Optional) Run `bash models/yolo10/bootstrap.sh` to fetch `models/yolo10/checkpoints/yolov10m.pt` for Subtask 1.4.
+- [x] Job-001-101-001 Verify the YOLOv10m ONNX checkpoint symlink resolves and the file is readable.
+- [x] Job-001-101-002 Bootstrap COCO2017 and confirm `datasets/quantize-calib/quant100.txt` entries exist on disk.
+- [x] Job-001-101-003 Run baseline random inference with ORT (CUDA EP preferred) and save outputs under `tmp/`.
+- [x] Job-001-101-004 (Optional) Run `bash models/yolo10/bootstrap.sh` to fetch `models/yolo10/checkpoints/yolov10m.pt` for Subtask 1.4.
+
+## Outputs (completed)
+
+- GPU run root: `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/`
+  - Baseline ORT smoke: `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/baseline-onnx/yolov10m/infer-summary.json`
+  - Notes: `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/baseline-notes.md`
+- CPU-only earlier run root (historical): `tmp/yolov10m_lowbit/2025-12-22_19-44-58/`
 
 ## Notes
 
@@ -33,4 +40,3 @@ pixi run -e rtx5090 python models/cv-models/helpers/run_random_onnx_inference.py
   --model models/cv-models/yolov10m/checkpoints/yolov10m.onnx \
   --output-root "$RUN_ROOT/baseline-onnx"
 ```
-

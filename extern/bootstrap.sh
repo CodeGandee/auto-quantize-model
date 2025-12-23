@@ -53,5 +53,6 @@ clone_repo "nncf"                     "https://github.com/openvinotoolkit/nncf.g
 clone_repo "openvino"                 "https://github.com/openvinotoolkit/openvino.git"
 clone_repo "vllm"                     "https://github.com/vllm-project/vllm.git"
 clone_repo "onnxruntime"              "https://github.com/microsoft/onnxruntime.git"
+clone_repo "brevitas"                 "https://github.com/Xilinx/brevitas.git"
 
 echo "[extern/bootstrap] Done."

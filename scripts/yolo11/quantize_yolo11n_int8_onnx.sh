@@ -65,6 +65,8 @@ if [[ ! -f "${CALIB_PATH}" ]]; then
   exit 1
 fi
 
+read -r -a CALIBRATION_EPS_ARR <<< "cuda:0 cpu"
+
 echo "Quantizing YOLO11n ONNX with ModelOpt..."
 echo "  ONNX input  : ${ONNX_PATH}"
 echo "  Calibration : ${CALIB_PATH}"
@@ -73,10 +75,10 @@ echo "  Output      : ${OUTPUT_PATH}"
 python -m modelopt.onnx.quantization \
   --onnx_path="${ONNX_PATH}" \
   --quantize_mode=int8 \
-  --calibration_data="${CALIB_PATH}" \
+  --calibration_data_path "${CALIB_PATH}" \
   --calibration_method=max \
   --output_path="${OUTPUT_PATH}" \
-  --calibration_eps "cuda:0 cpu"
+  --calibration_eps "${CALIBRATION_EPS_ARR[@]}"
 
 echo "Done. Quantized model written to:"
 echo "  ${OUTPUT_PATH}"

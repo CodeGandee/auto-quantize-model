@@ -16,10 +16,27 @@
 
 ## TODOs
 
-- [ ] Job-001-105-001 Implement the chosen “mixed/low-bit” materialization approach (ONNX-native exclusions/overrides or Torch quantize→export).
-- [ ] Job-001-105-002 Generate candidate artifacts for a small K-set (e.g., K ∈ {0, 5, 10, 20}) and record the exact scheme settings per artifact.
-- [ ] Job-001-105-003 Run COCO evaluation for all candidates using the evaluator from Subtask 1.2 (same medium subset, same thresholds).
-- [ ] Job-001-105-004 Benchmark ORT latency/throughput for baseline, INT8, and candidates; optionally build TRT engines with `--precisionConstraints=obey` for QDQ models.
+- [x] Job-001-105-001 Implement the chosen “mixed/low-bit” materialization approach (ONNX-native exclusions/overrides or Torch quantize→export).
+- [x] Job-001-105-002 Generate candidate artifacts for a small K-set (e.g., K ∈ {0, 5, 10, 20}) and record the exact scheme settings per artifact.
+- [x] Job-001-105-003 Run COCO evaluation for all candidates using the evaluator from Subtask 1.2 (same medium subset, same thresholds).
+- [x] Job-001-105-004 Benchmark ORT latency/throughput for baseline, INT8, and candidates; optionally build TRT engines with `--precisionConstraints=obey` for QDQ models.
+
+## Outputs (completed)
+
+- Candidate materialization scripts:
+  - `scripts/cv-models/quantize_yolov10m_fp8_onnx.sh`
+  - `scripts/cv-models/materialize_yolov10m_lowbit_candidates.sh`
+- GPU run root: `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/`
+  - Candidates: `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/candidates/yolov10m-fp8-k*.onnx`
+  - Candidate logs: `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/candidates/logs/`
+  - COCO100 eval + latency (warmup + skip-latency):
+    - `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/results/baseline_cuda_only.json`
+    - `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/results/int8_cuda_cpu.json`
+    - `tmp/yolov10m_lowbit/2025-12-23_04-40-28_gpu/results/fp8_k*_cuda_cpu.json`
+
+## TensorRT note
+
+- TensorRT engine builds were skipped because this environment did not have `trtexec` nor an ORT build with `TensorrtExecutionProvider`.
 
 ## Notes
 

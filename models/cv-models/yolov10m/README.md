@@ -45,3 +45,93 @@ These checkpoint files are not committed to the repository. Update the symlink o
 
 **Outputs**
 - `/model.23/Concat_3_output_0`: `FLOAT` `[1, 144, 8400]`
+
+## Quantization workflow (ModelOpt ONNX PTQ)
+
+All commands below are designed to write run artifacts under `tmp/` (not committed).
+
+### 1) Baseline smoke + COCO eval (ONNX Runtime)
+
+```bash
+RUN_ROOT="tmp/yolov10m_lowbit/$(date +%Y-%m-%d_%H-%M-%S)"
+
+# Random-tensor sanity check
+pixi run -e rtx5090 python models/cv-models/helpers/run_random_onnx_inference.py \
+  --model models/cv-models/yolov10m/checkpoints/yolov10m.onnx \
+  --output-root "$RUN_ROOT/baseline-onnx"
+
+# Baseline COCO2017 val (fixed 100-image slice, inference-only latency stats)
+pixi run -e rtx5090 python scripts/cv-models/eval_yolov10m_onnx_coco.py \
+  --onnx-path models/cv-models/yolov10m/checkpoints/yolov10m.onnx \
+  --data-root datasets/coco2017/source-data \
+  --max-images 100 \
+  --providers TensorrtExecutionProvider CUDAExecutionProvider \
+  --disable-cpu-fallback \
+  --warmup-runs 10 \
+  --skip-latency 10 \
+  --imgsz 640 \
+  --out "$RUN_ROOT/baseline-coco/metrics.json"
+```
+
+Notes:
+
+- Prefer `--providers TensorrtExecutionProvider CUDAExecutionProvider --disable-cpu-fallback` to enforce “GPU only”.
+- If a model requires CPU for unsupported ops, include it explicitly instead:
+  - `--providers TensorrtExecutionProvider CUDAExecutionProvider CPUExecutionProvider`
+  - (and omit `--disable-cpu-fallback`).
+
+### 2) Build calibration tensor (float32, NCHW)
+
+```bash
+RUN_ROOT="tmp/yolov10m_lowbit/$(date +%Y-%m-%d_%H-%M-%S)"
+
+pixi run -e rtx5090 python scripts/cv-models/make_yolov10m_calib_npy.py \
+  --list datasets/quantize-calib/quant100.txt \
+  --out "$RUN_ROOT/calib/calib_yolov10m_640.npy" \
+  --imgsz 640
+```
+
+### 3) INT8 PTQ (Q/DQ ONNX) + eval
+
+```bash
+RUN_ROOT="tmp/yolov10m_lowbit/$(date +%Y-%m-%d_%H-%M-%S)"
+
+RUN_ROOT="$RUN_ROOT" \
+CALIB_PATH="$RUN_ROOT/calib/calib_yolov10m_640.npy" \
+CALIBRATION_METHOD="entropy" \
+USE_ZERO_POINT=True \
+CALIBRATION_EPS="cuda:0 cpu" \
+pixi run -e rtx5090 bash scripts/cv-models/quantize_yolov10m_int8_onnx.sh
+
+pixi run -e rtx5090 python scripts/cv-models/eval_yolov10m_onnx_coco.py \
+  --onnx-path "$RUN_ROOT/onnx/yolov10m-int8-qdq.onnx" \
+  --data-root datasets/coco2017/source-data \
+  --max-images 100 \
+  --providers CUDAExecutionProvider CPUExecutionProvider \
+  --warmup-runs 10 \
+  --skip-latency 10 \
+  --imgsz 640 \
+  --out "$RUN_ROOT/int8-coco/metrics.json"
+```
+
+### 4) (Optional) Torch sensitivity → FP8 candidates (node exclusions)
+
+Note: ModelOpt ONNX `quantize_mode=int4` targets Gemm/MatMul by default and does not materially quantize this
+Conv-dominated YOLOv10m graph; FP8 is the practical “low-bit” ONNX PTQ candidate here.
+
+```bash
+# 4a) Run sensitivity sweep (Torch / AutoQuant proxy)
+pixi run -e rtx5090 bash scripts/cv-models/run_yolov10m_layer_sensitivity_sweep.sh
+
+# 4b) Convert a sensitivity report to ONNX node exclusion schemes
+RUN_ROOT="tmp/yolov10m_lowbit/$(date +%Y-%m-%d_%H-%M-%S)"
+SENS_RUN="tmp/yolov10m_layer_sensitivity/<run-id>"
+pixi run -e rtx5090 python scripts/cv-models/make_yolov10m_candidate_schemes.py \
+  --report-json "$SENS_RUN/outputs/yolov10m/fp8-fp8/per_layer/layer-sensitivity-report.json" \
+  --out-dir "$RUN_ROOT/schemes"
+
+# 4c) Materialize FP8 candidates (K ∈ {0,5,10,20})
+RUN_ROOT="$RUN_ROOT" \
+CALIB_PATH="$RUN_ROOT/calib/calib_yolov10m_640.npy" \
+pixi run -e rtx5090 bash scripts/cv-models/materialize_yolov10m_lowbit_candidates.sh
+```

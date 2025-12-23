@@ -29,7 +29,8 @@ from auto_quantize_model.modelopt_configs import resolve_quant_config
 from auto_quantize_model.modelopt_quant_overrides import apply_quant_cfg_overrides
 
 
-_SUPPORTED_DTYPES: Tuple[str, ...] = ("int4", "int8", "fp4", "fp8")
+_SUPPORTED_WEIGHT_DTYPES: Tuple[str, ...] = ("int4", "int8", "fp4", "fp8")
+_SUPPORTED_ACT_DTYPES: Tuple[str, ...] = ("fp16",) + _SUPPORTED_WEIGHT_DTYPES
 _SUPPORTED_GRANULARITIES: Tuple[str, ...] = ("per_channel", "per_layer")
 
 
@@ -302,6 +303,10 @@ def build_base_quant_config(
     if act_dtype == weight_dtype:
         return base_name, cfg
 
+    if act_dtype == "fp16":
+        quant_cfg["*input_quantizer"] = {"enable": False}
+        return base_name, cfg
+
     if act_dtype == "int8":
         src = resolve_quant_config("INT8_DEFAULT_CFG")
         patched = _copy_quant_entry(src, "*input_quantizer")
@@ -437,14 +442,14 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--weight-dtypes",
         nargs="+",
-        default=list(_SUPPORTED_DTYPES),
+        default=list(_SUPPORTED_WEIGHT_DTYPES),
         help="Weight dtypes to include (default: int4 int8 fp4 fp8).",
     )
     parser.add_argument(
         "--act-dtypes",
         nargs="+",
-        default=list(_SUPPORTED_DTYPES),
-        help="Activation dtypes to include (default: int4 int8 fp4 fp8).",
+        default=list(_SUPPORTED_WEIGHT_DTYPES),
+        help="Activation dtypes to include (default: int4 int8 fp4 fp8; use fp16 to disable activation quantizers).",
     )
     parser.add_argument(
         "--granularities",
@@ -489,9 +494,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     act_dtypes = [str(name) for name in args.act_dtypes]
     granularities = [str(name) for name in args.granularities]
 
-    for dtype in weight_dtypes + act_dtypes:
-        if dtype not in _SUPPORTED_DTYPES:
-            raise ValueError(f"Unsupported dtype {dtype!r}; expected one of {_SUPPORTED_DTYPES}.")
+    for dtype in weight_dtypes:
+        if dtype not in _SUPPORTED_WEIGHT_DTYPES:
+            raise ValueError(f"Unsupported weight dtype {dtype!r}; expected one of {_SUPPORTED_WEIGHT_DTYPES}.")
+    for dtype in act_dtypes:
+        if dtype not in _SUPPORTED_ACT_DTYPES:
+            raise ValueError(f"Unsupported activation dtype {dtype!r}; expected one of {_SUPPORTED_ACT_DTYPES}.")
     for granularity in granularities:
         if granularity not in _SUPPORTED_GRANULARITIES:
             raise ValueError(f"Unsupported granularity {granularity!r}; expected one of {_SUPPORTED_GRANULARITIES}.")
