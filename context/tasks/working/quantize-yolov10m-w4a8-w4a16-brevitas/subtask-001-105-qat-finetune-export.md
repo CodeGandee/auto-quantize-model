@@ -51,3 +51,22 @@
 ## Notes
 
 - If dataset conversion is required, prefer Ultralytics’ built-in COCO conversion utilities when possible (avoid bespoke label tooling).
+
+## Summary
+
+- Implemented a PyTorch Lightning–managed QAT entrypoint in `scripts/cv-models/quantize_yolov10m_brevitas_w4.py qat` via `auto_quantize_model.cv_models.yolov10_lightning_qat.run_lightning_qat`.
+  - Dataset conversion uses Ultralytics `convert_coco` on a run-local COCO JSON subset and keeps everything under `tmp/.../<run-id>/qat/` (no writes into `datasets/`).
+  - Training logs go to TensorBoard and a loss curve is emitted (CSV + PNG) for quick inspection.
+- Tested run root: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40`
+  - Train subset: 100 images (from `datasets/quantize-calib/quant100.txt`), val subset: 20 images (deterministic first 20), epochs=1, batch=2, seed=0.
+  - Hyperparams: lr=`1.2e-4`, weight_decay=`5e-4`, warmup_steps=`150`, accumulate_grad_batches=`4`.
+  - TensorBoard: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/lightning/yolov10m-brevitas-w4a8/lightning`
+  - Loss curve: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/lightning/yolov10m-brevitas-w4a8/loss/loss_curve.png`
+  - ONNX: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-qat-pl-opt.onnx`
+  - COCO subset (100 images) metrics: `mAP_50_95=0.2156`, `mAP_50=0.4150` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat-w4a8-pl-coco/metrics.json`)
+- Logs:
+  - QAT train/export: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-105-qat-w4a8-lightning-train-export-v4.log`
+  - Smoke: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-105-qat-w4a8-pl-smoke-v3.log`
+  - Eval: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-105-qat-w4a8-pl-eval-v3.log`
+- Legacy (pre-Lightning) Ultralytics-trainer QAT outputs are kept under the same run root for comparison:
+  - `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat-w4a8-coco/metrics.json` (`mAP_50_95=0.2912`)

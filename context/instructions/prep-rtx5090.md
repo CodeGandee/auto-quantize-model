@@ -28,14 +28,16 @@ Run them in this env and write outputs under `tmp/` (for example
 
 ## Know your tools in the RTX 5090 env
 
-The `rtx5090` Pixi environment already includes several key packages for ONNX and quantization work:
+The `rtx5090` Pixi environment is the base CUDA 12.8 / PyTorch stack for RTX 5090 work and includes several key packages for ONNX and quantization workflows:
 
-- **optimum-onnx**:
-  - Installed as `optimum-onnx[onnxruntime]>=0.0.3,<0.0.4` via `pyproject.toml`.
-  - Use `optimum.exporters.onnx` and `optimum.onnxruntime` for model export / optimization instead of hand-rolling `torch.onnx.export` where possible.
 - **onnx / onnxruntime-gpu**:
   - ONNX core + GPU runtime are available for running exported graphs and PTQ flows.
-- **neural-compressor**:
-  - Present via the `rtx5090` dependency group for INC-based PTQ and sensitivity analysis.
+- **torch**:
+  - CUDA-enabled PyTorch for general GPU work and model export.
+
+If you need Intel Neural Compressor (INC) or `optimum-onnx`, use the `rtx5090-inc` environment instead:
+
+- `pixi run -e rtx5090-inc python ...`
+- See: `context/instructions/prep-rtx5090-inc.md`
 
 Source code mirrors for some tools live under `extern/` (e.g. `extern/optimum-onnx`, `extern/TensorRT-Model-Optimizer`, `extern/neural-compressor`, `extern/vllm`), but the **runtime libraries** used in this env come from the Pixi-managed Python packages above. Prefer importing from the installed packages and treat `extern/` as read-only reference code unless explicitly modifying vendored sources.

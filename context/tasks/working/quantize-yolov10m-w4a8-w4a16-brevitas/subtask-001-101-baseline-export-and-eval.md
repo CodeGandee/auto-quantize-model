@@ -38,3 +38,13 @@
 
 - Keep run artifacts under `tmp/yolov10m_brevitas_w4a8_w4a16/<run-id>/` (do not commit).
 - If FP16 export is unavailable via the default exporter, proceed with FP32 and record the limitation.
+
+## Summary
+
+- Implemented a baseline export path that preserves raw YOLOv10 head outputs (`one2many`) for COCO evaluation (avoids Ultralytics ONNX export modes that return post-NMS `[1, 300, 6]` tensors).
+- Baseline exporter lives in `src/auto_quantize_model/cv_models/yolov10_brevitas.py` (`export_yolov10_head_onnx`) and is wired via `scripts/cv-models/quantize_yolov10m_brevitas_w4.py baseline`.
+- Tested run root: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40`
+  - ONNX: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-baseline-fp32.onnx`
+  - I/O contract: `images` `float32[1,3,640,640]` → `output0` `float32[1,84,8400]` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/baseline_io.json`)
+  - COCO subset (100 images) metrics: `mAP_50_95=0.6022`, `mAP_50=0.7736` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/baseline-coco/metrics.json`)
+- Logs: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-runner-2025-12-23_16-12-40.log`

@@ -37,3 +37,15 @@
 ## Notes
 
 - Keep function/class names intact when writing any Mermaid diagrams or notes (see `magic-context/instructions/mermaid-seq-styling.md`).
+
+## Summary
+
+- Implemented a Brevitas PTQ path for W4A16(-like) (4-bit weights, floating activations) in:
+  - `src/auto_quantize_model/cv_models/yolov10_brevitas.py` (`quantize_model_brevitas_ptq`, `export_brevitas_qcdq_onnx`)
+  - `scripts/cv-models/quantize_yolov10m_brevitas_w4.py ptq --mode w4a16`
+- Tested run root: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40`
+  - ONNX: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a16-qcdq-ptq-opt.onnx`
+  - QCDQ node counts (weight-only style): `QuantizeLinear=0`, `DequantizeLinear=118`, `Clip=118` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/ptq_w4a16_export.json`)
+  - COCO subset (100 images) metrics: `mAP_50_95=0.1277`, `mAP_50=0.2541` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/ptq-w4a16-coco/metrics.json`)
+- Logs: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-runner-2025-12-23_16-12-40.log`
+- Next: add W8A16/W8A8 PTQ sanity checks (Subtasks 1.7–1.8). If W8 PTQ also collapses, treat it as a pipeline issue rather than a W4 limitation.

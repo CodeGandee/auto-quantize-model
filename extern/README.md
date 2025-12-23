@@ -56,6 +56,16 @@ other large vendor/build directories). Add this to your workspace settings
     toolkit 12.8.1) for running ONNX models on GPU, and to inspect/export
     configuration for CUDA EP builds.
 
+- `finn-quantized-yolo/`
+  - Shallow clone of an example FINN-based quantized YOLO workflow.
+  - Upstream: <https://github.com/sefaburakokcu/finn-quantized-yolo>
+  - Used as a reference for FINN / FPGA-oriented quantization pipelines.
+
+- `quantized-yolov5/`
+  - Shallow clone of the LPYOLO/FINN companion training repo (Brevitas QAT on YOLOv5).
+  - Upstream: <https://github.com/sefaburakokcu/quantized-yolov5>
+  - Used to study their Brevitas-based QAT + FINN-oriented export choices.
+
 - `vllm/`
   - Shallow clone of the vLLM inference engine.
   - Upstream: <https://github.com/vllm-project/vllm>
@@ -80,6 +90,8 @@ git clone --depth=1 https://github.com/openvinotoolkit/nncf.git nncf
 git clone --depth=1 https://github.com/openvinotoolkit/openvino.git openvino
 git clone --depth=1 https://github.com/vllm-project/vllm.git vllm
 git clone --depth=1 https://github.com/microsoft/onnxruntime.git onnxruntime
+git clone --depth=1 https://github.com/sefaburakokcu/finn-quantized-yolo.git finn-quantized-yolo
+git clone --depth=1 https://github.com/sefaburakokcu/quantized-yolov5.git quantized-yolov5
 ```
 
 For ONNX Runtime, see the upstream docs for detailed CUDA build instructions:

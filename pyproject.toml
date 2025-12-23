@@ -266,4 +266,4 @@ rtx5090-inc = { features = ["rtx5090", "rtx5090-inc"], solve-group = "rtx5090-in
 
 [dependency-groups]
 rtx5090-inc = ["neural-compressor>=2.6,<3"]
-rtx5090 = ["onnx>=1.19.0,<1.20.0", "brevitas>=0.12.1,<0.13"]
+rtx5090 = ["onnx>=1.19.0,<1.20.0", "brevitas>=0.12.1,<0.13", "lightning>=2.6.0,<3", "tensorboardx>=2.6.4,<3", "tensorboard>=2.20.0,<3"]

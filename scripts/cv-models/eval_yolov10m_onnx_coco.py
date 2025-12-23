@@ -28,10 +28,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Sequence, Tuple
 
 import numpy as np
-import onnxruntime as ort
-from pycocotools.coco import COCO
-from pycocotools.cocoeval import COCOeval
-import yaml
+import onnxruntime as ort  # type: ignore[import-untyped]
+from pycocotools.coco import COCO  # type: ignore[import-untyped]
+from pycocotools.cocoeval import COCOeval  # type: ignore[import-untyped]
+import yaml  # type: ignore[import-untyped]
 
 from auto_quantize_model.cv_models.yolo_preprocess import (
     find_repo_root,
@@ -266,7 +266,7 @@ def decode_yolo_output(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Decode YOLO outputs to per-image detections in letterboxed xyxy space."""
 
-    raw = output
+    raw = output.astype(np.float32, copy=False)
     if raw.ndim == 3 and raw.shape[0] == 1:
         raw = raw[0]
 
@@ -365,8 +365,8 @@ def summarize_latency(latencies: List[float], *, skip: int = 0) -> Dict[str, flo
 
 def resolve_image_ids(coco: COCO, *, image_ids_list: Path | None, max_images: int) -> List[int]:
     if image_ids_list is None:
-        img_ids = sorted(coco.getImgIds())
-        return img_ids[: int(max_images)] if int(max_images) > 0 else img_ids
+        all_ids = sorted(coco.getImgIds())
+        return all_ids[: int(max_images)] if int(max_images) > 0 else all_ids
 
     img_ids: List[int] = []
     path = Path(image_ids_list)
@@ -435,11 +435,20 @@ def main(argv: List[str] | None = None) -> int:
             sess_options.add_session_config_entry("session.disable_cpu_ep_fallback", "1")
 
     session = ort.InferenceSession(str(onnx_path), sess_options=sess_options, providers=providers)
-    input_name = session.get_inputs()[0].name
+    input_meta = session.get_inputs()[0]
+    input_name = input_meta.name
+    input_type = str(input_meta.type)
+    input_dtype: type[np.floating[Any]]
+    if input_type == "tensor(float16)":
+        input_dtype = np.float16
+    elif input_type == "tensor(float)":
+        input_dtype = np.float32
+    else:
+        raise ValueError(f"Unsupported ONNX input type for images: {input_type}")
 
     warmup_runs = int(args.warmup_runs)
     if warmup_runs > 0:
-        warmup_tensor = np.zeros((1, 3, int(args.imgsz), int(args.imgsz)), dtype=np.float32)
+        warmup_tensor = np.zeros((1, 3, int(args.imgsz), int(args.imgsz)), dtype=input_dtype)
         print(f"[INFO] Warming up ORT session: warmup_runs={warmup_runs}")
         for _ in range(warmup_runs):
             _ = session.run(None, {input_name: warmup_tensor})
@@ -451,7 +460,7 @@ def main(argv: List[str] | None = None) -> int:
     latencies: List[float] = []
 
     print(
-        f"Running ONNX evaluation on {len(imgs)} images with providers={args.providers}, "
+        f"Running ONNX evaluation on {len(imgs)} images with providers={providers}, "
         f"imgsz={args.imgsz}, conf={args.conf}, iou={args.iou} ..."
     )
 
@@ -462,6 +471,8 @@ def main(argv: List[str] | None = None) -> int:
             raise FileNotFoundError(f"Image for COCO id {img_id} not found at {image_path}")
 
         input_tensor, meta = preprocess_image_path(image_path, img_size=int(args.imgsz), add_batch_dim=True)
+        if input_tensor.dtype != input_dtype:
+            input_tensor = input_tensor.astype(input_dtype, copy=False)
 
         start = time.perf_counter()
         outputs = session.run(None, {input_name: input_tensor})
@@ -545,7 +556,7 @@ def main(argv: List[str] | None = None) -> int:
             "data_root": str(data_root),
             "instances": str(instances_path),
             "images_dir": str(images_dir),
-            "providers": list(args.providers),
+            "providers": list(providers),
             "imgsz": int(args.imgsz),
             "max_images": int(args.max_images),
             "warmup_runs": int(args.warmup_runs),

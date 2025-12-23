@@ -1,0 +1,34 @@
+{
+  "onnx_path": "tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w8a16-qcdq-ptq-opt.onnx",
+  "data_root": "datasets/coco2017/source-data",
+  "instances": "datasets/coco2017/source-data/annotations/instances_val2017.json",
+  "images_dir": "datasets/coco2017/source-data/val2017",
+  "providers": [
+    "CUDAExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "imgsz": 640,
+  "max_images": 100,
+  "warmup_runs": 10,
+  "skip_latency": 10,
+  "conf": 0.001,
+  "iou": 0.7,
+  "max_det": 300,
+  "pre_nms_topk": 30000,
+  "metrics": {
+    "mAP_50_95": 0.5982681551599622,
+    "mAP_50": 0.7696711990420302,
+    "mAP_75": 0.6484362717958615,
+    "mAP_small": 0.39345871419439254,
+    "mAP_medium": 0.6392307179322809,
+    "mAP_large": 0.8015063467545429,
+    "num_images": 100,
+    "num_detections": 30000
+  },
+  "latency": {
+    "mean_ms": 4.533669622065241,
+    "median_ms": 4.542853002931224,
+    "p90_ms": 4.59432119896519,
+    "throughput_fps": 220.57187297747248
+  }
+}

@@ -36,3 +36,15 @@
 ## Notes
 
 - W4A8 here means **INT8 activations via Q/DQ**, not FP8.
+
+## Summary
+
+- Implemented a Brevitas PTQ path for W4A8 (4-bit weights + INT8 activations) with calibration on `datasets/quantize-calib/quant100.txt`.
+  - Code: `src/auto_quantize_model/cv_models/yolov10_brevitas.py` (`calibrate_activation_quantizers`) and `scripts/cv-models/quantize_yolov10m_brevitas_w4.py ptq --mode w4a8`.
+- Tested run root: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40`
+  - Calibration: 100 images, batch=4, device=`cuda:0` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/ptq_w4a8_export.json`)
+  - ONNX: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-ptq-opt.onnx`
+  - QCDQ node counts: `QuantizeLinear=118`, `DequantizeLinear=236`, `Clip=118` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/ptq_w4a8_export.json`)
+  - COCO subset (100 images) metrics: `mAP_50_95=0.1150`, `mAP_50=0.2265` (see `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/ptq-w4a8-coco/metrics.json`)
+- Logs: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-runner-2025-12-23_16-12-40.log`
+- Next: add W8A16/W8A8 PTQ sanity checks (Subtasks 1.7–1.8) to verify that INT8 PTQ does not show a similarly large drop.

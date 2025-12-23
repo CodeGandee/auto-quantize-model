@@ -26,3 +26,12 @@
 
 - Prefer the smallest possible compatibility shim that is easy to delete once Brevitas supports Torch 2.9 natively.
 
+## Summary
+
+- Reproduced Brevitas `export_onnx_qcdq(..., dynamo=False)` failure under Torch 2.9 (`AttributeError: torch.onnx.symbolic_helper has no _export_onnx_opset_version` and `ModuleNotFoundError: torch.onnx._globals`) in `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-102-brevitas-compat.log`.
+- Added `src/auto_quantize_model/brevitas_onnx_export_compat.py`:
+  - `apply_brevitas_torch_onnx_compat()` patches Brevitas’ `onnx_export_opset` getter to use Torch’s new internal `GLOBALS.export_onnx_opset_version` location.
+  - `get_brevitas_onnx_compat_status()` provides a small diagnostic payload for logs.
+- Added smoke script `scripts/cv-models/smoke_brevitas_qcdq_export.py` and validated end-to-end export + ORT inference.
+  - Smoke outputs: `tmp/brevitas_qcdq_smoke/2025-12-23_16-02-34` (see `smoke_summary.json` and `toy-w4a8-qcdq.onnx`)
+  - Smoke log: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-102-brevitas-compat-smoke.log`

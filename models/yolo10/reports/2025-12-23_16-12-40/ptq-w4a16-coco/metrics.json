@@ -1,0 +1,34 @@
+{
+  "onnx_path": "/workspace/code/auto-quantize-model/tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a16-qcdq-ptq-opt.onnx",
+  "data_root": "/workspace/code/auto-quantize-model/datasets/coco2017/source-data",
+  "instances": "/workspace/code/auto-quantize-model/datasets/coco2017/source-data/annotations/instances_val2017.json",
+  "images_dir": "/workspace/code/auto-quantize-model/datasets/coco2017/source-data/val2017",
+  "providers": [
+    "CUDAExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "imgsz": 640,
+  "max_images": 100,
+  "warmup_runs": 10,
+  "skip_latency": 10,
+  "conf": 0.001,
+  "iou": 0.7,
+  "max_det": 300,
+  "pre_nms_topk": 30000,
+  "metrics": {
+    "mAP_50_95": 0.1276738665479607,
+    "mAP_50": 0.25408512474536454,
+    "mAP_75": 0.1144879101623301,
+    "mAP_small": 0.03593420021243073,
+    "mAP_medium": 0.19549515758113287,
+    "mAP_large": 0.2982353407745781,
+    "num_images": 100,
+    "num_detections": 30000
+  },
+  "latency": {
+    "mean_ms": 4.336158410700995,
+    "median_ms": 4.321520504163345,
+    "p90_ms": 4.407778900349513,
+    "throughput_fps": 230.61888088132307
+  }
+}

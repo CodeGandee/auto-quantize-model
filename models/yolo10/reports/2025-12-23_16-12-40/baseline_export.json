@@ -1,0 +1,33 @@
+{
+  "fp16_error": null,
+  "fp16_used": false,
+  "head": "one2many",
+  "imgsz": 640,
+  "io_contract": {
+    "inputs": [
+      {
+        "dtype": 1,
+        "name": "images",
+        "shape": [
+          1,
+          3,
+          640,
+          640
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "dtype": 1,
+        "name": "output0",
+        "shape": [
+          1,
+          84,
+          8400
+        ]
+      }
+    ]
+  },
+  "opset": 13,
+  "out_path": "/workspace/code/auto-quantize-model/tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-baseline-fp32.onnx"
+}
