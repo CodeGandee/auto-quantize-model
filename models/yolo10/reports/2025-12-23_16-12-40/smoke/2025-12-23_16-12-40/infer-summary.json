@@ -1,6 +1,6 @@
 {
   "model_name": "2025-12-23_16-12-40",
-  "model_path": "tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-qat-pl-opt.onnx",
+  "model_path": "tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-qat-opt.onnx",
   "providers": [
     "CUDAExecutionProvider",
     "CPUExecutionProvider"
@@ -37,5 +37,5 @@
       ]
     }
   ],
-  "runtime_ms": 3149.378
+  "runtime_ms": 3116.56
 }

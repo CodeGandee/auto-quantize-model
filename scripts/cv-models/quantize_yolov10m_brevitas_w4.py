@@ -99,9 +99,7 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
     qat.add_argument("--val", action="store_true", default=False)
     qat.add_argument("--lr", type=float, default=1e-4)
     qat.add_argument("--weight-decay", type=float, default=5e-4)
-    qat.add_argument("--precision", type=str, default="32-true")
     qat.add_argument("--log-every-n-steps", type=int, default=10)
-    qat.add_argument("--gradient-clip-val", type=float, default=10.0)
 
     qat.add_argument("--optimize", action="store_true", default=True)
     qat.add_argument("--no-optimize", dest="optimize", action="store_false")
@@ -390,53 +388,30 @@ def run_qat(args: argparse.Namespace, *, repo_root: Path) -> Dict[str, Any]:
             max_images=args.calib_max_images,
         )
 
-    from auto_quantize_model.cv_models.yolov10_lightning_qat import run_lightning_qat
+    from auto_quantize_model.cv_models.yolov10_ultralytics_qat import run_ultralytics_qat
 
-    ensure_local_yolo10_src_on_path(repo_root=repo_root)
-    import torch
-    from ultralytics.cfg import get_cfg  # type: ignore[import-not-found]
-    from ultralytics.data.build import build_dataloader, build_yolo_dataset  # type: ignore[import-not-found]
-    from ultralytics.data.utils import check_det_dataset  # type: ignore[import-not-found]
-
-    cfg: Any = get_cfg(overrides={"task": "detect", "imgsz": int(args.imgsz), "fraction": 1.0})
-    data = check_det_dataset(str(dataset_yaml), autodownload=False)
-    stride = int(getattr(model, "stride", torch.tensor([32])).max())
-
-    # Ultralytics loss objects expect `model.args` to be an attribute-accessible config.
-    # The checkpoint-loaded model may carry `args` as a dict, which breaks v8/v10 loss code.
-    model.args = cfg  # type: ignore[attr-defined]
-    model.names = data.get("names", {})  # type: ignore[attr-defined]
-
-    train_dataset = build_yolo_dataset(cfg, data["train"], int(args.batch), data=data, mode="train", rect=False, stride=stride)
-    val_dataset = build_yolo_dataset(cfg, data["val"], int(args.batch), data=data, mode="val", rect=False, stride=stride)
-    train_loader = build_dataloader(train_dataset, int(args.batch), int(args.workers), shuffle=True, rank=-1)
-    val_loader = build_dataloader(val_dataset, int(args.batch), int(args.workers), shuffle=False, rank=-1)
-
-    accelerator = "cpu" if str(args.device).lower() in {"cpu", "-1"} else "gpu"
-    precision = str(args.precision)
-    if bool(args.amp) and precision == "32-true":
-        precision = "16-mixed"
-
-    qat_lightning_dir = qat_root / "lightning" / f"yolov10m-brevitas-{mode}"
-    trained_model, lightning_outputs, lightning_summary = run_lightning_qat(
+    qat_project_dir = qat_root / "ultralytics"
+    trained_model, qat_outputs, qat_summary = run_ultralytics_qat(
         model=model,
-        train_dataloader=train_loader,
-        val_dataloader=val_loader if bool(args.val) else None,
-        out_dir=qat_lightning_dir,
+        checkpoint_path=args.checkpoint,
+        dataset_yaml=dataset_yaml,
+        out_dir=qat_project_dir,
         run_name=f"yolov10m-brevitas-{mode}",
+        imgsz=int(args.imgsz),
         epochs=int(args.epochs),
-        lr=float(args.lr),
-        weight_decay=float(args.weight_decay),
+        batch=int(args.batch),
+        device=str(args.device),
         seed=int(args.seed),
-        accelerator=accelerator,
-        devices=1,
-        precision=precision,
+        workers=int(args.workers),
+        amp=bool(args.amp),
+        val=bool(args.val),
+        lr0=float(args.lr),
+        weight_decay=float(args.weight_decay),
         log_every_n_steps=int(args.log_every_n_steps),
-        gradient_clip_val=float(args.gradient_clip_val),
     )
 
     out_dir = args.run_root / "onnx"
-    onnx_path = out_dir / f"yolov10m-{mode}-qcdq-qat-pl.onnx"
+    onnx_path = out_dir / f"yolov10m-{mode}-qcdq-qat.onnx"
     export_model = Yolov10HeadOutput(trained_model, head="one2many")
     export_info = export_brevitas_qcdq_onnx(
         export_model,
@@ -460,13 +435,13 @@ def run_qat(args: argparse.Namespace, *, repo_root: Path) -> Dict[str, Any]:
         "train_subset": train_subset_stats,
         "val_subset": val_subset_stats,
     }
-    export_info["lightning"] = {
-        "run_dir": str(qat_lightning_dir),
-        "log_dir": str(lightning_outputs.log_dir),
-        "checkpoint_dir": str(lightning_outputs.checkpoint_dir),
-        "loss_curve_csv": str(lightning_outputs.loss_curve_csv),
-        "loss_curve_png": str(lightning_outputs.loss_curve_png),
-        "summary": lightning_summary,
+    export_info["qat_training"] = {"framework": "ultralytics", **qat_summary}
+    export_info["qat_training_outputs"] = {
+        "save_dir": str(qat_outputs.save_dir),
+        "tensorboard_log_dir": str(qat_outputs.tensorboard_log_dir),
+        "results_csv": str(qat_outputs.results_csv),
+        "loss_curve_csv": str(qat_outputs.loss_curve_csv),
+        "loss_curve_png": str(qat_outputs.loss_curve_png),
     }
     if calib_info is not None:
         export_info["calibration"] = calib_info
@@ -477,7 +452,7 @@ def run_qat(args: argparse.Namespace, *, repo_root: Path) -> Dict[str, Any]:
         export_info["optimized"] = opt_info
         export_info["optimized_io_contract"] = infer_onnx_io_contract(opt_path)
 
-    write_json(args.run_root / f"qat_{mode}_lightning_export.json", export_info)
+    write_json(args.run_root / f"qat_{mode}_export.json", export_info)
     return export_info
 
 

@@ -43,16 +43,18 @@
 - Added an end-to-end runner: `scripts/cv-models/run_yolov10m_brevitas_w4_ptq_qat.sh` (baseline + PTQ, optional QAT) writing into `tmp/yolov10m_brevitas_w4a8_w4a16/<run-id>/`.
 - Implemented conservative ONNX cleanup while keeping Q/DQ nodes: `src/auto_quantize_model/cv_models/yolov10_brevitas.py` (`optimize_onnx_keep_qdq`), emitting `*-opt.onnx` variants.
 - Updated runbook: `models/yolo10/README.md` (Brevitas PTQ/QAT W4A16/W4A8 commands + caveats).
-- Added a dataset-aware summary writer: `scripts/cv-models/write_yolov10m_brevitas_summary.py` (includes evaluation dataset details, calibration lists, and Lightning QAT log paths).
-- Produced updated comparison summary with W8 sanity checks + Lightning QAT: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/summary.md`
+- Added a dataset-aware summary writer: `scripts/cv-models/write_yolov10m_brevitas_summary.py` (includes evaluation dataset details, calibration lists, and Ultralytics-trainer QAT log paths).
+- Produced updated comparison summary with W8 sanity checks + Ultralytics-trainer QAT: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/summary.md`
   - baseline `mAP_50_95=0.6022` (FP32)
   - PTQ W8A16 `mAP_50_95=0.5983`
   - PTQ W8A8 `mAP_50_95=0.5932`
   - PTQ W4A16 `mAP_50_95=0.1277`
   - PTQ W4A8 `mAP_50_95=0.1150`
-  - QAT W4A8 (Lightning) `mAP_50_95=0.2156`
+- QAT W4A8 `mAP_50_95=0.2912`
 - Conclusion from W8 sanity checks: PTQ INT8 does **not** collapse, so the export/eval wiring is likely correct; the large W4 drop is scheme/config related.
 - Logs:
   - Runner: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-runner-2025-12-23_16-12-40.log`
-  - Summary regen: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-summary-v3.log`
-  - Quality gates: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-quality-gates.log` (full `ruff check .` fails due to pre-existing repo issues; targeted `ruff`/`mypy` for task files pass)
+  - Summary regen: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-summary-v4.log`
+  - Targeted `ruff`: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-ruff-v3.log`
+  - Targeted `mypy`: `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-mypy-v3.log`
+  - Full quality gates (known pre-existing failures): `context/logs/quantize-yolov10m-w4a8-w4a16-brevitas/subtask-001-106-quality-gates.log`

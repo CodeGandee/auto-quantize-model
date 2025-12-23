@@ -7,7 +7,7 @@ The runner writes multiple artifacts under a run root, e.g.:
 This script aggregates:
 - accuracy + latency from `*-coco/metrics.json`,
 - calibration metadata from `ptq_*.json` / `qat_*.json`,
-- QAT training metadata (Lightning logs, loss curve files).
+- QAT training metadata (Ultralytics save dir, TensorBoard logs, loss curve files).
 """
 
 from __future__ import annotations
@@ -56,7 +56,6 @@ def iter_variant_metrics(run_root: Path) -> List[Tuple[str, Path]]:
         ("ptq-w8a8", run_root / "ptq-w8a8-coco" / "metrics.json"),
         ("ptq-w4a16", run_root / "ptq-w4a16-coco" / "metrics.json"),
         ("ptq-w4a8", run_root / "ptq-w4a8-coco" / "metrics.json"),
-        ("qat-w4a8-pl", run_root / "qat-w4a8-pl-coco" / "metrics.json"),
         ("qat-w4a8", run_root / "qat-w4a8-coco" / "metrics.json"),
     ]
     return [(name, path) for name, path in order if path.is_file()]
@@ -124,7 +123,6 @@ def build_summary(run_root: Path) -> str:
     calib_sources = [
         ("ptq-w8a8", run_root / "ptq_w8a8_export.json"),
         ("ptq-w4a8", run_root / "ptq_w4a8_export.json"),
-        ("qat-w4a8-pl", run_root / "qat_w4a8_lightning_export.json"),
         ("qat-w4a8", run_root / "qat_w4a8_export.json"),
     ]
     any_calib = False
@@ -141,19 +139,29 @@ def build_summary(run_root: Path) -> str:
         lines.append("- (none found)")
     lines.append("")
 
-    qat_payload = maybe_load(run_root / "qat_w4a8_lightning_export.json")
+    qat_payload = maybe_load(run_root / "qat_w4a8_export.json")
     if qat_payload and isinstance(qat_payload.get("qat_dataset"), dict):
         qat_dataset = qat_payload["qat_dataset"]
-        lines.append("### QAT (Lightning)")
+        lines.append("### QAT (Ultralytics trainer)")
         lines.append("")
         lines.append(f"- `dataset_yaml`: `{qat_dataset.get('dataset_yaml')}`")
         lines.append(f"- `dataset_root`: `{qat_dataset.get('dataset_root')}`")
         lines.append(f"- `train_images`: `{qat_dataset.get('train_images')}` (list: `{qat_dataset.get('train_list_path')}`)")
         lines.append(f"- `val_images`: `{qat_dataset.get('val_images')}` (val_max_images: `{qat_dataset.get('val_max_images')}`)")
-        if isinstance(qat_payload.get("lightning"), dict):
-            lt = qat_payload["lightning"]
-            lines.append(f"- TensorBoard: `{lt.get('log_dir')}`")
-            lines.append(f"- Loss curve: `{lt.get('loss_curve_png')}` (csv: `{lt.get('loss_curve_csv')}`)")
+        if isinstance(qat_payload.get("qat_training_outputs"), dict):
+            training = qat_payload["qat_training_outputs"]
+            lines.append(f"- TensorBoard: `{training.get('tensorboard_log_dir')}`")
+            lines.append(f"- Loss curve: `{training.get('loss_curve_png')}` (csv: `{training.get('loss_curve_csv')}`)")
+        if isinstance(qat_payload.get("qat_training"), dict):
+            training_cfg = qat_payload["qat_training"].get("trainer_overrides")
+            if isinstance(training_cfg, dict):
+                lines.append(
+                    "- Train cfg: "
+                    f"epochs={training_cfg.get('epochs')}, batch={training_cfg.get('batch')}, "
+                    f"imgsz={training_cfg.get('imgsz')}, device={training_cfg.get('device')}, "
+                    f"lr0={training_cfg.get('lr0')}, weight_decay={training_cfg.get('weight_decay')}, "
+                    f"seed={training_cfg.get('seed')}"
+                )
         lines.append("")
 
     return "\n".join(lines) + "\n"

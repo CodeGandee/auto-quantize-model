@@ -7,8 +7,7 @@
 | ptq-w8a8 | 0.5932 | 0.7696 | 5.279 | 5.348 | CUDAExecutionProvider CPUExecutionProvider | `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w8a8-qcdq-ptq-opt.onnx` |
 | ptq-w4a16 | 0.1277 | 0.2541 | 4.336 | 4.408 | CUDAExecutionProvider CPUExecutionProvider | `/workspace/code/auto-quantize-model/tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a16-qcdq-ptq-opt.onnx` |
 | ptq-w4a8 | 0.1150 | 0.2265 | 5.302 | 5.370 | CUDAExecutionProvider CPUExecutionProvider | `/workspace/code/auto-quantize-model/tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-ptq-opt.onnx` |
-| qat-w4a8-pl | 0.2156 | 0.4150 | 5.264 | 5.336 | CUDAExecutionProvider CPUExecutionProvider | `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-qat-pl-opt.onnx` |
-| qat-w4a8 | 0.2912 | 0.4949 | 5.286 | 5.352 | CUDAExecutionProvider CPUExecutionProvider | `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-qat-opt.onnx` |
+| qat-w4a8 | 0.2912 | 0.4949 | 5.291 | 5.348 | CUDAExecutionProvider CPUExecutionProvider | `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/onnx/yolov10m-w4a8-qcdq-qat-opt.onnx` |
 
 ## Datasets
 
@@ -30,15 +29,15 @@
 
 - `ptq-w8a8`: list=`datasets/quantize-calib/quant100.txt`, used=100, batch=4, device=`cuda:0`
 - `ptq-w4a8`: list=`datasets/quantize-calib/quant100.txt`, used=100, batch=4, device=`cuda:0`
-- `qat-w4a8-pl`: list=`datasets/quantize-calib/quant100.txt`, used=100, batch=4, device=`cuda:0`
-- `qat-w4a8`: list=`None`, used=100, batch=4, device=`cuda:0`
+- `qat-w4a8`: list=`datasets/quantize-calib/quant100.txt`, used=100, batch=4, device=`cuda:0`
 
-### QAT (Lightning)
+### QAT (Ultralytics trainer)
 
 - `dataset_yaml`: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/coco_yolo_subset/coco_yolo_subset.yaml`
 - `dataset_root`: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/coco_yolo_subset`
 - `train_images`: `100` (list: `datasets/quantize-calib/quant100.txt`)
 - `val_images`: `20` (val_max_images: `20`)
-- TensorBoard: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/lightning/yolov10m-brevitas-w4a8/lightning`
-- Loss curve: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/lightning/yolov10m-brevitas-w4a8/loss/loss_curve.png` (csv: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/lightning/yolov10m-brevitas-w4a8/loss/loss_curve.csv`)
+- TensorBoard: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/ultralytics/yolov10m-brevitas-w4a8/tensorboard`
+- Loss curve: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/ultralytics/yolov10m-brevitas-w4a8/loss/loss_curve.png` (csv: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/qat/ultralytics/yolov10m-brevitas-w4a8/loss/loss_curve.csv`)
+- Train cfg: epochs=1, batch=2, imgsz=640, device=0, lr0=0.0001, weight_decay=0.0005, seed=0
 

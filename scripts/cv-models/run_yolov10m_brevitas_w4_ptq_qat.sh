@@ -220,9 +220,9 @@ if [[ "${RUN_QAT}" == "1" ]]; then
     --seed 0 \
     |& tee "${RUN_ROOT}/logs/qat_${QAT_MODE}.log"
 
-  qat_onnx="${RUN_ROOT}/onnx/yolov10m-${QAT_MODE}-qcdq-qat-pl-opt.onnx"
+  qat_onnx="${RUN_ROOT}/onnx/yolov10m-${QAT_MODE}-qcdq-qat-opt.onnx"
   if [[ ! -f "${qat_onnx}" ]]; then
-    qat_onnx="${RUN_ROOT}/onnx/yolov10m-${QAT_MODE}-qcdq-qat-pl.onnx"
+    qat_onnx="${RUN_ROOT}/onnx/yolov10m-${QAT_MODE}-qcdq-qat.onnx"
   fi
 
   echo "[INFO] Random-tensor smoke (QAT ${QAT_MODE})..."
@@ -241,7 +241,7 @@ if [[ "${RUN_QAT}" == "1" ]]; then
     --warmup-runs 10 \
     --skip-latency 10 \
     --imgsz "${IMG_SIZE}" \
-    --out "${RUN_ROOT}/qat-${QAT_MODE}-pl-coco/metrics.json" \
+    --out "${RUN_ROOT}/qat-${QAT_MODE}-coco/metrics.json" \
     |& tee "${RUN_ROOT}/logs/qat_${QAT_MODE}_eval.log"
 fi
 

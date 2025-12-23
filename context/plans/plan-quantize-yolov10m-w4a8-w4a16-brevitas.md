@@ -2,7 +2,7 @@
 
 ## HEADER
 - **Purpose**: Produce reproducible YOLOv10m ONNX artifacts for research that express **4-bit and 8-bit weights** with either **floating activations/compute (A16-like)** or **INT8 fake-quant activations (A8)**, using **PTQ first** and **optional QAT**, and validate they run on **ONNX Runtime CUDA EP** in the `rtx5090` Pixi environment.
-- **Status**: In progress (W8 PTQ sanity checks done; Lightning QAT added; W4 accuracy still low)
+- **Status**: In progress (W8 PTQ sanity checks pass; Ultralytics-trainer QAT logging added; W4 accuracy still low)
 - **Date**: 2025-12-23
 - **Dependencies**:
   - `context/instructions/prep-rtx5090.md`
@@ -28,7 +28,7 @@
 - W4 remains the main issue:
   - PTQ W4A16 `mAP_50_95=0.1277`
   - PTQ W4A8 `mAP_50_95=0.1150`
-  - Lightning QAT W4A8 partial recovery: `mAP_50_95=0.2156`
+  - QAT W4A8 partial recovery: `mAP_50_95=0.2912`
 - Reference run root and dataset-aware report: `tmp/yolov10m_brevitas_w4a8_w4a16/2025-12-23_16-12-40/summary.md`
 
 ## 1. Purpose and Outcome
@@ -48,7 +48,7 @@ Success looks like:
     - `onnx/yolov10m-w4a8-qcdq-ptq.onnx`
   - QAT exports (optional, if PTQ accuracy loss is too large):
     - `onnx/yolov10m-w4a16-qcdq-qat.onnx`
-    - `onnx/yolov10m-w4a8-qcdq-qat-pl.onnx` (Lightning-managed)
+    - `onnx/yolov10m-w4a8-qcdq-qat.onnx`
 - All produced ONNX artifacts pass:
   - **Random-tensor smoke** inference on **CUDAExecutionProvider** (CPU is last resort).
   - A small **COCO val subset** run via `scripts/cv-models/eval_yolov10m_onnx_coco.py` with providers ordered `CUDAExecutionProvider CPUExecutionProvider` and optional `--disable-cpu-fallback` for “GPU-only” enforcement.
@@ -145,7 +145,7 @@ sequenceDiagram
 - [x] **Implement PTQ W8A8 sanity** Quantize weights+activations to 8-bit with Brevitas; calibrate activations using `datasets/quantize-calib/quant100.txt`; export `yolov10m-w8a8-qcdq-ptq.onnx`; validate ORT CUDA inference and check accuracy is close to baseline.
 - [x] **Implement PTQ W4A16-like** Quantize weights to 4-bit with Brevitas; run model in FP16 where feasible; export `yolov10m-w4a16-qcdq-ptq.onnx`; validate ORT CUDA inference.
 - [x] **Implement PTQ W4A8** Add activation quantizers (INT8) and a calibration pass using `datasets/quantize-calib/quant100.txt`; export `yolov10m-w4a8-qcdq-ptq.onnx`; validate ORT CUDA inference.
-- [x] **Optional QAT** Run a short Lightning QAT fine-tune and export `*-qat-pl.onnx` variants; validate ORT CUDA inference and compare vs PTQ.
+- [x] **Optional QAT** Run a short Ultralytics-trainer QAT fine-tune (with TensorBoard + loss curve) and export `*-qat.onnx`; validate ORT CUDA inference and compare vs PTQ.
 - [x] **Optimize exported graphs** Apply `onnxoptimizer` to all exports, ensuring Q/DQ nodes remain (no accidental dequant folding that erases “inspectability”).
 - [x] **End-to-end eval + summary** Run COCO slice evaluation for baseline/PTQ/QAT variants and write a dataset-aware `tmp/.../summary.md`.
 - [ ] **Quality gates** If code is added/changed: run `pixi run -e rtx5090 ruff check .` and `pixi run -e rtx5090 mypy .` and fix only issues introduced by this work.
