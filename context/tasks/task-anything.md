@@ -42,43 +42,43 @@ Short description: Establish a reproducible workflow for baseline evaluation, Mo
 
 Goal: Verify the target ONNX checkpoint + datasets are present and confirm baseline ONNXRuntime inference runs end-to-end in the `rtx5090` Pixi environment.
 
-- Subtask spec: `context/tasks/working/quantize-yolov10m-low-bit-sensitivity/subtask-001-101-bootstrap-baseline.md`
+- Subtask spec: `context/tasks/done/quantize-yolov10m-low-bit-sensitivity/subtask-001-101-bootstrap-baseline.md`
 
 #### 1.2 Calibration preprocessing and baseline COCO evaluation (ONNX)
 
 Goal: Create a reproducible preprocessing pipeline (letterbox + normalization), generate a calibration tensor, and establish a baseline COCO evaluation path for the YOLOv10m ONNX outputs.
 
-- Subtask spec: `context/tasks/working/quantize-yolov10m-low-bit-sensitivity/subtask-001-102-calibration-and-baseline-coco-eval.md`
+- Subtask spec: `context/tasks/done/quantize-yolov10m-low-bit-sensitivity/subtask-001-102-calibration-and-baseline-coco-eval.md`
 
 #### 1.3 INT8 ONNX PTQ baseline (ModelOpt) + validation
 
 Goal: Produce an INT8 Q/DQ ONNX artifact for `models/cv-models/yolov10m` using ModelOpt ONNX PTQ and validate it via ORT + COCO evaluation.
 
-- Subtask spec: `context/tasks/working/quantize-yolov10m-low-bit-sensitivity/subtask-001-103-int8-onnx-ptq.md`
+- Subtask spec: `context/tasks/done/quantize-yolov10m-low-bit-sensitivity/subtask-001-103-int8-onnx-ptq.md`
 
 #### 1.4 Layer sensitivity sweep (Torch) and candidate mixed schemes
 
 Goal: Run the existing YOLOv10 Torch sensitivity sweep tooling and translate the results into a small, explicit set of candidate mixed/low-bit schemes (top‑K policy), noting assumptions/limitations for ONNX transfer.
 
-- Subtask spec: `context/tasks/working/quantize-yolov10m-low-bit-sensitivity/subtask-001-104-layer-sensitivity-and-schemes.md`
+- Subtask spec: `context/tasks/done/quantize-yolov10m-low-bit-sensitivity/subtask-001-104-layer-sensitivity-and-schemes.md`
 
 #### 1.5 Materialize low-bit candidates and benchmark (ORT/TensorRT)
 
 Goal: Generate mixed/low-bit candidate artifacts via the chosen approach (ONNX-native exclusions vs Torch→export), then evaluate accuracy + benchmark latency/throughput.
 
-- Subtask spec: `context/tasks/working/quantize-yolov10m-low-bit-sensitivity/subtask-001-105-materialize-lowbit-candidates.md`
+- Subtask spec: `context/tasks/done/quantize-yolov10m-low-bit-sensitivity/subtask-001-105-materialize-lowbit-candidates.md`
 
 #### 1.6 Summarize results, update docs, and optional INC cross-check
 
 Goal: Write a concise results summary (baseline vs candidates), update local docs with reproduction commands, and optionally run an INC cross-check for INT8.
 
-- Subtask spec: `context/tasks/working/quantize-yolov10m-low-bit-sensitivity/subtask-001-106-summarize-and-docs-inc.md`
+- Subtask spec: `context/tasks/done/quantize-yolov10m-low-bit-sensitivity/subtask-001-106-summarize-and-docs-inc.md`
 
 ### TODOs
 
-- [ ] Job-001-101: Complete subtask 1.1: Bootstrap assets and baseline smoke checks.
-- [ ] Job-001-102: Complete subtask 1.2: Calibration preprocessing and baseline COCO evaluation (ONNX).
-- [ ] Job-001-103: Complete subtask 1.3: INT8 ONNX PTQ baseline (ModelOpt) + validation.
-- [ ] Job-001-104: Complete subtask 1.4: Layer sensitivity sweep (Torch) and candidate mixed schemes.
-- [ ] Job-001-105: Complete subtask 1.5: Materialize low-bit candidates and benchmark (ORT/TensorRT).
-- [ ] Job-001-106: Complete subtask 1.6: Summarize results, update docs, and optional INC cross-check.
+- [x] Job-001-101: Complete subtask 1.1: Bootstrap assets and baseline smoke checks.
+- [x] Job-001-102: Complete subtask 1.2: Calibration preprocessing and baseline COCO evaluation (ONNX).
+- [x] Job-001-103: Complete subtask 1.3: INT8 ONNX PTQ baseline (ModelOpt) + validation.
+- [x] Job-001-104: Complete subtask 1.4: Layer sensitivity sweep (Torch) and candidate mixed schemes.
+- [x] Job-001-105: Complete subtask 1.5: Materialize low-bit candidates and benchmark (ORT/TensorRT).
+- [x] Job-001-106: Complete subtask 1.6: Summarize results, update docs, and optional INC cross-check.

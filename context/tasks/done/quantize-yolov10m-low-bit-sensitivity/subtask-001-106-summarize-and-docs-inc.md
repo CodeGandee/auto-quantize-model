@@ -19,7 +19,7 @@
 
 - [x] Job-001-106-001 Write `summary.md` with baseline vs candidate comparisons and a clear recommendation.
 - [x] Job-001-106-002 Update `models/cv-models/yolov10m/README.md` (and/or the main task file) with the canonical reproduction commands and pointers to scripts.
-- [ ] Job-001-106-003 (Optional) Run an INC INT8 PTQ/tuning flow and record accuracy/latency for comparison.
+- [x] Job-001-106-003 (Optional) Run an INC INT8 PTQ/tuning flow and record accuracy/latency for comparison (skipped).
 
 ## Outputs (completed)
 
