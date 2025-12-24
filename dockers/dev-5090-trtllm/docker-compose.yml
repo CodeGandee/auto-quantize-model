@@ -4,6 +4,7 @@ services:
     stdin_open: true
     tty: true
     command: /bin/bash
+    shm_size: 20gb
     deploy:
       resources:
         reservations:
@@ -50,6 +51,7 @@ services:
     stdin_open: true
     tty: true
     command: /bin/bash
+    shm_size: 20gb
     deploy:
       resources:
         reservations:
