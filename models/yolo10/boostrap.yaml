@@ -1,0 +1,29 @@
+# Local bootstrap configuration for YOLOv10.
+# Defaults preserve the current behavior (assets stored under this repo folder).
+
+env:
+  # Optional: point this env var to a directory that should hold YOLO assets.
+  # If set, it should be an absolute path.
+  assets_dir_env: AQ_YOLO10_ASSETS_DIR
+
+  # Default assets directory when env var is not set.
+  # Relative paths are resolved relative to this model folder.
+  default_assets_dir: "."
+
+layout:
+  src_subdir: src
+  checkpoints_subdir: checkpoints
+  tmp_subdir: tmp
+
+source:
+  repo_url: https://github.com/THU-MIG/yolov10.git
+
+checkpoints:
+  assets_base_url: https://github.com/jameslahm/yolov10/releases/download/v1.0
+  sizes: [ "n", "s", "m", "b", "l", "x" ]
+  file_template: "yolov10{size}.pt"
+
+choices:
+  # If set, preferred assets directory (absolute path recommended).
+  assets_dir: ""
+  updated_at: ""

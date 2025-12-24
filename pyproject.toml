@@ -66,7 +66,7 @@ pycocotools = "*"
 [tool.pixi.activation.env]
 CUDA_HOME = "${CONDA_PREFIX}"
 CUDA_PATH = "${CONDA_PREFIX}"
-LD_LIBRARY_PATH = "${CONDA_PREFIX}/lib:${CONDA_PREFIX}/lib64:/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+LD_LIBRARY_PATH = "${CONDA_PREFIX}/targets/x86_64-linux/lib:${CONDA_PREFIX}/lib/python3.12/site-packages/nvidia/cudnn/lib:${CONDA_PREFIX}/lib:${CONDA_PREFIX}/lib64:/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
 PATH = "${CONDA_PREFIX}/bin:/opt/tensorrt/bin:${PATH}"
 NVTOOLSEXT_PATH = "${CONDA_PREFIX}/lib/python3.12/site-packages/nvidia/nvtx"
 
@@ -75,6 +75,7 @@ setup-tensorrt = "env NVIDIA_TENSORRT_DISABLE_INTERNAL_PIP=0 python -m pip insta
 build-vllm-wheel = "env VLLM_TAG=v0.8.5 bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
 build-vllm-wheel-rtx5090 = "env VLLM_TAG=autoq-vllm-v0.10.1 TORCH_CUDA_ARCH_LIST=12.0 bash extern/build-vllm.sh -o tmp/vllm-build --jobs 12 --nvcc-threads 3"
 build-onnxoptimizer-rtx5090 = "bash extern/build-onnxoptimizer-rtx5090.sh"
+build-onnxoptimizer-cu128 = "bash extern/build-onnxoptimizer-cu128.sh"
 install-vllm-wheel = "bash custom-build/bootstrap.sh --yes && python -m pip install --no-deps custom-build/vllm-*.whl"
 postinstall-vllm-rtx5090 = "python -m pip install --no-deps custom-build/vllm-0.10.2.dev2+g926b2b1d9.d20251208-cp312-cp312-linux_x86_64.whl"
 postinstall-tensorrt-llm-rtx5090 = "python -m pip install --pre tensorrt_llm --extra-index-url https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/nightly/cu128"
@@ -118,6 +119,7 @@ torchaudio = "==2.9.0"
 onnxruntime-gpu = "*"
 cupy-cuda12x = "*"
 nvidia-modelopt = "==0.40.0"
+brevitas = ">=0.12.1,<0.13"
 
 [tool.pixi.feature.cu128.pypi-options]
 # Use the stable PyTorch cu128 index for this CUDA 12.8 stack,
@@ -299,3 +301,4 @@ rtx5090-inc = { features = ["rtx5090", "rtx5090-inc"], solve-group = "rtx5090-in
 [dependency-groups]
 rtx5090-inc = ["neural-compressor>=2.6,<3"]
 rtx5090 = ["onnx>=1.19.0,<1.20.0", "brevitas>=0.12.1,<0.13", "lightning>=2.6.0,<3", "tensorboardx>=2.6.4,<3", "tensorboard>=2.20.0,<3"]
+cu128 = ["brevitas>=0.12.1,<0.13", "onnx>=1.19.1,<2", "lightning>=2.6.0,<3", "tensorboard>=2.20.0,<3"]

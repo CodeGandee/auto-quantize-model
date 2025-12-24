@@ -12,7 +12,7 @@ stage_1:
     # Flattened version of nvcr.io/nvidia/tensorrt-llm/release:1.0.0
     # Built with: uvx docker-squash -f 188 -t tensorrt-llm:1.0.0-packed nvcr.io/nvidia/tensorrt-llm/release:1.0.0
     # Reduces 188 layers to 1 layer, size decreased from 47.9GB to 36.5GB (23.57% reduction)
-    base: tensorrt-llm:1.0.0-packed
+    base: tensorrt-llm:1.1.0-packed
     output: auto-quantize-trtllm:stage-1
 
   # ssh settings
@@ -29,8 +29,8 @@ stage_1:
     users:
       me:
         password: '123456'
-        uid: 1001
-        gid: 1001
+        uid: ${USER_ID:-1001}
+        gid: ${GROUP_ID:-1001}
         pubkey_file: ~
         privkey_file: ~
 
@@ -110,11 +110,11 @@ stage_2:
     cache_disk:
       type: host
       dst_path: /pkg-cache
-      host_path: /pkg-cache
+      host_path: ${HOST_PIXI_CACHE_DIR:-/pkg-cache}
     wkspace:
       type: host
       dst_path: /workspace
-      host_path: /workspace
+      host_path: ${HOST_WORKSPACE_DIR:-/workspace}
 
   custom:
     # scripts run during build
