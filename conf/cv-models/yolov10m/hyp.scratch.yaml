@@ -1,0 +1,36 @@
+# Scratch hyperparameters for YOLOv10m COCO training (Ultralytics-style).
+#
+# This file mirrors the intent of:
+#   extern/quantized-yolov5/data/hyps/hyp.scratch.yaml
+#
+# Notes:
+# - YOLOv10/Ultralytics has different internal loss scaling than YOLOv5, so we
+#   intentionally do NOT override `box/cls/dfl` loss gains here.
+# - Only include keys we explicitly pass as Ultralytics trainer overrides.
+#
+
+# Optimizer / LR schedule (YOLOv5 scratch recipe)
+optimizer: SGD
+lr0: 0.01
+lrf: 0.1
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+
+# Augmentations (YOLOv5 scratch recipe)
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 0.0
+translate: 0.1
+scale: 0.5
+shear: 0.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.5
+mosaic: 1.0
+mixup: 0.0
+copy_paste: 0.0
+
