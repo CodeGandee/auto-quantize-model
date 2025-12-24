@@ -1,12 +1,9 @@
-# TensorRT Model Optimizer official repo
-/TensorRT-Model-Optimizer
-/llm-compressor
-/neural-compressor
-/nncf
-/openvino
-/vllm
-/onnxruntime
-/onnx
-/optimum-onnx
-/brevitas
-/onnxoptimizer
+# Ignore everything under extern/ by default (including all subdirs)
+/*
+
+# Keep this gitignore file tracked
+!/.gitignore
+
+# Keep root-level scripts and markdown files tracked
+!/*.sh
+!/*.md

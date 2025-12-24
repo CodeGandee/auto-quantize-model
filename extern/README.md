@@ -6,6 +6,8 @@ tooling used as references by this project and its notes under `context/hints/`.
 The contents are **not** committed to this repo. They are ignored via
 `extern/.gitignore` and can be safely deleted and re-cloned at any time.
 
+Only the root-level helper scripts and markdown docs in `extern/` are tracked.
+
 ## VS Code file watching
 
 This directory can contain a very large number of files (vendored repositories).
@@ -56,6 +58,11 @@ other large vendor/build directories). Add this to your workspace settings
     toolkit 12.8.1) for running ONNX models on GPU, and to inspect/export
     configuration for CUDA EP builds.
 
+- `optimum-onnx/`
+  - Shallow clone of Hugging Face Optimum ONNX.
+  - Upstream: <https://github.com/huggingface/optimum-onnx>
+  - Used as a reference for ONNX export/optimization flows.
+
 - `finn-quantized-yolo/`
   - Shallow clone of an example FINN-based quantized YOLO workflow.
   - Upstream: <https://github.com/sefaburakokcu/finn-quantized-yolo>
@@ -65,6 +72,11 @@ other large vendor/build directories). Add this to your workspace settings
   - Shallow clone of the LPYOLO/FINN companion training repo (Brevitas QAT on YOLOv5).
   - Upstream: <https://github.com/sefaburakokcu/quantized-yolov5>
   - Used to study their Brevitas-based QAT + FINN-oriented export choices.
+
+- `brevitas/`
+  - Shallow clone of Xilinx/AMD Brevitas.
+  - Upstream: <https://github.com/Xilinx/brevitas>
+  - Used as a reference for QAT recipes and export utilities.
 
 - `vllm/`
   - Shallow clone of the vLLM inference engine.
@@ -77,10 +89,22 @@ other large vendor/build directories). Add this to your workspace settings
   - Helper script to build vLLM from `extern/vllm` as a wheel or editable
     install inside your current Python environment.
 
+- `build-onnxruntime-cuda-12_8.sh`
+  - Helper script to build ONNX Runtime (CUDA 12.8) from `extern/onnxruntime`.
+
+- `build-onnxoptimizer-rtx5090.sh`
+  - Helper script for building ONNX optimizer tooling used in this repo.
+
 ## (Re)creating the checkouts
 
 If you ever remove the directories under `extern/`, you can recreate them with
-shallow clones (from the repo root):
+shallow clones via the bootstrap script (from the repo root):
+
+```bash
+bash extern/bootstrap.sh
+```
+
+Or manually:
 
 ```bash
 cd extern
@@ -90,8 +114,10 @@ git clone --depth=1 https://github.com/openvinotoolkit/nncf.git nncf
 git clone --depth=1 https://github.com/openvinotoolkit/openvino.git openvino
 git clone --depth=1 https://github.com/vllm-project/vllm.git vllm
 git clone --depth=1 https://github.com/microsoft/onnxruntime.git onnxruntime
+git clone --depth=1 https://github.com/huggingface/optimum-onnx.git optimum-onnx
 git clone --depth=1 https://github.com/sefaburakokcu/finn-quantized-yolo.git finn-quantized-yolo
 git clone --depth=1 https://github.com/sefaburakokcu/quantized-yolov5.git quantized-yolov5
+git clone --depth=1 https://github.com/Xilinx/brevitas.git brevitas
 ```
 
 For ONNX Runtime, see the upstream docs for detailed CUDA build instructions:

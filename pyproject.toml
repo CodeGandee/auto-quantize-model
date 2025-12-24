@@ -104,6 +104,35 @@ index-url = "https://download.pytorch.org/whl/cu124"
 extra-index-urls = ["https://pypi.org/simple"]
 index-strategy = "unsafe-best-match"
 
+[tool.pixi.feature.cu128.dependencies]
+# Generic CUDA 12.8 stack:
+# - Mirrors the RTX 5090 CUDA/toolchain and PyTorch stack
+#   but uses a standard onnxruntime-gpu wheel (no custom .whl path).
+cuda-toolkit = { version = "12.8.1.*", channel = "conda-forge" }
+cuda-nvtx-dev = ">=12.4.99,<13"
+
+[tool.pixi.feature.cu128.pypi-dependencies]
+torch = "==2.9.0"
+torchvision = "==0.24.0"
+torchaudio = "==2.9.0"
+onnxruntime-gpu = "*"
+cupy-cuda12x = "*"
+nvidia-modelopt = "==0.40.0"
+
+[tool.pixi.feature.cu128.pypi-options]
+# Use the stable PyTorch cu128 index for this CUDA 12.8 stack,
+# with PyPI as a fallback for non-torch packages.
+index-url = "https://download.pytorch.org/whl/cu128"
+extra-index-urls = ["https://pypi.org/simple"]
+index-strategy = "unsafe-best-match"
+
+[tool.pixi.feature.cu128.activation.env]
+# Match the CUDA toolkit layout used in the RTX 5090 env.
+CUDAToolkit_ROOT = "${CONDA_PREFIX}/targets/x86_64-linux"
+CUDA_TOOLKIT_ROOT_DIR = "${CONDA_PREFIX}/targets/x86_64-linux"
+CUDA_HOME = "${CONDA_PREFIX}/targets/x86_64-linux"
+CUDA_PATH = "${CONDA_PREFIX}/targets/x86_64-linux"
+
 [tool.pixi.feature.rtx5090.dependencies]
 # RTX 5090 CUDA toolchain pin:
 # - These versions are intentionally fixed for this env.
@@ -118,9 +147,11 @@ cuda-nvtx-dev = ">=12.4.99,<13"
 torch = "==2.9.0"
 torchvision = "==0.24.0"
 torchaudio = "==2.9.0"
-# Use a locally built ONNX Runtime GPU wheel (built from extern/onnxruntime).
-# See: `extern/howto-build-onnxruntime-with-pixi-cuda-12_8.md`.
-onnxruntime-gpu = { path = "custom-build/onnxruntime_gpu-1.24.0-cp312-cp312-linux_x86_64.whl" }
+# Use the standard upstream ONNX Runtime GPU wheel by default.
+# If you build a custom wheel following
+# `extern/howto-build-onnxruntime-with-pixi-cuda-12_8.md`, install it manually
+# inside the env (e.g. via `pixi run -e rtx5090 python -m pip install --no-deps <wheel>`).
+onnxruntime-gpu = "*"
 cupy-cuda12x = "*"
 nvidia-modelopt = "==0.40.0"
 
@@ -258,6 +289,7 @@ testpaths = ["tests"]
 # Keep the existing environment behaviour as the CUDA 12.4 setup.
 default = { features = ["cu124"], solve-group = "cu124" }
 cu124 = { features = ["cu124"], solve-group = "cu124" }
+cu128 = { features = ["cu128"], solve-group = "cu128" }
 # RTX 5090-specific environment using nightly PyTorch/cu128.
 rtx5090 = { features = ["rtx5090"], solve-group = "rtx5090" }
 rtx5090-vllm = { features = ["rtx5090-vllm"], solve-group = "rtx5090-vllm" }
