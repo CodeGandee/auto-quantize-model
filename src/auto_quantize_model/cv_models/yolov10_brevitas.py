@@ -19,7 +19,7 @@ import contextlib
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, Sequence
+from typing import Any, Callable, Dict, Iterator, Optional, Sequence, cast
 
 import numpy as np
 import onnx
@@ -59,6 +59,29 @@ def ensure_local_yolo10_src_on_path(*, repo_root: Path) -> None:
     src_dir = (repo_root / "models" / "yolo10" / "src").resolve()
     if src_dir.is_dir() and str(src_dir) not in sys.path:
         sys.path.insert(0, str(src_dir))
+    _patch_ultralytics_dataset_cache_for_ddp()
+
+
+def _patch_ultralytics_dataset_cache_for_ddp() -> None:
+    try:
+        from ultralytics.data import dataset as dataset_mod  # type: ignore[import-not-found]
+    except Exception:
+        return
+
+    if getattr(dataset_mod, "__autoq_ddp_cache_patch__", False):
+        return
+
+    original_save = cast(Callable[..., Any], dataset_mod.save_dataset_cache_file)
+
+    def _save_dataset_cache_file(*args: Any, **kwargs: Any) -> Any:
+        from ultralytics.utils import LOCAL_RANK  # type: ignore[import-not-found]
+
+        if LOCAL_RANK not in (-1, 0):
+            return
+        return original_save(*args, **kwargs)
+
+    dataset_mod.save_dataset_cache_file = cast(Any, _save_dataset_cache_file)
+    setattr(dataset_mod, "__autoq_ddp_cache_patch__", True)
 
 
 def load_ultralytics_yolov10(*, checkpoint_path: Path, repo_root: Path) -> Any:

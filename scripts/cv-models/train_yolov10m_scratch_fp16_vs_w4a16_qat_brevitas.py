@@ -10,8 +10,8 @@ under `tmp/`), including:
 - loss curve CSV + PNG,
 - ONNX exports (baseline head + Brevitas QCDQ for QAT).
 
-Run in the RTX 5090 Pixi env:
-  pixi run -e rtx5090 python scripts/cv-models/train_yolov10m_scratch_fp16_vs_w4a16_qat_brevitas.py ...
+Run in the cu128 Pixi env:
+  pixi run -e cu128 python scripts/cv-models/train_yolov10m_scratch_fp16_vs_w4a16_qat_brevitas.py ...
 """
 
 from __future__ import annotations
@@ -31,7 +31,6 @@ from auto_quantize_model.cv_models.yolov10_brevitas import (
     export_brevitas_qcdq_onnx,
     export_yolov10_head_onnx,
     optimize_onnx_keep_qdq,
-    quantize_model_brevitas_ptq,
     torch_load_weights_only_disabled,
 )
 from auto_quantize_model.cv_models.yolov10_coco_dataset import prepare_coco2017_yolo_dataset
@@ -151,7 +150,12 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
     fp16.add_argument("--export-opset", type=int, default=13)
     fp16.add_argument("--no-export", dest="export", action="store_false", default=True)
 
-    qat = sub.add_parser("qat-w4a16", parents=[common], help="Train Brevitas W4A16 QAT from scratch.")
+    qat = sub.add_parser(
+        "qat-w4a16",
+        parents=[common],
+        help="Train Brevitas W4A16 QAT from scratch (AMP off by default).",
+    )
+    qat.set_defaults(amp=False)
     qat.add_argument("--export-opset", type=int, default=13)
     qat.add_argument("--no-export", dest="export", action="store_false", default=True)
     qat.add_argument("--optimize-onnx", action="store_true", default=True)
@@ -362,56 +366,9 @@ def run_qat_w4a16(args: argparse.Namespace, *, repo_root: Path) -> Dict[str, Any
     from auto_quantize_model.cv_models.yolov10_brevitas import ensure_local_yolo10_src_on_path
 
     ensure_local_yolo10_src_on_path(repo_root=repo_root)
-    from ultralytics.models.yolov10.train import YOLOv10DetectionTrainer  # type: ignore[import-not-found]
-
-    class Yolov10BrevitasW4A16Trainer(YOLOv10DetectionTrainer):
-        def get_model(self, cfg=None, weights=None, verbose=True):  # type: ignore[override]
-            model = super().get_model(cfg=cfg, weights=weights, verbose=verbose)
-            model = quantize_model_brevitas_ptq(model, weight_bit_width=4, act_bit_width=None)
-            return model
-
-        def save_model(self) -> None:  # type: ignore[override]
-            """Save pickling-free checkpoints for Brevitas models.
-
-            Ultralytics default checkpoints pickle the full model object, which
-            can be brittle for graph-transformed Brevitas modules. We instead
-            store `state_dict()` plus optimizer/EMA state for resumption.
-            """
-
-            from datetime import datetime
-
-            import torch
-            from ultralytics.utils.torch_utils import de_parallel  # type: ignore[import-not-found, attr-defined]
-
-            model = de_parallel(self.model) if isinstance(self.model, nn.Module) else self.model
-            ema_model = getattr(getattr(self, "ema", None), "ema", None)
-            if isinstance(ema_model, nn.Module):
-                ema_state = de_parallel(ema_model).state_dict()
-            else:
-                ema_state = None
-            optimizer = getattr(self, "optimizer", None)
-
-            ckpt: Dict[str, Any] = {
-                "epoch": int(self.epoch + 1),
-                "model_state_dict": model.state_dict() if isinstance(model, nn.Module) else None,
-                "ema_state_dict": ema_state,
-                "optimizer": optimizer.state_dict() if optimizer is not None else None,
-                "train_args": vars(self.args),
-                "date": datetime.now().isoformat(),
-            }
-
-            self.last.parent.mkdir(parents=True, exist_ok=True)
-            torch.save(ckpt, self.last)
-            if getattr(self, "best_fitness", None) == getattr(self, "fitness", None):
-                torch.save(ckpt, self.best)
-
-            save_period = int(getattr(self.args, "save_period", -1) or -1)
-            if save_period > 0 and (int(self.epoch + 1) % save_period == 0):
-                torch.save(ckpt, self.wdir / f"epoch{int(self.epoch + 1):03d}.pt")
-
-        def final_eval(self) -> None:  # type: ignore[override]
-            # Skip Ultralytics final_eval (expects pickle checkpoints).
-            return
+    from auto_quantize_model.cv_models.yolov10_ultralytics_trainers import (
+        Yolov10BrevitasW4A16Trainer,
+    )
 
     overrides = _base_overrides(
         repo_root=repo_root,
