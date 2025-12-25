@@ -3,7 +3,7 @@
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**Note**: This template is filled in by the `/speckit.plan` command.
 
 ## Summary
 
@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Pixi-first** All commands are written as `pixi run ...` (or explicitly justified).
+- [ ] **Quality gates planned** Lint/type/test commands are specified: `pixi run ruff check .`, `pixi run mypy .`, `pixi run pytest`.
+- [ ] **Testing strategy** Tests are planned with the right scope and placement (`tests/unit/`, `tests/integration/`, `tests/manual/`).
+- [ ] **Reproducibility** Plan records config + dataset provenance and respects artifact policy (`tmp/` not committed; curated reports under `models/*/reports/` when applicable).
+- [ ] **Documentation** Required docs updates are listed (README/docs/specs/reports) with clear deliverables.
 
 ## Project Structure
 
