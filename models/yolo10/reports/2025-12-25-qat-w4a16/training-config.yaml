@@ -1,0 +1,190 @@
+report:
+  id: 2025-12-25-qat-w4a16
+  description: "YOLOv10m from-scratch QAT with Brevitas W4A16 on COCO2017."
+
+source:
+  repository: auto-quantize-model
+  git:
+    commit: f18eb9795dd854115921df5d70b79c3c05dd987e
+    subject: "Enable YOLOv10 Brevitas QAT DDP"
+
+run:
+  kind: "qat-w4a16"
+  run_id: "2025-12-24_08-38-32"
+  run_root: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32"
+  ultralytics_run_dir: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/qat-w4a16/ultralytics/yolov10m-scratch-qat-w4a16"
+  command:
+    - "pixi run -e rtx5090 python scripts/cv-models/train_yolov10m_scratch_fp16_vs_w4a16_qat_brevitas.py qat-w4a16"
+    - "--run-root tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32"
+    - "--coco-root datasets/coco2017/source-data"
+    - "--imgsz 640 --epochs 300 --batch 32 --fraction 1.0 --device 0 --workers 8 --save-period 5"
+
+environment:
+  pixi_env: rtx5090
+  ultralytics_version: "8.1.34 (local fork under models/yolo10/src)"
+  python: "3.12.12"
+  torch: "2.9.0+cu128"
+  cuda:
+    device_index: 0
+    device_name: "NVIDIA GeForce RTX 5090"
+    vram_mib: 32109
+
+model:
+  task: detect
+  architecture: yolov10m
+  model_cfg: "models/yolo10/src/ultralytics/cfg/models/v10/yolov10m.yaml"
+  pretrained: false
+  output_heads:
+    description: "YOLOv10 produces one2many and one2one heads; training uses the YOLOv10 trainer/validator."
+
+quantization:
+  enabled: true
+  library: brevitas
+  scheme: "W4A16 (weight-only int4 fake-quant; activations left floating)"
+  insertion:
+    method: "brevitas.graph.quantize.layerwise_quantize"
+    module_mapping:
+      Conv2d: "brevitas.nn.QuantConv2d"
+    weights:
+      bit_width: 4
+      quantizer: "Int4WeightPerTensorFloatDecoupled"
+    activations:
+      bit_width: null
+      quantizer: null
+    return_quant_tensor: false
+    name_blacklist: null
+
+dataset:
+  name: coco2017
+  classes: 80
+  source:
+    coco_root: "datasets/coco2017/source-data"
+    annotations_expected:
+      - "annotations/instances_train2017.json"
+      - "annotations/instances_val2017.json"
+  run_local_yolo_format:
+    created_under: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/dataset/"
+    dataset_root: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/dataset/coco_yolo"
+    dataset_yaml: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/dataset/coco_yolo/coco2017-yolo.yaml"
+    provenance_json: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/dataset/provenance.json"
+    conversion:
+      tool: "ultralytics.data.converter.convert_coco"
+      cls91to80: true
+      use_segments: false
+      use_keypoints: false
+    layout_notes: "images/* are per-file symlinks; labels/* are generated under dataset_root."
+  split:
+    train:
+      subset: train2017
+      images: 118287
+    val:
+      subset: val2017
+      images: 5000
+
+training:
+  # Parameter selection rationale:
+  # - This run follows the standard YOLO “scratch on COCO” recipe (ported into Ultralytics overrides via
+  #   `conf/cv-models/yolov10m/hyp.scratch.yaml`) to keep the setup comparable to common YOLO baselines.
+  # - `optimizer: SGD` (with momentum) is the conventional choice for YOLO scratch training on COCO; switching to
+  #   Adam/AdamW typically requires retuning LR/WD/warmup and would not be an apples-to-apples comparison.
+  # - `imgsz: 640` is the canonical YOLO COCO resolution; `batch: 32` was chosen to fit GPU memory while keeping a
+  #   reasonably large effective batch (Ultralytics uses `nbs=64` as its nominal batch-size reference).
+  # - `warmup_epochs: 3.0` and `warmup_bias_lr: 0.1` are standard YOLO warmup settings to stabilize early training.
+  # - `save_period: 5` balances checkpoint granularity vs. storage; `close_mosaic: 10` matches common YOLO practice.
+  seed: 0
+  deterministic: true
+  device: "0"
+  amp: true
+  imgsz: 640
+  epochs: 300
+  batch: 32
+  workers: 8
+  steps_per_epoch_train: 3697  # observed in logs (~ceil(118287 / 32))
+  fraction: 1.0
+
+  optimizer:
+    name: SGD
+    lr0: 0.01
+    lrf: 0.1
+    momentum: 0.937
+    weight_decay: 0.0005
+    param_groups:
+      lr/pg0: "bias params (no weight decay; special warmup schedule)"
+      lr/pg1: "non-Norm weights (with weight decay)"
+      lr/pg2: "Norm weights (no weight decay)"
+
+  warmup:
+    warmup_epochs: 3.0
+    warmup_iters: 11091  # max(round(warmup_epochs * steps_per_epoch_train), 100)
+    warmup_momentum: 0.8
+    warmup_bias_lr: 0.1
+
+  augmentations:
+    hsv_h: 0.015
+    hsv_s: 0.7
+    hsv_v: 0.4
+    degrees: 0.0
+    translate: 0.1
+    scale: 0.5
+    shear: 0.0
+    perspective: 0.0
+    flipud: 0.0
+    fliplr: 0.5
+    mosaic: 1.0
+    mixup: 0.0
+    copy_paste: 0.0
+    auto_augment: randaugment
+    erasing: 0.4
+    close_mosaic: 10
+
+  validation:
+    enabled: true
+    split: val
+    iou: 0.7
+    max_det: 300
+
+checkpointing:
+  save_period_epochs: 5
+  ultralytics_weights_dir: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/qat-w4a16/ultralytics/yolov10m-scratch-qat-w4a16/weights"
+  format: "pickling-free state_dict checkpoint (dict with model_state_dict/ema_state_dict/optimizer/train_args)"
+  report_copy:
+    destination_dir: "models/yolo10/reports/2025-12-25-qat-w4a16/checkpoints"
+    max_epoch_copied: 65
+
+logging_and_artifacts:
+  results_csv: "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/qat-w4a16/ultralytics/yolov10m-scratch-qat-w4a16/results.csv"
+  tensorboard_event_dirs:
+    - "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/qat-w4a16/ultralytics/yolov10m-scratch-qat-w4a16"
+    - "tmp/yolov10m_scratch_fp16_vs_w4a16_qat_brevitas/2025-12-24_08-38-32/qat-w4a16/ultralytics/yolov10m-scratch-qat-w4a16/tensorboard"
+  scalar_tags:
+    - "lr/pg0"
+    - "lr/pg1"
+    - "lr/pg2"
+    - "metrics/mAP50(B)"
+    - "metrics/mAP50-95(B)"
+    - "metrics/precision(B)"
+    - "metrics/recall(B)"
+    - "train/box_om"
+    - "train/box_oo"
+    - "train/cls_om"
+    - "train/cls_oo"
+    - "train/dfl_om"
+    - "train/dfl_oo"
+    - "val/box_om"
+    - "val/box_oo"
+    - "val/cls_om"
+    - "val/cls_oo"
+    - "val/dfl_om"
+    - "val/dfl_oo"
+  sqlite_stats_db: "models/yolo10/reports/2025-12-25-qat-w4a16/train-logs/training-stats.db"
+  sqlite_stats_db_max_step_at_export: 70
+  figures_dir: "models/yolo10/reports/2025-12-25-qat-w4a16/train-logs/figures"
+  screenshot: "models/yolo10/reports/2025-12-25-qat-w4a16/train-logs/image.png"
+
+references:
+  training_entrypoint: "scripts/cv-models/train_yolov10m_scratch_fp16_vs_w4a16_qat_brevitas.py"
+  runner_script: "scripts/cv-models/run_yolov10m_scratch_fp16_vs_w4a16_qat.sh"
+  hyperparameters_file: "conf/cv-models/yolov10m/hyp.scratch.yaml"
+  dataset_prep_module: "src/auto_quantize_model/cv_models/yolov10_coco_dataset.py"
+  tb_to_sqlite: "scripts/cv-models/collect_training_stats_sqlite.py"
+  sqlite_to_svg: "scripts/cv-models/plot_training_stats_from_sqlite.py"
