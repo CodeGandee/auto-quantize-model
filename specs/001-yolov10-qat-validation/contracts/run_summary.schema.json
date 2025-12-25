@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "YOLOv10 W4A16 QAT Validation Run Summary",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "created_at",
+    "git",
+    "model",
+    "quantization",
+    "method",
+    "dataset",
+    "training",
+    "artifacts",
+    "metrics",
+    "stability",
+    "status"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "run_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "git": {
+      "type": "object",
+      "required": ["commit", "branch", "dirty"],
+      "properties": {
+        "commit": { "type": "string" },
+        "branch": { "type": "string" },
+        "dirty": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "model": {
+      "type": "object",
+      "required": ["variant", "checkpoint", "imgsz"],
+      "properties": {
+        "variant": { "type": "string", "enum": ["yolo10n", "yolo10s", "yolo10m"] },
+        "checkpoint": { "type": "string" },
+        "imgsz": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": true
+    },
+    "quantization": {
+      "type": "object",
+      "required": ["mode", "library", "weight_bit_width", "activation_bit_width"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["w4a16"] },
+        "library": { "type": "string", "enum": ["brevitas"] },
+        "weight_bit_width": { "type": "integer", "enum": [4] },
+        "activation_bit_width": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "method": {
+      "type": "object",
+      "required": ["variant"],
+      "properties": {
+        "variant": { "type": "string", "enum": ["baseline", "ema", "ema+qc"] },
+        "ema": {
+          "type": "object",
+          "required": ["enabled"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "decay": { "type": "number" },
+            "tau": { "type": "number" }
+          },
+          "additionalProperties": true
+        },
+        "qc": {
+          "type": "object",
+          "required": ["enabled"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "epochs": { "type": "integer", "minimum": 0 },
+            "lr": { "type": "number", "minimum": 0 },
+            "bn_stats_fixed": { "type": "boolean" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "dataset": {
+      "type": "object",
+      "required": ["coco_root", "dataset_yaml", "train_images", "val_images"],
+      "properties": {
+        "coco_root": { "type": "string" },
+        "dataset_yaml": { "type": "string" },
+        "train_images": { "type": "integer", "minimum": 0 },
+        "val_images": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "training": {
+      "type": "object",
+      "required": ["framework", "epochs", "batch", "seed", "device", "amp"],
+      "properties": {
+        "framework": { "type": "string" },
+        "epochs": { "type": "integer", "minimum": 0 },
+        "batch": { "type": "integer", "minimum": 1 },
+        "seed": { "type": "integer" },
+        "device": { "type": "string" },
+        "amp": { "type": "boolean" },
+        "overrides": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["run_root"],
+      "properties": {
+        "run_root": { "type": "string" },
+        "results_csv": { "type": "string" },
+        "tensorboard_log_dir": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["primary_name", "best_value", "final_value"],
+      "properties": {
+        "primary_name": { "type": "string" },
+        "best_value": { "type": "number" },
+        "final_value": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "stability": {
+      "type": "object",
+      "required": ["collapse_threshold_ratio", "final_over_best_ratio", "collapsed"],
+      "properties": {
+        "collapse_threshold_ratio": { "type": "number", "minimum": 0 },
+        "final_over_best_ratio": { "type": "number", "minimum": 0 },
+        "collapsed": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "status": { "type": "string", "enum": ["completed-success", "completed-failed", "incomplete"] },
+    "error": { "type": "string" }
+  },
+  "additionalProperties": true
+}
