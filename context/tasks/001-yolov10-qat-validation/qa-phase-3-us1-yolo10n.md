@@ -7,6 +7,7 @@ This Q&A captures common “how do I run it / what does it do” questions for P
 **Metadata**
 - Created at: `2025-12-26T02:59:03Z`
 - Created in commit: `35c600ab388bca08f1562dae286dd21fca0885e5`
+- Last revised at: `2025-12-26T03:07:43Z`
 
 **Related docs**
 - Spec: `specs/001-yolov10-qat-validation/spec.md`
