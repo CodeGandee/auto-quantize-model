@@ -1,6 +1,6 @@
 # Phase 3 (US1 yolo10n) — Q&A (Runner, Profiles, and Starting Point)
 
-## Context
+## Introduction
 
 This Q&A captures common “how do I run it / what does it do” questions for Phase 3 (US1) of `001-yolov10-qat-validation`.
 
