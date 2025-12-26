@@ -1,5 +1,26 @@
 # Phase 3 (US1 yolo10n) — Q&A (Runner, Profiles, and Starting Point)
 
+## Context
+
+This Q&A captures common “how do I run it / what does it do” questions for Phase 3 (US1) of `001-yolov10-qat-validation`.
+
+**Related docs**
+- Spec: `specs/001-yolov10-qat-validation/spec.md`
+- Tasks: `specs/001-yolov10-qat-validation/tasks.md`
+- Phase 3 impl guide: `context/tasks/001-yolov10-qat-validation/impl-phase-3-us1-yolo10n.md`
+- CLI contract: `specs/001-yolov10-qat-validation/contracts/cli.md`
+- Artifacts contract: `specs/001-yolov10-qat-validation/contracts/artifacts.md`
+- Run summary schema: `specs/001-yolov10-qat-validation/contracts/run_summary.schema.json`
+- Manual run doc: `tests/manual/yolov10_w4a16_ema_qc_validation/README.md`
+
+**Key entrypoints and modules**
+- Runner CLI: `scripts/cv-models/run_yolov10_w4a16_qat_validation.py`
+- Summarizer CLI: `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py`
+- Config + writers: `src/auto_quantize_model/cv_models/yolov10_w4a16_validation.py`
+- COCO subset builder: `src/auto_quantize_model/cv_models/yolov10_coco_subset_dataset.py`
+- EMA/QAT trainer: `src/auto_quantize_model/cv_models/yolov10_ultralytics_trainers.py`
+- QC stage: `src/auto_quantize_model/cv_models/yolov10_qc.py`
+
 ## How do I run yolo10n with `ema` and `ema+qc`?
 
 Run the Phase-3 runner under Pixi `cu128`, providing `--variant`, `--method`, `--profile`, and a unique `--run-root`:
@@ -58,4 +79,3 @@ Not as a separate step for W4A16 in this workflow.
 
 The trainer loads the pretrained checkpoint and then immediately inserts Brevitas W4 fake-quant modules before running QAT.
 Because this is weight-only quantization (activations stay floating), there is no activation calibration step required.
-
