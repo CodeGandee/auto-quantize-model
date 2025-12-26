@@ -110,4 +110,6 @@ pixi run -e cu128 python -m compileall scripts/cv-models/summarize_yolov10_w4a16
 
 ## Implementation Summary
 
-Placeholder (fill after implementation).
+- Added Hydra-style config scaffold under `conf/cv-models/yolov10_w4a16_validation/` (defaults + profile/variant/method groups).
+- Added CLI entrypoints `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` and `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py` (argparse, contract-compatible flags).
+- Added manual-run guide at `tests/manual/yolov10_w4a16_ema_qc_validation/README.md` using `pixi run -e cu128 ...`.

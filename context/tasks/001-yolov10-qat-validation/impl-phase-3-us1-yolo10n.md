@@ -194,4 +194,7 @@ pixi run -e cu128 python tests/manual/yolov10_w4a16_ema_qc_validation/README.md
 
 ## Implementation Summary
 
-Placeholder (fill after implementation).
+- Implemented method-aware EMA behavior in `src/auto_quantize_model/cv_models/yolov10_ultralytics_trainers.py` (baseline uses raw weights; EMA/EMA+QC use EMA).
+- Implemented QC wrappers + training loop in `src/auto_quantize_model/cv_models/yolov10_qc.py` and added unit test `tests/unit/cv_models/test_yolov10_qc.py`.
+- Implemented yolo10n runner + artifact writing in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` and comparison summarizer in `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py` (with fixtures + integration test).
+- Updated `tests/manual/yolov10_w4a16_ema_qc_validation/README.md` with yolo10n smoke commands (seeds 0/1; baseline/ema/ema+qc) and summarizer usage.

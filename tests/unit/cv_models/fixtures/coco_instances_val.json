@@ -1,0 +1,17 @@
+{
+  "info": { "description": "Toy COCO val" },
+  "licenses": [],
+  "images": [
+    { "id": 101, "file_name": "000000000101.jpg", "width": 640, "height": 480 },
+    { "id": 102, "file_name": "000000000102.jpg", "width": 640, "height": 480 }
+  ],
+  "annotations": [
+    { "id": 101, "image_id": 101, "category_id": 1, "bbox": [10, 10, 80, 60], "area": 4800, "iscrowd": 0 },
+    { "id": 102, "image_id": 102, "category_id": 2, "bbox": [12, 8, 70, 50], "area": 3500, "iscrowd": 0 }
+  ],
+  "categories": [
+    { "id": 1, "name": "person" },
+    { "id": 2, "name": "bicycle" }
+  ]
+}
+

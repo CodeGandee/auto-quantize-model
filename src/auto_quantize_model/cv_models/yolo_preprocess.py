@@ -15,8 +15,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List, Sequence, Tuple
 
-import cv2
 import numpy as np
+try:
+    import cv2
+except ImportError as exc:  # pragma: no cover
+    cv2 = None  # type: ignore[assignment]
+    _CV2_IMPORT_ERROR: ImportError | None = exc
+else:  # pragma: no cover
+    _CV2_IMPORT_ERROR = None
 
 
 @dataclass(frozen=True)
@@ -82,6 +88,9 @@ def letterbox(
 ) -> Tuple[np.ndarray, LetterboxMetadata]:
     """Resize and pad an RGB image to a square, preserving aspect ratio."""
 
+    if cv2 is None:
+        raise ImportError(f"OpenCV (cv2) is required for letterbox(): {_CV2_IMPORT_ERROR}")
+
     orig_h, orig_w = image_rgb.shape[:2]
     if orig_h <= 0 or orig_w <= 0:
         raise ValueError(f"Invalid image shape {image_rgb.shape}")
@@ -135,6 +144,9 @@ def preprocess_image_path(
       - (1, 3, img_size, img_size) if add_batch_dim=True
       - (3, img_size, img_size) if add_batch_dim=False
     """
+
+    if cv2 is None:
+        raise ImportError(f"OpenCV (cv2) is required for preprocess_image_path(): {_CV2_IMPORT_ERROR}")
 
     image_bgr = cv2.imread(str(image_path))
     if image_bgr is None:
@@ -191,4 +203,3 @@ def batched(iterable: Sequence[Path], batch_size: int) -> Iterable[List[Path]]:
     safe = max(int(batch_size), 1)
     for start in range(0, len(iterable), safe):
         yield list(iterable[start : start + safe])
-

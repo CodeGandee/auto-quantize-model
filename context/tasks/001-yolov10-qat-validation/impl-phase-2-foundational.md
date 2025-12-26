@@ -217,4 +217,7 @@ pixi run -e cu128 pytest tests/integration/test_yolov10_w4a16_run_summary.py
 
 ## Implementation Summary
 
-Placeholder (fill after implementation).
+- Implemented config composition + run summary writers in `src/auto_quantize_model/cv_models/yolov10_w4a16_validation.py`.
+- Implemented deterministic COCO subset builder in `src/auto_quantize_model/cv_models/yolov10_coco_subset_dataset.py` (subset JSON + YOLO labels + dataset YAML + provenance).
+- Implemented `results.csv` parsing + collapse classification in `src/auto_quantize_model/cv_models/yolov10_results_csv.py` and `src/auto_quantize_model/cv_models/yolov10_stability.py`.
+- Exported new helpers from `src/auto_quantize_model/cv_models/__init__.py` and added unit/integration tests under `tests/unit/cv_models/` + `tests/integration/`.

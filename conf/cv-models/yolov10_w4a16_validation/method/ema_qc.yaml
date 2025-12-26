@@ -1,0 +1,11 @@
+method:
+  variant: ema+qc
+  ema:
+    enabled: true
+    decay: 0.9999
+    tau: 2000.0
+  qc:
+    enabled: true
+    epochs: 1
+    lr: 0.0001
+    bn_stats_fixed: true

@@ -1,0 +1,40 @@
+# YOLOv10 W4A16 (Brevitas) QAT stability validation (EMA + QC).
+#
+# This config is composed via OmegaConf/Hydra-style "defaults" groups.
+# The runner CLI (`scripts/cv-models/run_yolov10_w4a16_qat_validation.py`) loads
+# this config and applies CLI overrides.
+
+defaults:
+  - profile: smoke
+  - variant: yolo10n
+  - method: baseline
+  - _self_
+
+quantization:
+  mode: w4a16
+  library: brevitas
+  weight_bit_width: 4
+  activation_bit_width: null
+
+dataset:
+  coco_root: datasets/coco2017/source-data
+  # Deterministic subset builder settings.
+  train_list: null
+  train_max_images: null
+  val_max_images: 50
+  selection: random
+
+training:
+  imgsz: 640
+  epochs: 1
+  batch: 16
+  device: "0"
+  workers: 8
+  seed: 0
+  amp: true
+
+artifacts:
+  # Ultralytics trainer project/name under `run_root/`.
+  ultralytics_project: ultralytics
+  run_name_template: "{variant}-{method}-{profile}-seed{seed}"
+

@@ -1,0 +1,13 @@
+method:
+  variant: ema
+  ema:
+    enabled: true
+    # Ultralytics defaults are close to the paper; keep these configurable.
+    decay: 0.9999
+    tau: 2000.0
+  qc:
+    enabled: false
+    epochs: 0
+    lr: 0.0
+    bn_stats_fixed: true
+

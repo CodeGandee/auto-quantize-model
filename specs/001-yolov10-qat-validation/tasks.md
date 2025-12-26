@@ -22,10 +22,10 @@ description: "Task list for validating EMA+QC W4A16 QAT on YOLOv10n/s with yolo1
 
 **Purpose**: Create the scaffolding for configs, runner scripts, and manual validation docs (Pixi `cu128`).
 
-- [ ] T001 Create Hydra/OmegaConf config scaffold under `conf/cv-models/yolov10_w4a16_validation/` (`config.yaml`, `profile/{smoke,short,full}.yaml`, `variant/{yolo10n,yolo10s,yolo10m}.yaml`, `method/{baseline,ema,ema_qc}.yaml`)
-- [ ] T002 [P] Create runner CLI skeleton in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` (argparse contract from `specs/001-yolov10-qat-validation/contracts/cli.md`)
-- [ ] T003 [P] Create summarizer CLI skeleton in `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py` (reads multiple `run_summary.json` and writes comparison `summary.md`)
-- [ ] T004 [P] Create manual-run guide skeleton in `tests/manual/yolov10_w4a16_ema_qc_validation/README.md` (commands must be `pixi run -e cu128 ...`)
+- [X] T001 Create Hydra/OmegaConf config scaffold under `conf/cv-models/yolov10_w4a16_validation/` (`config.yaml`, `profile/{smoke,short,full}.yaml`, `variant/{yolo10n,yolo10s,yolo10m}.yaml`, `method/{baseline,ema,ema_qc}.yaml`)
+- [X] T002 [P] Create runner CLI skeleton in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` (argparse contract from `specs/001-yolov10-qat-validation/contracts/cli.md`)
+- [X] T003 [P] Create summarizer CLI skeleton in `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py` (reads multiple `run_summary.json` and writes comparison `summary.md`)
+- [X] T004 [P] Create manual-run guide skeleton in `tests/manual/yolov10_w4a16_ema_qc_validation/README.md` (commands must be `pixi run -e cu128 ...`)
 
 ---
 
@@ -35,16 +35,16 @@ description: "Task list for validating EMA+QC W4A16 QAT on YOLOv10n/s with yolo1
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T005 Implement config models + loader in `src/auto_quantize_model/cv_models/yolov10_w4a16_validation.py` (load defaults from `conf/cv-models/yolov10_w4a16_validation/`)
-- [ ] T006 [P] Implement deterministic COCO subset dataset builder in `src/auto_quantize_model/cv_models/yolov10_coco_subset_dataset.py` (train selection + val first-N + dataset YAML + provenance JSON)
-- [ ] T007 [P] Implement Ultralytics `results.csv` parser in `src/auto_quantize_model/cv_models/yolov10_results_csv.py` (extract `metrics/mAP50-95(B)` series robustly)
-- [ ] T008 [P] Implement collapse detection + run status classification in `src/auto_quantize_model/cv_models/yolov10_stability.py` (collapse if `final < 0.5 * best`)
-- [ ] T009 Implement `run_summary.json` and `summary.md` writers in `src/auto_quantize_model/cv_models/yolov10_w4a16_validation.py` (align fields with `specs/001-yolov10-qat-validation/contracts/run_summary.schema.json`)
-- [ ] T010 [P] Export public APIs in `src/auto_quantize_model/cv_models/__init__.py` (new validation helpers + config loader)
-- [ ] T011 [P] Add unit tests for results parsing in `tests/unit/cv_models/test_yolov10_results_csv.py` (use a tiny fixture results.csv stored under `tests/unit/cv_models/fixtures/yolov10_results.csv`)
-- [ ] T012 [P] Add unit tests for stability classification in `tests/unit/cv_models/test_yolov10_stability.py`
-- [ ] T013 [P] Add unit tests for COCO subset selection in `tests/unit/cv_models/test_yolov10_coco_subset_dataset.py` (use tiny COCO JSON fixtures under `tests/unit/cv_models/fixtures/coco_instances_*.json`)
-- [ ] T014 Add integration test for `run_summary.json` shape/required keys in `tests/integration/test_yolov10_w4a16_run_summary.py` (write to `tmp/` during test)
+- [X] T005 Implement config models + loader in `src/auto_quantize_model/cv_models/yolov10_w4a16_validation.py` (load defaults from `conf/cv-models/yolov10_w4a16_validation/`)
+- [X] T006 [P] Implement deterministic COCO subset dataset builder in `src/auto_quantize_model/cv_models/yolov10_coco_subset_dataset.py` (train selection + val first-N + dataset YAML + provenance JSON)
+- [X] T007 [P] Implement Ultralytics `results.csv` parser in `src/auto_quantize_model/cv_models/yolov10_results_csv.py` (extract `metrics/mAP50-95(B)` series robustly)
+- [X] T008 [P] Implement collapse detection + run status classification in `src/auto_quantize_model/cv_models/yolov10_stability.py` (collapse if `final < 0.5 * best`)
+- [X] T009 Implement `run_summary.json` and `summary.md` writers in `src/auto_quantize_model/cv_models/yolov10_w4a16_validation.py` (align fields with `specs/001-yolov10-qat-validation/contracts/run_summary.schema.json`)
+- [X] T010 [P] Export public APIs in `src/auto_quantize_model/cv_models/__init__.py` (new validation helpers + config loader)
+- [X] T011 [P] Add unit tests for results parsing in `tests/unit/cv_models/test_yolov10_results_csv.py` (use a tiny fixture results.csv stored under `tests/unit/cv_models/fixtures/yolov10_results.csv`)
+- [X] T012 [P] Add unit tests for stability classification in `tests/unit/cv_models/test_yolov10_stability.py`
+- [X] T013 [P] Add unit tests for COCO subset selection in `tests/unit/cv_models/test_yolov10_coco_subset_dataset.py` (use tiny COCO JSON fixtures under `tests/unit/cv_models/fixtures/coco_instances_*.json`)
+- [X] T014 Add integration test for `run_summary.json` shape/required keys in `tests/integration/test_yolov10_w4a16_run_summary.py` (write to `tmp/` during test)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -58,17 +58,17 @@ description: "Task list for validating EMA+QC W4A16 QAT on YOLOv10n/s with yolo1
 
 ### Tests for User Story 1 (recommended) ⚠️
 
-- [ ] T015 [P] [US1] Add unit tests for QC wrapper behavior in `tests/unit/cv_models/test_yolov10_qc.py` (toy `nn.Conv2d+nn.BatchNorm2d` model, verify only QC params are trainable)
-- [ ] T016 [P] [US1] Add integration test for comparison summarizer in `tests/integration/test_yolov10_w4a16_summarize.py` (consume fixture `run_summary.json` files under `tests/integration/fixtures/yolov10_w4a16/`)
+- [X] T015 [P] [US1] Add unit tests for QC wrapper behavior in `tests/unit/cv_models/test_yolov10_qc.py` (toy `nn.Conv2d+nn.BatchNorm2d` model, verify only QC params are trainable)
+- [X] T016 [P] [US1] Add integration test for comparison summarizer in `tests/integration/test_yolov10_w4a16_summarize.py` (consume fixture `run_summary.json` files under `tests/integration/fixtures/yolov10_w4a16/`)
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Add method-aware EMA control in `src/auto_quantize_model/cv_models/yolov10_ultralytics_trainers.py` (baseline uses EMA decay=0; EMA/EMA+QC uses decay≈0.9999)
-- [ ] T018 [US1] Implement QC modules + 1-epoch QC training loop in `src/auto_quantize_model/cv_models/yolov10_qc.py` (freeze base weights; BN stats fixed; Adam lr=1e-4)
-- [ ] T019 [US1] Implement yolo10n run execution in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` (resolve `models/yolo10/checkpoints/yolov10n.pt`, build subset dataset via `src/auto_quantize_model/cv_models/yolov10_coco_subset_dataset.py`, run trainer, write artifacts)
-- [ ] T020 [US1] Implement method variants (`baseline`, `ema`, `ema+qc`) end-to-end in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` (QC runs after QAT and updates final metrics in `run_summary.json`)
-- [ ] T021 [US1] Implement yolo10n comparison summary generator in `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py` (table of best/final/collapsed per run; writes `summary.md`)
-- [ ] T022 [US1] Document yolo10n smoke-run procedure in `tests/manual/yolov10_w4a16_ema_qc_validation/README.md` (baseline/ema/ema+qc; seeds 0 and 1; expected outputs under `tmp/`)
+- [X] T017 [US1] Add method-aware EMA control in `src/auto_quantize_model/cv_models/yolov10_ultralytics_trainers.py` (baseline uses EMA decay=0; EMA/EMA+QC uses decay≈0.9999)
+- [X] T018 [US1] Implement QC modules + 1-epoch QC training loop in `src/auto_quantize_model/cv_models/yolov10_qc.py` (freeze base weights; BN stats fixed; Adam lr=1e-4)
+- [X] T019 [US1] Implement yolo10n run execution in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` (resolve `models/yolo10/checkpoints/yolov10n.pt`, build subset dataset via `src/auto_quantize_model/cv_models/yolov10_coco_subset_dataset.py`, run trainer, write artifacts)
+- [X] T020 [US1] Implement method variants (`baseline`, `ema`, `ema+qc`) end-to-end in `scripts/cv-models/run_yolov10_w4a16_qat_validation.py` (QC runs after QAT and updates final metrics in `run_summary.json`)
+- [X] T021 [US1] Implement yolo10n comparison summary generator in `scripts/cv-models/summarize_yolov10_w4a16_qat_validation.py` (table of best/final/collapsed per run; writes `summary.md`)
+- [X] T022 [US1] Document yolo10n smoke-run procedure in `tests/manual/yolov10_w4a16_ema_qc_validation/README.md` (baseline/ema/ema+qc; seeds 0 and 1; expected outputs under `tmp/`)
 
 **Checkpoint**: yolo10n validation workflow runs end-to-end and produces comparable summaries.
 
