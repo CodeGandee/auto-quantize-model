@@ -4,10 +4,7 @@
 
 This Q&A captures common “how do I run it / what does it do” questions for Phase 3 (US1) of `001-yolov10-qat-validation`.
 
-**Metadata**
-- Created at: `2025-12-26T02:59:03Z`
-- Created in commit: `35c600ab388bca08f1562dae286dd21fca0885e5`
-- Last revised at: `2025-12-26T03:07:43Z`
+Revision metadata is tracked per-question; only update a question’s “Last revised” line when that specific question/answer changes.
 
 **Related docs**
 - Spec: `specs/001-yolov10-qat-validation/spec.md`
@@ -27,6 +24,8 @@ This Q&A captures common “how do I run it / what does it do” questions for P
 - QC stage: `src/auto_quantize_model/cv_models/yolov10_qc.py`
 
 ## How do I run yolo10n with `ema` and `ema+qc`?
+
+> Last revised at: `2025-12-26T04:00:33Z` | Last revised base commit: `3c9b3884d8fc94dbda9e19dd60a882b3bbd5a3bd`
 
 Run the Phase-3 runner under Pixi `cu128`, providing `--variant`, `--method`, `--profile`, and a unique `--run-root`:
 
@@ -48,13 +47,19 @@ Each run writes:
 - `<run_root>/summary.md`
 - Ultralytics logs under `<run_root>/ultralytics/...` (including `results.csv` and `tensorboard/`)
 
+To generate a combined comparison report (e.g., baseline vs EMA vs EMA+QC across seeds), use the summarizer as shown in `tests/manual/yolov10_w4a16_ema_qc_validation/README.md`.
+
 ## Is the example run “full scale training”?
+
+> Last revised at: `2025-12-26T03:12:12Z` | Last revised base commit: `dd664002a857455b0da2b79dcbd6ee1b29a34aba`
 
 No. The example uses `--profile smoke`, which defaults to a small deterministic COCO subset and a short run (1 epoch).
 
 Use `--profile short` (longer but still subset) or `--profile full` (defaults to 100 epochs; uses the full dataset unless overridden).
 
 ## What does the `short` profile do?
+
+> Last revised at: `2025-12-26T03:12:12Z` | Last revised base commit: `dd664002a857455b0da2b79dcbd6ee1b29a34aba`
 
 The `short` profile is a “medium” validation run:
 - Dataset: deterministic COCO subset written under `<run_root>/dataset/`
@@ -67,9 +72,13 @@ The `short` profile is a “medium” validation run:
 
 ## Is this training “from scratch” or “fine-tuning”?
 
+> Last revised at: `2025-12-26T03:12:12Z` | Last revised base commit: `dd664002a857455b0da2b79dcbd6ee1b29a34aba`
+
 It is fine-tuning from a pretrained checkpoint.
 
 ## Where does the base model (starting point) come from?
+
+> Last revised at: `2025-12-26T03:12:12Z` | Last revised base commit: `dd664002a857455b0da2b79dcbd6ee1b29a34aba`
 
 From pretrained YOLOv10 checkpoint files in this repo, referenced by the config:
 - `models/yolo10/checkpoints/yolov10n.pt` (yolo10n)
@@ -79,6 +88,8 @@ From pretrained YOLOv10 checkpoint files in this repo, referenced by the config:
 The runner passes the checkpoint path to Ultralytics as `model=...`, so it loads those weights as the starting point.
 
 ## Do I need to run PTQ before QAT?
+
+> Last revised at: `2025-12-26T03:12:12Z` | Last revised base commit: `dd664002a857455b0da2b79dcbd6ee1b29a34aba`
 
 Not as a separate step for W4A16 in this workflow.
 
