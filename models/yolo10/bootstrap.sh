@@ -17,7 +17,7 @@ require_cmd() {
   done
 }
 
-require_cmd yq python3 git ln mkdir grep date
+require_cmd python3 git ln mkdir grep date
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 YOLO10_ROOT="${SCRIPT_DIR}"
@@ -28,16 +28,102 @@ if [[ ! -f "${CFG}" ]]; then
   exit 1
 fi
 
-ASSETS_DIR_ENV="$(yq -r '.env.assets_dir_env' "${CFG}")"
-DEFAULT_ASSETS_DIR_REL="$(yq -r '.env.default_assets_dir' "${CFG}")"
-SRC_SUBDIR="$(yq -r '.layout.src_subdir' "${CFG}")"
-CHECKPOINTS_SUBDIR="$(yq -r '.layout.checkpoints_subdir' "${CFG}")"
-TMP_SUBDIR="$(yq -r '.layout.tmp_subdir' "${CFG}")"
-YOLO10_REPO_URL="$(yq -r '.source.repo_url' "${CFG}")"
-ASSETS_BASE_URL="$(yq -r '.checkpoints.assets_base_url' "${CFG}")"
-MODELS_CSV="$(yq -r '.checkpoints.sizes | join(",")' "${CFG}")"
-FILE_TEMPLATE="$(yq -r '.checkpoints.file_template' "${CFG}")"
-SAVED_ASSETS_DIR="$(yq -r '.choices.assets_dir // ""' "${CFG}")"
+yaml_get() {
+  local path="$1"
+  python3 - "${CFG}" "${path}" <<'PY'
+import sys
+
+import yaml
+
+cfg_path, dotted_path = sys.argv[1], sys.argv[2]
+with open(cfg_path, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+cur = data
+for part in dotted_path.split("."):
+    if isinstance(cur, dict) and part in cur:
+        cur = cur[part]
+    else:
+        cur = None
+        break
+
+if cur is None:
+    print("")
+elif isinstance(cur, bool):
+    print("true" if cur else "false")
+else:
+    print(cur)
+PY
+}
+
+yaml_get_default() {
+  local path="$1"
+  local default_value="$2"
+  python3 - "${CFG}" "${path}" "${default_value}" <<'PY'
+import sys
+
+import yaml
+
+cfg_path, dotted_path, default_value = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(cfg_path, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+cur = data
+for part in dotted_path.split("."):
+    if isinstance(cur, dict) and part in cur:
+        cur = cur[part]
+    else:
+        cur = None
+        break
+
+if cur is None:
+    print(default_value)
+elif isinstance(cur, bool):
+    print("true" if cur else "false")
+else:
+    print(cur)
+PY
+}
+
+yaml_get_list_join() {
+  local path="$1"
+  local sep="$2"
+  python3 - "${CFG}" "${path}" "${sep}" <<'PY'
+import sys
+
+import yaml
+
+cfg_path, dotted_path, sep = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(cfg_path, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+cur = data
+for part in dotted_path.split("."):
+    if isinstance(cur, dict) and part in cur:
+        cur = cur[part]
+    else:
+        cur = None
+        break
+
+if cur is None:
+    print("")
+elif isinstance(cur, list):
+    print(sep.join(str(x) for x in cur))
+else:
+    print(str(cur))
+PY
+}
+
+ASSETS_DIR_ENV="$(yaml_get 'env.assets_dir_env')"
+DEFAULT_ASSETS_DIR_REL="$(yaml_get 'env.default_assets_dir')"
+SRC_SUBDIR="$(yaml_get 'layout.src_subdir')"
+CHECKPOINTS_SUBDIR="$(yaml_get 'layout.checkpoints_subdir')"
+TMP_SUBDIR="$(yaml_get 'layout.tmp_subdir')"
+YOLO10_REPO_URL="$(yaml_get 'source.repo_url')"
+ASSETS_BASE_URL="$(yaml_get 'checkpoints.assets_base_url')"
+MODELS_CSV="$(yaml_get_list_join 'checkpoints.sizes' ',')"
+FILE_TEMPLATE="$(yaml_get 'checkpoints.file_template')"
+SAVED_ASSETS_DIR="$(yaml_get_default 'choices.assets_dir' '')"
 
 ASSUME_YES=false
 CLEAN_ONLY=false
@@ -328,4 +414,3 @@ ensure_gitignore_pattern "checkpoints/"
 ensure_gitignore_pattern "tmp/"
 
 echo "[YOLO10] Bootstrap completed successfully."
-

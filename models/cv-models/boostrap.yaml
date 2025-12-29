@@ -1,0 +1,20 @@
+# Local bootstrap configuration for cv-models (ONNX checkpoints).
+# This file intentionally records workstation-specific paths.
+
+env:
+  # Name of the env var that (optionally) points to the directory containing ONNX files.
+  models_root_env: AQ_CV_MODELS_ROOT
+
+  # Default root used when the env var is not set.
+  # Expected file layout: <root>/<checkpoint_name_from_each_model_readme>
+  default_models_root: /workspace/model-to-quantize/General-CV-Models
+
+layout:
+  # Directory within each model folder where symlinks are created.
+  checkpoints_subdir: checkpoints
+
+choices:
+  # The last chosen absolute root directory. If set and exists, it is preferred.
+  models_root: ""
+  updated_at: ""
+

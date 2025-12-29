@@ -16,7 +16,7 @@ require_cmd() {
   done
 }
 
-require_cmd yq ln mkdir
+require_cmd python3 ln mkdir
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CFG="${SCRIPT_DIR}/bootstrap.yaml"
@@ -26,10 +26,38 @@ if [[ ! -f "${CFG}" ]]; then
   exit 1
 fi
 
-DATA_ROOT_ENV="$(yq -r '.env.data_root_env' "${CFG}")"
-DEFAULT_DATA_ROOT="$(yq -r '.env.default_data_root' "${CFG}")"
-SRC_SUBDIR="$(yq -r '.dataset.source_subdir' "${CFG}")"
-LINK_NAME="$(yq -r '.dataset.repo_link_name' "${CFG}")"
+yaml_get() {
+  local path="$1"
+  python3 - "${CFG}" "${path}" <<'PY'
+import sys
+
+import yaml
+
+cfg_path, dotted_path = sys.argv[1], sys.argv[2]
+with open(cfg_path, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+cur = data
+for part in dotted_path.split("."):
+    if isinstance(cur, dict) and part in cur:
+        cur = cur[part]
+    else:
+        cur = None
+        break
+
+if cur is None:
+    print("")
+elif isinstance(cur, bool):
+    print("true" if cur else "false")
+else:
+    print(cur)
+PY
+}
+
+DATA_ROOT_ENV="$(yaml_get 'env.data_root_env')"
+DEFAULT_DATA_ROOT="$(yaml_get 'env.default_data_root')"
+SRC_SUBDIR="$(yaml_get 'dataset.source_subdir')"
+LINK_NAME="$(yaml_get 'dataset.repo_link_name')"
 
 LINK_PATH="${SCRIPT_DIR}/${LINK_NAME}"
 

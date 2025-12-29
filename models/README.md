@@ -11,6 +11,9 @@
 
 This directory groups model families used by the project. Each subdirectory owns its own bootstrap script, source checkout, and checkpoints, or contains symlinks to external storage:
 
+- `cv-models/` — General CV ONNX checkpoints (symlinked from local storage):
+  - See the per-model `models/cv-models/*/README.md` files for expected checkpoint names.
+  - Bootstrap script: `./models/cv-models/bootstrap.sh` (creates `checkpoints/*.onnx` symlinks).
 - `yolo11/` — Ultralytics YOLO11:
   - See `models/yolo11/README.md` for details.
   - Bootstrap script: `./models/yolo11/bootstrap.sh`
