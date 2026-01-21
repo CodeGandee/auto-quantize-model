@@ -8,7 +8,7 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: Include the right-sized tests (unit/integration/manual) per the project constitution; only omit tests if explicitly out-of-scope and justified in `spec.md`.
+**Tests**: Tasks MUST include the right-sized tests (unit/integration/manual) per the repository constitution; only omit tests if explicitly out-of-scope and justified in `spec.md` (and include an alternative validation step).
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -20,7 +20,7 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
+- **Single project**: `src/auto_quantize_model/`, `scripts/`, `conf/`, `tests/` at repository root
 - **Web app**: `backend/src/`, `frontend/src/`
 - **Mobile**: `api/src/`, `ios/src/` or `android/src/`
 - Paths shown below assume single project - adjust based on plan.md structure
@@ -79,19 +79,20 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (recommended) ⚠️
+### Tests for User Story 1 (required for new logic) ⚠️
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **NOTE: Write these tests first when feasible, ensure they fail before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T010 [P] [US1] Unit tests for deterministic logic in tests/unit/test_[name].py
+- [ ] T011 [P] [US1] Integration test for end-to-end behavior in tests/integration/test_[name].py
+- [ ] T011a [US1] Manual validation script (if GPU/slow) in tests/manual/[area]/test_[name].py
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T012 [P] [US1] Add reusable logic in src/auto_quantize_model/[area]/[module].py
+- [ ] T013 [US1] Add experiment entrypoint in scripts/[area]/[script].py (delegates to src/auto_quantize_model/)
+- [ ] T014 [US1] Add config presets in conf/[area]/ (if applicable)
+- [ ] T015 [US1] Write run metadata + artifact outputs under tmp/ (and curate reports under models/*/reports/<run-id>/ if needed)
 - [ ] T016 [US1] Add validation and error handling
 - [ ] T017 [US1] Add logging for user story 1 operations
 
@@ -105,16 +106,16 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (recommended) ⚠️
+### Tests for User Story 2 (required for new logic) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T018 [P] [US2] Unit tests in tests/unit/test_[name].py
+- [ ] T019 [P] [US2] Integration test in tests/integration/test_[name].py
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T020 [P] [US2] Extend src/auto_quantize_model/[area]/[module].py
+- [ ] T021 [US2] Extend scripts/[area]/[script].py runner(s)
+- [ ] T022 [US2] Extend conf/[area]/ presets (if applicable)
 - [ ] T023 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
@@ -127,16 +128,16 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (recommended) ⚠️
+### Tests for User Story 3 (required for new logic) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T024 [P] [US3] Unit tests in tests/unit/test_[name].py
+- [ ] T025 [P] [US3] Integration test in tests/integration/test_[name].py
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T026 [P] [US3] Extend src/auto_quantize_model/[area]/[module].py
+- [ ] T027 [US3] Extend scripts/[area]/[script].py runner(s)
+- [ ] T028 [US3] Extend conf/[area]/ presets (if applicable)
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -153,7 +154,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests in tests/unit/
+- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
@@ -178,7 +179,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Within Each User Story
 
-- Tests (if included) MUST be written and FAIL before implementation
+- Tests MUST be written and FAIL before implementation unless explicitly justified in `spec.md`
 - Models before services
 - Services before endpoints
 - Core implementation before integration
@@ -198,13 +199,13 @@ Examples of foundational tasks (adjust based on your project):
 ## Parallel Example: User Story 1
 
 ```bash
-# Launch all tests for User Story 1 together:
-Task: "Contract test for [endpoint] in tests/contract/test_[name].py"
-Task: "Integration test for [user journey] in tests/integration/test_[name].py"
+# Launch core tests for User Story 1 together:
+Task: "Unit tests in tests/unit/test_[name].py"
+Task: "Integration test in tests/integration/test_[name].py"
 
-# Launch all models for User Story 1 together:
-Task: "Create [Entity1] model in src/models/[entity1].py"
-Task: "Create [Entity2] model in src/models/[entity2].py"
+# Launch independent implementation work together:
+Task: "Reusable logic in src/auto_quantize_model/[area]/[module].py"
+Task: "Runner in scripts/[area]/[script].py"
 ```
 
 ---
