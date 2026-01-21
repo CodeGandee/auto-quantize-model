@@ -1,0 +1,16 @@
+# Layer Sensitivity Summary
+
+| Key | Value |
+|---|---|
+| auto_quantize_method | `gradient` |
+| auto_quantize_score_size | `1` |
+| coverage_fraction | `1.0` |
+| coverage_mode | `full` |
+| dataset_captions_path | `None` |
+| dataset_vlm_calib_db | `<ABSOLUTE_PATH>` |
+| has_autoquant_state | `True` |
+| has_layer_sensitivity | `True` |
+| manifest_keys | `["autoquant_state", "dataset", "layer_sensitivity", "layers", "model", "num_quantized_layers", "quantization", "run_config", "scheme", "sensitivity_ranking"]` |
+| model_id | `<ABSOLUTE_PATH>` |
+| quant_formats | `["INT8_ALL_LAYERS_CFG"]` |
+| scheme_name | `int8_autoquant_all_layers_int8` |

@@ -22,12 +22,12 @@ The symlink target is host-specific and should not be committed to the repositor
 
 On this development host, the Qwen3-VL-4B-Instruct snapshot currently lives under:
 
-- `/workspace/llm-models/Qwen3-VL-4B-Instruct`
+- `/data1/huangzhe/llm-models/Qwen3-VL-4B-Instruct`
 
 To mirror that layout (recommended pattern):
 
 ```bash
-MODELS_ROOT=/workspace/llm-models
+MODELS_ROOT=/data1/huangzhe/llm-models
 ln -s "${MODELS_ROOT}/Qwen3-VL-4B-Instruct" \
   models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct
 ```
@@ -42,19 +42,23 @@ Notes:
 
 With the checkpoint symlink in place and COCO calibration subsets available, run:
 
-```bash
-# All-layers FP8 sensitivity (vision + text towers).
-pixi run -e rtx5090-vllm python \
-  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py
+For a minimal, reproducible end-to-end smoke test (generates a tiny synthetic COCO-like input and runs both all-layers + LM-only INT8), see: `docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/`.
 
-# All-layers INT8 (W8A8) sensitivity.
-pixi run -e rtx5090-vllm python \
+```bash
+# All-layers INT8 (W8A8) sensitivity (vision + text towers).
+pixi run python \
   models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
   --quant-format int8 \
   --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_int8_large
 
+# All-layers FP8 sensitivity (vision + text towers).
+pixi run python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
+  --quant-format fp8 \
+  --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_fp8
+
 # INT8 LM-only sensitivity (text tower).
-pixi run -e rtx5090-vllm python \
+pixi run python \
   models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py
 ```
 

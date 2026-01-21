@@ -44,7 +44,7 @@ AUTOQUANT_INT8_LM_DEFAULT = AutoQuantSchemeConfig(
     auto_quantize_bits=8.0,
     auto_quantize_method="gradient",
     auto_quantize_score_size=128,
-    coverage_mode="lm_default",
+    coverage_mode="lm_only",
     coverage_fraction=1.0,
     quant_formats=["INT8_LM_DEFAULT_CFG"],
 )

@@ -17,7 +17,7 @@ Git ignores only `.pt` artifacts under `models/qwen3_vl_4b_instruct/layer-analys
 The preferred workflow for **LM-only** per-layer sensitivity is the Hydra runner:
 
 ```bash
-pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
+pixi run python scripts/qwen/qwen3_lm_sensitivity.py \
   output_layout=publish \
   quant_pair=wfp8_afp8 \
   quant_granularity=default \
@@ -29,7 +29,7 @@ format selected by `quant_pair.format_name`, set `quant_granularity` (configs
 live in `conf/quant_granularity/`):
 
 ```bash
-pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
+pixi run python scripts/qwen/qwen3_lm_sensitivity.py \
   output_layout=publish \
   quant_pair=wint4_aint8 \
   quant_granularity=recipe_match_channel_token \
@@ -39,7 +39,7 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py \
 To sweep multiple dataset sizes:
 
 ```bash
-pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
+pixi run python scripts/qwen/qwen3_lm_sensitivity.py -m \
   output_layout=publish \
   quant_pair=wfp8_afp8 \
   quant_granularity=default \
@@ -49,7 +49,7 @@ pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
 To sweep multiple granularities (common for grid-searches):
 
 ```bash
-pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
+pixi run python scripts/qwen/qwen3_lm_sensitivity.py -m \
   output_layout=tmp \
   quant_pair=wint4_aint8 \
   quant_granularity=default,recipe_match_channel_token,w_group64,w_group128 \

@@ -393,7 +393,6 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         / "checkpoints"
         / "Qwen3-VL-4B-Instruct"
     )
-    default_output_dir = Path("tmp") / "qwen3_vl_4b_autoquant_all_layers_fp8"
     default_vlm_calib_db = (
         Path("datasets")
         / "vlm-quantize-calib"
@@ -410,7 +409,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=default_output_dir,
+        default=None,
         help="Directory to write the quantization manifest and artifacts.",
     )
     parser.add_argument(
@@ -459,7 +458,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--quant-format",
         type=str,
-        default="fp8",
+        default="int8",
         choices=["fp8", "int8"],
         help=(
             "Quantization format family to use. "
@@ -499,6 +498,12 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
+    if args.output_dir is None:
+        if args.quant_format == "fp8":
+            args.output_dir = Path("tmp") / "qwen3_vl_4b_autoquant_all_layers_fp8"
+        else:
+            suffix = "large" if int(args.max_calib_samples) >= 512 else "small"
+            args.output_dir = Path("tmp") / f"qwen3_vl_4b_autoquant_all_layers_int8_{suffix}"
     try:
         scheme = select_autoquant_scheme(args.quant_format)
     except ValueError as exc:  # noqa: BLE001
@@ -720,7 +725,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         out_path=sensitivity_json_path,
     )
 
-    print("[INFO] AutoQuant all-layers FP8 completed successfully.")
+    print(
+        f"[INFO] AutoQuant all-layers {args.quant_format.upper()} completed successfully."
+    )
     print(f"[INFO] Quantization manifest written to: {manifest_path}")
     print(f"[INFO] AutoQuant state written to: {state_path}")
     print(f"[INFO] Layer sensitivity report: {sensitivity_md_path}")

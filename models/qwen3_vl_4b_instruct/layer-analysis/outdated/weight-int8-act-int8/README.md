@@ -44,19 +44,19 @@ The simplest way to regenerate everything in this folder (all-layers + LM-only,
 small/medium/large) is the 3-phase runner:
 
 ```bash
-pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+pixi run bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
 ```
 
 To write outputs under `tmp/` instead of publishing into this folder:
 
 ```bash
-OUTPUT_MODE=tmp pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+OUTPUT_MODE=tmp pixi run bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
 ```
 
 To regenerate only the **LM-only** INT8 runs via Hydra:
 
 ```bash
-pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
+pixi run python scripts/qwen/qwen3_lm_sensitivity.py -m \
   output_layout=publish \
   quant_pair=wint8_aint8 \
   dataset.size=small,medium,large
@@ -77,5 +77,5 @@ That runner calls the underlying drivers:
 From the repo root:
 
 ```bash
-pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+pixi run bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
 ```
