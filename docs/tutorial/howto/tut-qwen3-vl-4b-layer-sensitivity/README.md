@@ -101,6 +101,61 @@ Outputs land under `<WORKSPACE>/all_layers_int8/`, including:
 - `layer-sensitivity-report.{md,json}`
 - `composed-config.yaml`
 
+#### 3.2.1 Under the hood: `run_qwen3_vl_4b_autoquant_all_layers.py` (step by step)
+
+This is what happens inside `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py` when you run the all-layers driver:
+
+1. **Parse CLI args and pick a scheme**
+   - `--quant-format {int8,fp8}` selects one of the hard-coded scheme configs:
+     - `AUTOQUANT_INT8_ALL_LAYERS` → `INT8_ALL_LAYERS_CFG`, `effective_bits=8.0`
+     - `AUTOQUANT_FP8_ALL_LAYERS` → `FP8_ALL_LAYERS_CFG`, `effective_bits=11.0`
+   - Optional overrides `--effective-bits` and `--auto-quantize-score-size` rewrite the chosen scheme.
+   - If `--output-dir` is omitted, the script picks a default under `tmp/` based on `--quant-format` and `--max-calib-samples`.
+
+2. **Report-only short path**
+   - If `--report-only` is set, the driver does not run AutoQuant:
+     - it reads `<output_dir>/<scheme.name>_quant_manifest.json`
+     - it regenerates `layer-sensitivity-report.{md,json}` from that manifest
+
+3. **Load the HF model and preprocessing stack**
+   - Loads `Qwen3-VL-4B-Instruct` via `transformers.AutoModelForImageTextToText.from_pretrained(...)` with `trust_remote_code=True`.
+   - Uses `torch_dtype=bfloat16` on CUDA and `float32` on CPU.
+   - Loads `AutoTokenizer` and sets `padding_side="left"` (needed for batching/padding behavior).
+   - Loads `AutoProcessor` for multimodal preprocessing.
+
+4. **Build the VLM calibration samples (COCO-like)**
+   - Reads `(image_relpath, caption)` rows from the SQLite DB table `vlm_calib_samples` (up to `--max-calib-samples`).
+   - Resolves each image path as `<coco_root>/<image_relpath>`.
+   - For each sample, constructs a “chat template” message containing one image + one caption, then:
+     - `tokenizer.apply_chat_template(..., add_generation_prompt=True)` produces the text prompt
+     - `qwen_vl_utils.process_vision_info(messages)` extracts the image/video inputs
+     - `processor(...)` converts (text + image/video inputs) into tensor inputs
+   - Adds `labels = input_ids.clone()` so the driver can compute a causal LM loss during gradient-based scoring.
+   - The loader is a simple Python list of samples (each item treated as its own batch), to avoid image collation edge-cases.
+
+5. **Resolve quantization formats and run AutoQuant**
+   - For the selected scheme, each format name is resolved to a ModelOpt config:
+     - first from `auto_quantize_model.modelopt_configs.CUSTOM_QUANT_CONFIGS` (repo-defined configs like `INT8_ALL_LAYERS_CFG`)
+     - otherwise from `modelopt.torch.quantization` presets (if present)
+   - Calls `modelopt.torch.quantization.auto_quantize(...)` with:
+     - `constraints={"effective_bits": scheme.auto_quantize_bits}`
+     - `forward_step(model, batch)` that moves tensors to the target device
+     - a standard causal LM cross-entropy loss over `logits` vs `labels`
+     - `num_score_steps` derived from `--auto-quantize-score-size` and `--batch-size`
+   - The result is a quantized model + an AutoQuant `state_dict` containing (among other things) per-layer `candidate_stats` and the chosen “best” solution.
+
+6. **Write artifacts**
+   - Saves the raw AutoQuant state: `<scheme.name>_autoquant_state.pt`
+   - Builds a manifest JSON:
+     - enumerates quantized linear layers using `modelopt.torch.quantization.utils.is_quantized_linear`
+     - extracts `candidate_stats` into `layer_sensitivity` and a ranked list of layers
+     - records dataset + quantization metadata and a small composed-config YAML for reproducibility
+   - Writes:
+     - `<scheme.name>_quant_manifest.json`
+     - `layer-sensitivity-report.md` and `layer-sensitivity-report.json` via `auto_quantize_model.modelopt_autoquant.write_layer_sensitivity_md/json`
+
+The tutorial’s expected outputs under `expected_report/all_layers_int8/` are a sanitized snapshot of these artifacts (paths replaced with `<ABSOLUTE_PATH>`).
+
 #### 3.3 LM-only INT8 (text tower)
 
 This runs the LM-only driver over the captions file:
