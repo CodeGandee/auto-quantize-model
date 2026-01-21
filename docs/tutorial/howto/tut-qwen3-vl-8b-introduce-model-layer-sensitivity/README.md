@@ -73,6 +73,15 @@ bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_d
 
 The runner executes this (smoke-test settings):
 
+> **Why does the 8B tutorial call a “4B” script?**
+>
+> This is intentional: the all-layers driver is parameterized by `--model-dir`, so it can run with
+> `Qwen3-VL-8B-Instruct` as long as you pass the 8B checkpoint path. The filename still contains “4b”
+> because it was originally introduced for the 4B model, but it is model-agnostic at runtime.
+>
+> One cosmetic caveat: the script’s log line prints `Loading Qwen3-VL-4B-Instruct ...` even when the
+> `--model-dir` points to the 8B checkpoint.
+
 ```bash
 pixi run python \
   models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
