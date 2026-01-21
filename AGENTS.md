@@ -54,6 +54,9 @@ All commands should run through Pixi:
 ## Active Technologies
 - Python 3.12 (Pixi-managed; `pyproject.toml` pins `python = "3.12.*"`) + Ultralytics (local clone under `models/yolo10/src/`), PyTorch, Brevitas (W4A16 fake-quant), Hydra/OmegaConf (experiment configs), ONNX/onnxruntime (export/eval), TensorBoard + matplotlib (logging/plots) (001-yolov10-qat-validation)
 - Filesystem artifacts under `tmp/` (not committed) and curated reports under `models/yolo10/reports/<run-id>/` (001-yolov10-qat-validation)
+- Python 3.12 (Pixi-managed; `pyproject.toml` pins `python = "3.12.*"`) + PyTorch, Hydra/OmegaConf, ONNX/onnxruntime, TensorBoard + matplotlib (002-revise-qwen3-vl-tutorial)
+- Workspace artifacts under `/data1/huangzhe/code/auto-quantize-model/tmp/` (uncommitted) + sanitized snapshots under the tutorial pack’s `expected_report/` (committed) (002-revise-qwen3-vl-tutorial)
 
 ## Recent Changes
+- 002-revise-qwen3-vl-tutorial: Added planning docs for revising the Qwen3-VL-8B layer-sensitivity tutorial pack
 - 001-yolov10-qat-validation: Added Python 3.12 (Pixi-managed; `pyproject.toml` pins `python = "3.12.*"`) + Ultralytics (local clone under `models/yolo10/src/`), PyTorch, Brevitas (W4A16 fake-quant), Hydra/OmegaConf (experiment configs), ONNX/onnxruntime (export/eval), TensorBoard + matplotlib (logging/plots)
