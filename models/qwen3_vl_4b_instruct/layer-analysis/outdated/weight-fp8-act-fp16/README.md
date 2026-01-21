@@ -17,7 +17,7 @@ Git ignores only `.pt` artifacts under `models/qwen3_vl_4b_instruct/layer-analys
 Run a published sweep (small/medium/large) from the repo root:
 
 ```bash
-pixi run -e rtx5090-vllm python scripts/qwen/qwen3_lm_sensitivity.py -m \
+pixi run python scripts/qwen/qwen3_lm_sensitivity.py -m \
   output_layout=publish \
   quant_pair=wfp8_afp16 \
   dataset.size=small,medium,large

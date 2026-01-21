@@ -49,13 +49,13 @@ you can run per-layer quantization sensitivity with NVIDIA ModelOpt:
 
 ```bash
 # INT8 (W8A8) LM-only sensitivity (text tower).
-pixi run -e rtx5090-vllm python \
+pixi run python \
   models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_schemes.py \
   --scheme-name int8_autoquant_full \
   --output-dir tmp/qwen2_5_vl_3b_autoquant_int8_lm_large
 
 # FP8 LM-only sensitivity.
-pixi run -e rtx5090-vllm python \
+pixi run python \
   models/qwen2_5_vl_3b_instruct/helpers/qwen2_5_vl_3b_autoquant_fp8_schemes.py \
   --scheme-name fp8_autoquant_full \
   --output-dir tmp/qwen2_5_vl_3b_autoquant_fp8_lm_large

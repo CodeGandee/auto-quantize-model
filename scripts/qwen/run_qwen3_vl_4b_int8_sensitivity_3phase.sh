@@ -3,19 +3,19 @@ set -euo pipefail
 
 # Run Qwen3-VL-4B INT8 per-layer sensitivity in 3 phases (small/medium/large).
 #
-# Usage (from repo root, RTX 5090 env):
-#   pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+# Usage (from repo root, Pixi default env):
+#   pixi run bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
 #
 # By default this script writes outputs into the published analysis layout under:
 #   models/qwen3_vl_4b_instruct/layer-analysis/weight-int8-act-int8/
 #
 # To write to tmp/ instead:
-#   OUTPUT_MODE=tmp pixi run -e rtx5090-vllm bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
+#   OUTPUT_MODE=tmp pixi run bash scripts/qwen/run_qwen3_vl_4b_int8_sensitivity_3phase.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-ENV_NAME="${ENV_NAME:-rtx5090-vllm}"
+ENV_NAME="${ENV_NAME:-default}"
 OUTPUT_MODE="${OUTPUT_MODE:-publish}"
 
 if [[ "${OUTPUT_MODE}" != "publish" && "${OUTPUT_MODE}" != "tmp" ]]; then

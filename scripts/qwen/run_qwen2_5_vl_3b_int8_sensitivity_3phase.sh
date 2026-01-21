@@ -6,7 +6,7 @@ set -euo pipefail
 # This script always runs the LM-only INT8 sensitivity pass.
 # For all-layers INT8 runs, you must provide a baseline and coverage manifest
 # from an existing FP8 all-layers baseline:
-#   BASELINE_DIR=... COVERAGE_MANIFEST=... pixi run -e rtx5090-vllm bash \
+#   BASELINE_DIR=... COVERAGE_MANIFEST=... pixi run bash \
 #     scripts/qwen/run_qwen2_5_vl_3b_int8_sensitivity_3phase.sh
 #
 # Outputs are written under tmp/ with one subdir per phase.
@@ -14,7 +14,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-ENV_NAME="${ENV_NAME:-rtx5090-vllm}"
+ENV_NAME="${ENV_NAME:-default}"
 
 MODEL_DIR="${REPO_ROOT}/models/qwen2_5_vl_3b_instruct/checkpoints/Qwen2.5-VL-3B-Instruct"
 CALIB_ROOT="${REPO_ROOT}/datasets/vlm-quantize-calib"
@@ -91,4 +91,3 @@ done
 
 echo
 echo "[INFO] Completed Qwen2.5 INT8 3-phase sensitivity runs."
-
