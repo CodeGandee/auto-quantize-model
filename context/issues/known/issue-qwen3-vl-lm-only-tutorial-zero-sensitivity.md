@@ -36,33 +36,33 @@ Symptoms / Problem
     candidates in `layer_sensitivity`.
 
 
-Comparison: tutorial pack vs published Hydra run
+Comparison: tutorial packs vs published Hydra run
 ------------------------------------------------
 
-| Parameter | Tutorial pack (current) | Published Hydra run (historical) | Notes |
-|---|---|---|---|
-| Primary goal | Self-contained smoke test | Research-grade sensitivity snapshot | Tutorial prioritizes speed over stability/quality |
-| Model | `Qwen3-VL-8B-Instruct` | `Qwen3-VL-4B-Instruct` | Different model sizes, but both exhibit the “LM-only” flow |
-| Model path source | repo-local symlink | repo-local symlink | Tutorial: `models/qwen3_vl_8b_instruct/checkpoints/Qwen3-VL-8B-Instruct` |
-| Runner entrypoint | `docs/.../run_demo.sh` → `models/.../run_qwen3_vl_4b_autoquant_int8_lm.py` | `pixi run python scripts/qwen/qwen3_lm_sensitivity.py ...` | Hydra runner writes `per-layer-sensitivity.{md,json}` in that era |
-| Output directory type | `tmp/tutorial_workspace_...` then sanitized snapshot | `models/.../layer-analysis/...` committed | Both include a manifest JSON |
-| Scheme name | `int8_autoquant_lm_default` | `wint8_aint8_autoquant_lm` | Naming differs (CLI vs Hydra naming conventions) |
-| `scheme.coverage_mode` | `lm_only` | `lm_only` | Same intent |
-| `scheme.auto_quantize_method` | `gradient` | `gradient` | Same method family |
-| `scheme.auto_quantize_score_size` | `1` | `128` | Huge difference in scoring budget |
-| `scheme.auto_quantize_bits` (target) | `8.5643` | `8.7453` | Both may be auto-adjusted internally in LM-only flows |
-| Effective bits chosen (best) | `16.0` | `8.7443` | Tutorial run degenerates to “all NONE” |
-| Constraint satisfied | `False` | `True` | From `autoquant_state.is_satisfied` |
-| Total AutoQuant score | `0` | `418.8904...` | From `autoquant_state.score` |
-| Calibration captions | 1 line (tutorial `inputs/`) | COCO captions “medium” | See dataset rows below |
-| `dataset.max_calib_samples` | `1` | `128` | |
-| `dataset.num_calib_samples` | `1` | `128` | |
-| `dataset.calib_seq_len` | `64` | `512` | |
-| `dataset.batch_size` | `1` | `8` | |
-| `dataset.num_calib_batches` | `1` | `16` | |
-| Manifest path | `docs/.../expected_report/lm_only_int8/quant_manifest.json` | `models/.../wint8_aint8_autoquant_lm_quant_manifest.json` | Filenames differ |
-| Candidate formats observed per-layer | `['NONE(effective-bits: 16.0)']` only | `['INT8_DEFAULT_CFG(effective-bits: 8.0)', 'NONE(effective-bits: 16.0)']` commonly | Example key: `model.language_model.layers.0.self_attn.q_proj.quant_recipe` |
-| Resulting sensitivity values | All 0 | Many non-zero | Tutorial report table is driven by manifest scores |
+| Parameter | Tutorial pack LM-only INT8 (current) | Tutorial pack all-layers INT8 (reference) | Published Hydra LM-only run (historical) | Notes |
+|---|---|---|---|---|
+| Primary goal | Self-contained smoke test | Self-contained smoke test | Research-grade sensitivity snapshot | Tutorial packs prioritize speed and portability |
+| Model | `Qwen3-VL-8B-Instruct` | `Qwen3-VL-4B-Instruct` | `Qwen3-VL-4B-Instruct` | The reference column shows that tutorial infrastructure can produce non-zero scores |
+| Model path source | repo-local symlink | repo-local symlink | repo-local symlink | Tutorial 8B: `models/qwen3_vl_8b_instruct/checkpoints/Qwen3-VL-8B-Instruct` |
+| Runner entrypoint | `docs/.../run_demo.sh` → `models/.../run_qwen3_vl_4b_autoquant_int8_lm.py` | `docs/.../run_demo.sh` → `models/.../run_qwen3_vl_4b_autoquant_all_layers.py` | `pixi run python scripts/qwen/qwen3_lm_sensitivity.py ...` | Hydra run writes `per-layer-sensitivity.{md,json}` in that era |
+| Output directory type | `tmp/tutorial_workspace_...` then sanitized snapshot | `tmp/tutorial_workspace_...` then sanitized snapshot | `models/.../layer-analysis/...` committed | All include a manifest JSON |
+| Scheme name | `int8_autoquant_lm_default` | `int8_autoquant_all_layers_int8` | `wint8_aint8_autoquant_lm` | Naming differs (CLI vs Hydra conventions) |
+| `scheme.coverage_mode` | `lm_only` | `full` | `lm_only` | All-layers is expected to cover vision + text |
+| `scheme.auto_quantize_method` | `gradient` | `gradient` | `gradient` | Same method family |
+| `scheme.auto_quantize_score_size` | `1` | `1` | `128` | Scoring budget is tiny in tutorial packs |
+| `scheme.auto_quantize_bits` (target) | `8.5643` | `8.0` | `8.7453` | Targets may be adjusted internally for LM-only flows |
+| Effective bits chosen (best) | `16.0` | `8.0` | `8.7443` | LM-only tutorial run degenerates to “all NONE” |
+| Constraint satisfied | `False` | `True` | `True` | From `autoquant_state.is_satisfied` |
+| Total AutoQuant score | `0` | `1050.4093...` | `418.8904...` | From `autoquant_state.score` |
+| Calibration data type | captions text file | COCO-like VLM (SQLite + images) | captions text file | Tutorial all-layers uses a generated 1-row SQLite DB and synthetic image |
+| `dataset.max_calib_samples` | `1` | `1` | `128` | |
+| `dataset.num_calib_samples` | `1` | `unknown` (dataset object has no `__len__`) | `128` | In the all-layers driver we record `num_calib_samples: null` |
+| `dataset.calib_seq_len` | `64` | `64` | `512` | |
+| `dataset.batch_size` | `1` | `1` | `8` | |
+| `dataset.num_calib_batches` | `1` | `1` | `16` | |
+| Manifest path | `docs/.../expected_report/lm_only_int8/quant_manifest.json` | `docs/.../expected_report/all_layers_int8/quant_manifest.json` | `models/.../wint8_aint8_autoquant_lm_quant_manifest.json` | Filenames differ |
+| Candidate formats observed per-layer | `NONE(effective-bits: 16.0)` only | often includes both a quantized candidate and `NONE` | commonly includes both `INT8_DEFAULT_CFG(...)` and `NONE(...)` | Example key: `model.language_model.layers.0.self_attn.q_proj.quant_recipe` |
+| Resulting sensitivity values | All 0 | Non-zero | Non-zero | Tutorial report tables are driven by manifest `scores` |
 
 
 Why this happens (current hypothesis)
