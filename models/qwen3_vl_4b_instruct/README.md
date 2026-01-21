@@ -22,12 +22,12 @@ The symlink target is host-specific and should not be committed to the repositor
 
 On this development host, the Qwen3-VL-4B-Instruct snapshot currently lives under:
 
-- `/workspace/llm-models/Qwen3-VL-4B-Instruct`
+- `/data1/huangzhe/llm-models/Qwen3-VL-4B-Instruct`
 
 To mirror that layout (recommended pattern):
 
 ```bash
-MODELS_ROOT=/workspace/llm-models
+MODELS_ROOT=/data1/huangzhe/llm-models
 ln -s "${MODELS_ROOT}/Qwen3-VL-4B-Instruct" \
   models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct
 ```
