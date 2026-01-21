@@ -42,6 +42,8 @@ Notes:
 
 With the checkpoint symlink in place and COCO calibration subsets available, run:
 
+For a minimal, reproducible end-to-end smoke test (generates a tiny synthetic COCO-like input and runs both all-layers + LM-only INT8), see: `docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/`.
+
 ```bash
 # All-layers INT8 (W8A8) sensitivity (vision + text towers).
 pixi run python \

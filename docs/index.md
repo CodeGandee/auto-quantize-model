@@ -20,6 +20,7 @@ pixi run mkdocs build
 
 - Start here: `Workflows → Layer Sensitivity (Hydra)`
 - Qwen3-VL LM-only runner: `Workflows → Qwen3-VL LM-only Sensitivity`
+- Qwen3-VL-4B end-to-end smoke test: `Tutorials → Qwen3-VL-4B Layer Sensitivity (Pack)`
 
 ## CV / ONNX workflows
 
