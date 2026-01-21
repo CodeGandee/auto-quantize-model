@@ -27,6 +27,10 @@ This directory groups model families used by the project. Each subdirectory owns
 - `qwen3_vl_4b_instruct/` — Qwen3-VL 4B Instruct (HF snapshot, external weights):
   - Tracks a local HF snapshot via `checkpoints/Qwen3-VL-4B-Instruct` symlink pointing to a host-specific directory (e.g. `/data1/huangzhe/llm-models/Qwen3-VL-4B-Instruct`), ignored by Git.
   - On this host, the default snapshots root is `/data1/huangzhe/llm-models` (see `models/qwen3_vl_4b_instruct/README.md`).
+- `qwen3_vl_8b_instruct/` — Qwen3-VL 8B Instruct (HF snapshot, external weights):
+  - See `models/qwen3_vl_8b_instruct/README.md` for details.
+  - Bootstrap script: `./models/qwen3_vl_8b_instruct/bootstrap.sh`
+  - Tracks a local HF snapshot via `checkpoints/Qwen3-VL-8B-Instruct` symlink pointing to a host-specific directory (e.g. `/data1/huangzhe/llm-models/Qwen3-VL-8B-Instruct`), ignored by Git.
 
 All large artifacts (source clones, checkpoints, temporary files, and external HF snapshots) are managed per-model and are not committed to the repository. Use the per-model README files and local symlink conventions for exact setup and bootstrap instructions.
 
