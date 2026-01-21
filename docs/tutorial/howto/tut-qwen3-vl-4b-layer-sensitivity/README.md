@@ -37,22 +37,101 @@ The all-layers driver expects a COCO-style root plus a small SQLite DB mapping `
 This tutorial pack provides a minimal captions file in `inputs/` and generates the tiny DB + image in a gitignored workspace under `tmp/`.
 
 ```bash
-# One-click runner handles input setup automatically.
-# (See run_demo.sh for the embedded input generator.)
+# One-click runner handles input setup automatically by:
+# - copying the tracked captions file from inputs/
+# - generating a tiny synthetic COCO-like root with a single JPEG
+# - generating a 1-row SQLite calibration DB (`vlm_calib_small.db`)
 ```
 
-### Step 3: Run Drivers + Verify Outputs
+### Step 3: Run Drivers + Verify Outputs (What `run_demo.sh` Does)
 
-Run the tutorial pack from the repo root. It will:
+The tutorial is executed by `run_demo.sh`, which is intentionally written as a
+robust, non-destructive orchestrator. It runs in a fresh workspace under `tmp/`
+and never writes into the tracked tutorial directory unless you explicitly pass
+`--snapshot-report`.
 
-- create a fresh workspace under `tmp/tutorial_workspace_qwen3_vl_4b_layer_sensitivity_<epoch>/`
-- run all-layers INT8
-- run LM-only INT8
-- generate sanitized summaries and compare them against `expected_report/` (if present)
+At a high level, `run_demo.sh` does:
+
+1. Creates a workspace directory.
+2. Prepares minimal calibration inputs.
+3. Runs the all-layers INT8 driver.
+4. Runs the LM-only INT8 driver.
+5. Generates sanitized summaries.
+6. Verifies against `expected_report/` (or snapshots it).
 
 ```bash
+# From repo root:
 bash docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/run_demo.sh
 ```
+
+#### 3.1 Workspace + inputs
+
+`run_demo.sh` creates a fresh, gitignored workspace:
+
+- `tmp/tutorial_workspace_qwen3_vl_4b_layer_sensitivity_<epoch>/`
+
+Inside that workspace it generates:
+
+- `coco2017/source-data/train2017/000000000001.jpg` (a tiny synthetic image)
+- `vlm_calib_small.db` (SQLite DB with one row in `vlm_calib_samples`)
+- `coco2017_captions_small.txt` (copied from `inputs/`)
+
+#### 3.2 All-layers INT8 (vision + text)
+
+This is the core all-layers call (smoke-test settings):
+
+```bash
+pixi run python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
+  --quant-format int8 \
+  --model-dir models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct \
+  --output-dir <WORKSPACE>/all_layers_int8 \
+  --vlm-calib-db <WORKSPACE>/vlm_calib_small.db \
+  --coco-root <WORKSPACE>/coco2017/source-data \
+  --max-calib-samples 1 \
+  --calib-seq-len 64 \
+  --batch-size 1 \
+  --device cuda:0 \
+  --auto-quantize-score-size 1
+```
+
+Outputs land under `<WORKSPACE>/all_layers_int8/`, including:
+
+- `*_quant_manifest.json`
+- `layer-sensitivity-report.{md,json}`
+- `composed-config.yaml`
+
+#### 3.3 LM-only INT8 (text tower)
+
+This runs the LM-only driver over the captions file:
+
+```bash
+pixi run python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_int8_lm/run_qwen3_vl_4b_autoquant_int8_lm.py \
+  --model-dir models/qwen3_vl_4b_instruct/checkpoints/Qwen3-VL-4B-Instruct \
+  --output-dir <WORKSPACE>/lm_only_int8 \
+  --captions-path <WORKSPACE>/coco2017_captions_small.txt \
+  --max-calib-samples 1 \
+  --calib-seq-len 64 \
+  --batch-size 1 \
+  --device cuda:0 \
+  --auto-quantize-score-size 1
+```
+
+Outputs land under `<WORKSPACE>/lm_only_int8/` with the same artifact shapes.
+
+#### 3.4 Summaries, sanitization, and verification
+
+`run_demo.sh` produces stable summaries used for verification:
+
+- `summaries/all_layers_int8/summary.{json,md}`
+- `summaries/lm_only_int8/summary.{json,md}`
+
+It compares these against `expected_report/**/summary.{json,md}`. In snapshot
+mode it also sanitizes and copies the detailed run artifacts into
+`expected_report/` (paths replaced with `<ABSOLUTE_PATH>`).
+
+#### 3.5 Flags
 
 To also run the FP8 all-layers pass:
 
@@ -62,7 +141,7 @@ bash docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/run_demo.sh --with-fp
 
 ### Complete Runnable Script
 
-This tutorial pack is designed to be executed via its one-click runner:
+This tutorial pack is executed via its one-click runner:
 
 ```bash
 #!/usr/bin/env bash
