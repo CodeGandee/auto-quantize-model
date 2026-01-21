@@ -1,0 +1,35 @@
+script: run_qwen3_vl_4b_autoquant_all_layers.py
+scheme:
+  name: int8_autoquant_all_layers_int8
+  auto_quantize_bits: 8.0
+  auto_quantize_method: gradient
+  auto_quantize_score_size: 1
+  coverage_mode: full
+  coverage_fraction: 1.0
+  quant_formats:
+  - INT8_ALL_LAYERS_CFG
+args:
+  model_dir: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-VL-8B-Instruct
+  output_dir: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>
+  vlm_calib_db: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>
+  coco_root: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-data
+  max_calib_samples: 1
+  calib_seq_len: 64
+  batch_size: 1
+  device: cuda:0
+  quant_format: int8
+  effective_bits: null
+  auto_quantize_score_size: 1
+  report_only: false
+dataset:
+  vlm_calib_db: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>
+  coco_root: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-data
+  calib_seq_len: 64
+  batch_size: 1
+  num_calib_samples: null
+  max_calib_samples: 1
+quantization:
+  base_format_name: INT8_ALL_LAYERS_CFG
+  format_names:
+  - INT8_ALL_LAYERS_CFG
+  quant_format: int8

@@ -45,3 +45,14 @@ This repo provides an interactive bootstrap script that can create/update the sy
 ```bash
 ./models/qwen3_vl_8b_instruct/bootstrap.sh --yes
 ```
+
+## Introduce + per-layer sensitivity (ModelOpt AutoQuant)
+
+For a minimal, reproducible end-to-end smoke test that:
+
+1. introduces the 8B checkpoint into the repo (via symlink), and
+2. runs both all-layers INT8 + LM-only INT8 per-layer sensitivity,
+
+see:
+
+- `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/`
