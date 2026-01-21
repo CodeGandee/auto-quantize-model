@@ -1,0 +1,11 @@
+# Short profile: small but meaningful validation runs.
+
+dataset:
+  train_max_images: 2048
+  val_max_images: 256
+  selection: random
+
+training:
+  epochs: 10
+  batch: 16
+

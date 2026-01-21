@@ -1,0 +1,11 @@
+# Smoke profile: fast sanity checks.
+
+dataset:
+  train_max_images: 256
+  val_max_images: 64
+  selection: random
+
+training:
+  epochs: 1
+  batch: 16
+

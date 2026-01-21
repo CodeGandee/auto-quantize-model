@@ -23,7 +23,10 @@ from typing import Any, Callable, Dict, Iterator, Optional, Sequence, cast
 
 import numpy as np
 import onnx
-import onnxoptimizer  # type: ignore[import-untyped]
+try:
+    import onnxoptimizer  # type: ignore[import-not-found, import-untyped]
+except ModuleNotFoundError:  # pragma: no cover
+    onnxoptimizer = None  # type: ignore[assignment]
 import torch
 from torch import nn
 
@@ -433,6 +436,12 @@ def optimize_onnx_keep_qdq(
     The default pass list is intentionally conservative to avoid erasing
     QuantizeLinear/DequantizeLinear nodes that make the model inspectable.
     """
+
+    if onnxoptimizer is None:
+        raise ModuleNotFoundError(
+            "onnxoptimizer is required for optimize_onnx_keep_qdq(); "
+            "install it (or use a Pixi env that provides it)."
+        )
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     if passes is None:

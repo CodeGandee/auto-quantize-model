@@ -16,7 +16,7 @@ from __future__ import annotations
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import torch
 from torch import nn
@@ -42,11 +42,64 @@ _REPO_ROOT = _resolve_repo_root()
 ensure_local_yolo10_src_on_path(repo_root=_REPO_ROOT)
 
 from ultralytics.models.yolov10.train import YOLOv10DetectionTrainer  # type: ignore[import-not-found]  # noqa: E402
-from ultralytics.utils.torch_utils import de_parallel  # type: ignore[import-not-found, attr-defined]  # noqa: E402
+from ultralytics.utils.torch_utils import ModelEMA, de_parallel  # type: ignore[import-not-found, attr-defined]  # noqa: E402
+
+
+class _NoEMA:
+    """EMA shim to force raw-weight validation (baseline)."""
+
+    ema: None = None
+    updates: int = 0
+    enabled: bool = False
+
+    def __bool__(self) -> bool:
+        return False
+
+    def update(self, _: Any) -> None:
+        return
+
+    def update_attr(self, _: Any, include=(), exclude=("process_group", "reducer")) -> None:  # noqa: ARG002
+        return
 
 
 class Yolov10BrevitasW4A16Trainer(YOLOv10DetectionTrainer):
     """YOLOv10 trainer with Brevitas weight-only int4 fake-quant (W4A16)."""
+
+    ema: Any
+
+    def __init__(
+        self,
+        *,
+        overrides: Dict[str, Any],
+        method_variant: str,
+        ema_decay: Optional[float] = None,
+        ema_tau: Optional[float] = None,
+        _callbacks=None,
+    ) -> None:
+        super().__init__(overrides=overrides, _callbacks=_callbacks)
+        self.m_method_variant = str(method_variant)
+        self.m_ema_decay = float(ema_decay) if ema_decay is not None else None
+        self.m_ema_tau = float(ema_tau) if ema_tau is not None else None
+
+    def _setup_train(self, world_size: int) -> None:  # type: ignore[override]
+        super()._setup_train(world_size)
+
+        if self.m_method_variant == "baseline":
+            self.ema = _NoEMA()
+            return
+
+        if getattr(self, "ema", None) is None:
+            return
+        if self.m_ema_decay is None and self.m_ema_tau is None:
+            return
+
+        decay = 0.9999 if self.m_ema_decay is None else float(self.m_ema_decay)
+        tau = 2000.0 if self.m_ema_tau is None else float(self.m_ema_tau)
+        try:
+            self.ema = ModelEMA(self.model, decay=decay, tau=tau)
+        except Exception:
+            # Fall back to Ultralytics default EMA behavior.
+            return
 
     def get_model(self, cfg=None, weights=None, verbose=True):  # type: ignore[override]
         model = super().get_model(cfg=cfg, weights=weights, verbose=verbose)

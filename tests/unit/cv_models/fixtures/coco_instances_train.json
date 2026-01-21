@@ -1,0 +1,19 @@
+{
+  "info": { "description": "Toy COCO train" },
+  "licenses": [],
+  "images": [
+    { "id": 1, "file_name": "000000000001.jpg", "width": 640, "height": 480 },
+    { "id": 2, "file_name": "000000000002.jpg", "width": 640, "height": 480 },
+    { "id": 3, "file_name": "000000000003.jpg", "width": 640, "height": 480 }
+  ],
+  "annotations": [
+    { "id": 1, "image_id": 1, "category_id": 1, "bbox": [10, 10, 100, 80], "area": 8000, "iscrowd": 0 },
+    { "id": 2, "image_id": 2, "category_id": 1, "bbox": [20, 15, 120, 90], "area": 10800, "iscrowd": 0 },
+    { "id": 3, "image_id": 3, "category_id": 2, "bbox": [5, 5, 50, 40], "area": 2000, "iscrowd": 0 }
+  ],
+  "categories": [
+    { "id": 1, "name": "person" },
+    { "id": 2, "name": "bicycle" }
+  ]
+}
+

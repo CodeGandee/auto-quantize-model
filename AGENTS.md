@@ -50,3 +50,10 @@ All commands should run through Pixi:
   - Reference relevant issues or context files (e.g., `context/tasks/...`).
   - Note any new commands, config changes, or migration steps.
 
+
+## Active Technologies
+- Python 3.12 (Pixi-managed; `pyproject.toml` pins `python = "3.12.*"`) + Ultralytics (local clone under `models/yolo10/src/`), PyTorch, Brevitas (W4A16 fake-quant), Hydra/OmegaConf (experiment configs), ONNX/onnxruntime (export/eval), TensorBoard + matplotlib (logging/plots) (001-yolov10-qat-validation)
+- Filesystem artifacts under `tmp/` (not committed) and curated reports under `models/yolo10/reports/<run-id>/` (001-yolov10-qat-validation)
+
+## Recent Changes
+- 001-yolov10-qat-validation: Added Python 3.12 (Pixi-managed; `pyproject.toml` pins `python = "3.12.*"`) + Ultralytics (local clone under `models/yolo10/src/`), PyTorch, Brevitas (W4A16 fake-quant), Hydra/OmegaConf (experiment configs), ONNX/onnxruntime (export/eval), TensorBoard + matplotlib (logging/plots)

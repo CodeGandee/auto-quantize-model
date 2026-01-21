@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "run_id": "fixture_yolo10n_ema_qc_seed0",
+  "created_at": "2025-12-25T00:00:00Z",
+  "git": { "commit": "deadbeef", "branch": "main", "dirty": false },
+  "model": {
+    "variant": "yolo10n",
+    "checkpoint": "models/yolo10/checkpoints/yolov10n.pt",
+    "imgsz": 640
+  },
+  "quantization": {
+    "mode": "w4a16",
+    "library": "brevitas",
+    "weight_bit_width": 4,
+    "activation_bit_width": null
+  },
+  "method": {
+    "variant": "ema+qc",
+    "ema": { "enabled": true, "decay": 0.9999, "tau": 2000.0 },
+    "qc": { "enabled": true, "epochs": 1, "lr": 0.001, "bn_stats_fixed": true }
+  },
+  "dataset": {
+    "coco_root": "datasets/coco2017/source-data",
+    "dataset_yaml": "tmp/dataset.yaml",
+    "train_images": 256,
+    "val_images": 64
+  },
+  "training": {
+    "framework": "ultralytics",
+    "epochs": 1,
+    "batch": 16,
+    "seed": 0,
+    "device": "0",
+    "amp": true
+  },
+  "artifacts": {
+    "run_root": "tests/integration/fixtures/yolov10_w4a16/yolo10n/ema-qc/seed0"
+  },
+  "metrics": {
+    "primary_name": "metrics/mAP50-95(B)",
+    "best_value": 0.33,
+    "final_value": 0.29
+  },
+  "stability": {
+    "collapse_threshold_ratio": 0.5,
+    "final_over_best_ratio": 0.8788,
+    "collapsed": false
+  },
+  "status": "completed-success"
+}
+
