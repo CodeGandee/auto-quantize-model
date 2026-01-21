@@ -173,6 +173,7 @@ if $WITH_FP8; then
 fi
 
 SUMMARIZER="$SCRIPT_DIR/scripts/summarize_manifest.py"
+SANITIZER="$SCRIPT_DIR/scripts/sanitize_artifacts.py"
 SUMMARY_DIR="$WORKSPACE_DIR/summaries"
 mkdir -p "$SUMMARY_DIR"
 
@@ -193,10 +194,15 @@ if $SNAPSHOT; then
   cp -f "$SUMMARY_DIR/all_layers_int8/summary.md" "$EXPECTED_DIR/all_layers_int8/summary.md"
   cp -f "$SUMMARY_DIR/lm_only_int8/summary.json" "$EXPECTED_DIR/lm_only_int8/summary.json"
   cp -f "$SUMMARY_DIR/lm_only_int8/summary.md" "$EXPECTED_DIR/lm_only_int8/summary.md"
+
+  # Include the detailed run artifacts as well (sanitized for portability).
+  pixi run python "$SANITIZER" "$OUT_ALL_INT8" "$EXPECTED_DIR/all_layers_int8"
+  pixi run python "$SANITIZER" "$OUT_LM_INT8" "$EXPECTED_DIR/lm_only_int8"
   if $WITH_FP8; then
     mkdir -p "$EXPECTED_DIR/all_layers_fp8"
     cp -f "$SUMMARY_DIR/all_layers_fp8/summary.json" "$EXPECTED_DIR/all_layers_fp8/summary.json"
     cp -f "$SUMMARY_DIR/all_layers_fp8/summary.md" "$EXPECTED_DIR/all_layers_fp8/summary.md"
+    pixi run python "$SANITIZER" "$OUT_ALL_FP8" "$EXPECTED_DIR/all_layers_fp8"
   fi
   echo "[INFO] Updated expected_report/ from: $WORKSPACE_DIR"
   exit 0
@@ -212,6 +218,8 @@ if [[ -d "$EXPECTED_DIR/all_layers_int8" && -d "$EXPECTED_DIR/lm_only_int8" ]]; 
     diff -u "$EXPECTED_DIR/all_layers_fp8/summary.json" "$SUMMARY_DIR/all_layers_fp8/summary.json"
     diff -u "$EXPECTED_DIR/all_layers_fp8/summary.md" "$SUMMARY_DIR/all_layers_fp8/summary.md"
   fi
+  test -f "$EXPECTED_DIR/all_layers_int8/layer-sensitivity-report.json"
+  test -f "$EXPECTED_DIR/lm_only_int8/layer-sensitivity-report.json"
   echo "[INFO] Verification OK."
 else
   echo "[INFO] No expected_report snapshot found; run with --snapshot-report to create one."

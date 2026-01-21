@@ -34,6 +34,11 @@ This writes outputs under a workspace like:
 
 If `expected_report/` is present, `run_demo.sh` will compare the generated summaries against it and fail the run if they differ.
 
+The `expected_report/` directory includes both:
+
+- A stable, sanitized `summary.{json,md}` used for verification
+- The detailed run artifacts (sanitized for portability): `layer-sensitivity-report.{md,json}`, and `quant_manifest.json` when present
+
 To regenerate the expected report (maintenance mode):
 
 ```bash
