@@ -38,20 +38,29 @@ directory for INT8 runs if desired.
 
 ## Usage
 
-Run the all-layers AutoQuant sensitivity pass from the repo root (FP8 by default):
+Run the all-layers AutoQuant sensitivity pass from the repo root (INT8 by default):
 
 ```bash
 pixi run python \
   models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py
 ```
 
-To run an INT8 (W8A8) all-layers sensitivity pass:
+To run an INT8 (W8A8) all-layers sensitivity pass explicitly:
 
 ```bash
 pixi run python \
   models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
   --quant-format int8 \
   --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_int8_large
+```
+
+To run an FP8 all-layers sensitivity pass:
+
+```bash
+pixi run python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
+  --quant-format fp8 \
+  --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_fp8
 ```
 
 To regenerate only the Markdown report from an existing manifest:

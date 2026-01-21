@@ -396,6 +396,9 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
 
     disabled_layers: Optional[List[str]] = None
     coverage_mode = str(scheme.coverage_mode)
+    if coverage_mode == "lm_default":
+        coverage_mode = "lm_only"
+
     if coverage_mode == "lm_only":
         # Keep the vision tower unquantized, but include it in sensitivity reports
         # by allowing ModelOpt to register NONE-only recipes for these layers.

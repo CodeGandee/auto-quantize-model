@@ -43,15 +43,17 @@ Notes:
 With the checkpoint symlink in place and COCO calibration subsets available, run:
 
 ```bash
-# All-layers FP8 sensitivity (vision + text towers).
-pixi run python \
-  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py
-
-# All-layers INT8 (W8A8) sensitivity.
+# All-layers INT8 (W8A8) sensitivity (vision + text towers).
 pixi run python \
   models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
   --quant-format int8 \
   --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_int8_large
+
+# All-layers FP8 sensitivity (vision + text towers).
+pixi run python \
+  models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py \
+  --quant-format fp8 \
+  --output-dir tmp/qwen3_vl_4b_autoquant_all_layers_fp8
 
 # INT8 LM-only sensitivity (text tower).
 pixi run python \
