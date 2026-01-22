@@ -21,7 +21,6 @@ from auto_quantize_model.qwen.tutorial_pack_runner import (
     resolve_dataset_preset,
     resolve_expected_case_dir,
     resolve_output_dir,
-    resolve_summary_dir,
     run_tutorial_pack,
     verify_scenario,
 )
@@ -94,11 +93,10 @@ def test_workspace_and_layout_helpers(tmp_path: Path) -> None:
     workspace = create_workspace_dir(repo_root, "slug", now=datetime(2026, 1, 1, 0, 0, 0, 123456))
     assert workspace.parent == repo_root / "tmp"
     assert (workspace / "outputs").is_dir()
-    assert (workspace / "summaries").is_dir()
+    assert not (workspace / "summaries").exists()
 
     scenario = ScenarioSpec(mode="all_layers", quant_pair="wint4_afp16")
     assert resolve_output_dir(workspace, scenario) == workspace / "outputs" / "all_layers" / "wint4_afp16"
-    assert resolve_summary_dir(workspace, scenario) == workspace / "summaries" / "all_layers" / "wint4_afp16"
     assert resolve_expected_case_dir(Path("/expected"), scenario) == Path("/expected") / "all_layers" / "wint4_afp16"
 
 
@@ -137,14 +135,13 @@ def test_run_tutorial_pack_rejects_invalid_quant_pairs() -> None:
 
 def test_verify_fails_when_expected_snapshot_missing(tmp_path: Path) -> None:
     expected_report_dir = tmp_path / "expected_report"
-    summary_dir = tmp_path / "summaries"
-    summary_dir.mkdir(parents=True, exist_ok=True)
-    (summary_dir / "summary.json").write_text(_fixture("summary_ok.json").read_text(encoding="utf-8"), encoding="utf-8")
-    (summary_dir / "summary.md").write_text("# ok\n", encoding="utf-8")
+    output_dir = tmp_path / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "summary.json").write_text(_fixture("summary_ok.json").read_text(encoding="utf-8"), encoding="utf-8")
 
     scenario = ScenarioSpec(mode="all_layers", quant_pair="wint4_afp16")
     with pytest.raises(ExpectedSnapshotMissingError):
-        verify_scenario(expected_report_dir, scenario, summary_dir)
+        verify_scenario(expected_report_dir, scenario, output_dir)
 
 
 def test_verify_fails_when_expected_snapshot_incomplete(tmp_path: Path) -> None:
@@ -152,16 +149,14 @@ def test_verify_fails_when_expected_snapshot_incomplete(tmp_path: Path) -> None:
     scenario = ScenarioSpec(mode="all_layers", quant_pair="wint4_afp16")
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
     expected_case_dir.mkdir(parents=True, exist_ok=True)
-    (expected_case_dir / "summary.json").write_text(_fixture("summary_ok.json").read_text(encoding="utf-8"), encoding="utf-8")
-    # Intentionally missing summary.md
+    # Intentionally missing summary.json
 
-    summary_dir = tmp_path / "summaries"
-    summary_dir.mkdir(parents=True, exist_ok=True)
-    (summary_dir / "summary.json").write_text(_fixture("summary_ok.json").read_text(encoding="utf-8"), encoding="utf-8")
-    (summary_dir / "summary.md").write_text("# ok\n", encoding="utf-8")
+    output_dir = tmp_path / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "summary.json").write_text(_fixture("summary_ok.json").read_text(encoding="utf-8"), encoding="utf-8")
 
     with pytest.raises(ExpectedSnapshotMissingError):
-        verify_scenario(expected_report_dir, scenario, summary_dir)
+        verify_scenario(expected_report_dir, scenario, output_dir)
 
 
 def test_verify_ignores_non_summary_files(tmp_path: Path) -> None:
@@ -170,21 +165,18 @@ def test_verify_ignores_non_summary_files(tmp_path: Path) -> None:
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
     expected_case_dir.mkdir(parents=True, exist_ok=True)
 
-    summary_dir = tmp_path / "summaries"
-    summary_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = tmp_path / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     summary_json = _fixture("summary_ok.json").read_text(encoding="utf-8")
-    summary_md = "# summary\n"
 
     (expected_case_dir / "summary.json").write_text(summary_json, encoding="utf-8")
-    (expected_case_dir / "summary.md").write_text(summary_md, encoding="utf-8")
     (expected_case_dir / "layer-sensitivity-report.md").write_text("ignored\n", encoding="utf-8")
 
-    (summary_dir / "summary.json").write_text(summary_json, encoding="utf-8")
-    (summary_dir / "summary.md").write_text(summary_md, encoding="utf-8")
-    (summary_dir / "other.txt").write_text("ignored\n", encoding="utf-8")
+    (output_dir / "summary.json").write_text(summary_json, encoding="utf-8")
+    (output_dir / "other.txt").write_text("ignored\n", encoding="utf-8")
 
-    verify_scenario(expected_report_dir, scenario, summary_dir)
+    verify_scenario(expected_report_dir, scenario, output_dir)
 
 
 def test_verify_enforces_non_degeneracy_gate(tmp_path: Path) -> None:
@@ -193,17 +185,15 @@ def test_verify_enforces_non_degeneracy_gate(tmp_path: Path) -> None:
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
     expected_case_dir.mkdir(parents=True, exist_ok=True)
 
-    summary_dir = tmp_path / "summaries"
-    summary_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = tmp_path / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     degenerate_json = _fixture("summary_degenerate.json").read_text(encoding="utf-8")
     (expected_case_dir / "summary.json").write_text(degenerate_json, encoding="utf-8")
-    (expected_case_dir / "summary.md").write_text("# summary\n", encoding="utf-8")
 
-    (summary_dir / "summary.json").write_text(degenerate_json, encoding="utf-8")
-    (summary_dir / "summary.md").write_text("# summary\n", encoding="utf-8")
+    (output_dir / "summary.json").write_text(degenerate_json, encoding="utf-8")
 
     payload = json.loads(degenerate_json)
     assert payload["has_nonzero_sensitivity"] is False
     with pytest.raises(DegenerateSensitivityError):
-        verify_scenario(expected_report_dir, scenario, summary_dir)
+        verify_scenario(expected_report_dir, scenario, output_dir)

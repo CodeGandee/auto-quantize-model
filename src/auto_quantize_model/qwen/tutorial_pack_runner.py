@@ -7,7 +7,7 @@ under `docs/tutorial/howto/` into a single, testable runner:
 - validates required model/dataset assets,
 - enumerates scenarios as `modes × quant_pairs`,
 - creates an isolated workspace under `tmp/`,
-- generates schema-locked per-scenario summaries (`summary.json`, `summary.md`),
+- generates schema-locked per-scenario summaries (`summary.json`),
 - supports snapshot mode (refresh expected summaries; remove stale scenarios),
 - supports verify mode (diff summary-only; strict + fail-fast; non-degeneracy).
 
@@ -33,8 +33,8 @@ from auto_quantize_model.qwen.tutorial_pack_summary import (
     DatasetSize,
     Mode,
     TutorialPackScenarioSummary,
+    render_summary_md,
     write_summary_json,
-    write_summary_md,
 )
 
 
@@ -64,6 +64,7 @@ class VerificationMismatchError(TutorialPackRunnerError):
 
 class DegenerateSensitivityError(TutorialPackRunnerError):
     """Raised when summaries report all-zero sensitivities."""
+
 
 @dataclass(frozen=True)
 class DatasetPreset:
@@ -123,6 +124,8 @@ class TutorialPackRunResult:
 
 
 def _discover_repo_root(start: Optional[Path] = None) -> Path:
+    """Discover the repository root by scanning parent directories."""
+
     cursor = (start or Path.cwd()).resolve()
     for parent in [cursor, *cursor.parents]:
         if (parent / "pyproject.toml").is_file() and (parent / "src" / "auto_quantize_model").is_dir():
@@ -133,6 +136,8 @@ def _discover_repo_root(start: Optional[Path] = None) -> Path:
 
 
 def _split_csv(value: str) -> list[str]:
+    """Split a comma-separated string into trimmed, non-empty items."""
+
     items = [part.strip() for part in str(value).split(",")]
     return [item for item in items if item]
 
@@ -219,6 +224,8 @@ def resolve_dataset_preset(repo_root: Path, dataset_size: DatasetSize) -> Datase
 
 
 def _validate_model_id(model_id: str, registry: Mapping[str, ModelConfig]) -> ModelConfig:
+    """Validate --model-id and return the resolved ModelConfig."""
+
     model = registry.get(str(model_id))
     if model is None:
         allowed = ", ".join(sorted(registry.keys()))
@@ -227,6 +234,8 @@ def _validate_model_id(model_id: str, registry: Mapping[str, ModelConfig]) -> Mo
 
 
 def _validate_quant_pairs(selected: Sequence[str], allowed: Sequence[str]) -> None:
+    """Validate selected quant-pairs against the model's allowed set."""
+
     allowed_set = set(allowed)
     invalid = [pair for pair in selected if pair not in allowed_set]
     if invalid:
@@ -236,6 +245,8 @@ def _validate_quant_pairs(selected: Sequence[str], allowed: Sequence[str]) -> No
 
 
 def _validate_assets(model: ModelConfig, dataset: DatasetPreset, device: str) -> None:
+    """Validate that required model + dataset assets exist for a run request."""
+
     missing: list[str] = []
 
     if not model.checkpoint_dir.is_dir():
@@ -263,6 +274,8 @@ def _validate_assets(model: ModelConfig, dataset: DatasetPreset, device: str) ->
 
 
 def _timestamp_slug(now: Optional[datetime] = None) -> str:
+    """Return a timestamp slug suitable for workspace naming."""
+
     dt = now or datetime.now()
     return dt.strftime("%Y%m%d_%H%M%S_%f")
 
@@ -275,19 +288,18 @@ def create_workspace_dir(repo_root: Path, workspace_slug: str, *, now: Optional[
     workspace = root / f"tutorial_workspace_{workspace_slug}_{_timestamp_slug(now)}"
     workspace.mkdir(parents=True, exist_ok=False)
     (workspace / "outputs").mkdir(parents=True, exist_ok=True)
-    (workspace / "summaries").mkdir(parents=True, exist_ok=True)
     return workspace
 
 
 def resolve_output_dir(workspace_dir: Path, scenario: ScenarioSpec) -> Path:
+    """Return the per-scenario output directory inside the workspace."""
+
     return workspace_dir / "outputs" / scenario.mode / scenario.quant_pair
 
 
-def resolve_summary_dir(workspace_dir: Path, scenario: ScenarioSpec) -> Path:
-    return workspace_dir / "summaries" / scenario.mode / scenario.quant_pair
-
-
 def resolve_expected_case_dir(expected_report_dir: Path, scenario: ScenarioSpec) -> Path:
+    """Return the per-scenario expected snapshot directory."""
+
     return expected_report_dir / scenario.mode / scenario.quant_pair
 
 
@@ -302,12 +314,12 @@ def find_quant_manifest(output_dir: Path) -> Path:
 
 def build_and_write_summary(
     manifest_json: Path,
-    summary_dir: Path,
+    output_dir: Path,
     *,
     scenario: ScenarioSpec,
     dataset_size: DatasetSize,
 ) -> TutorialPackScenarioSummary:
-    """Generate `summary.json` + `summary.md` from a scenario manifest."""
+    """Generate `summary.json` from a scenario manifest."""
 
     payload = json.loads(manifest_json.read_text(encoding="utf-8"))
     if not isinstance(payload, Mapping):
@@ -320,12 +332,13 @@ def build_and_write_summary(
         quant_pair=scenario.quant_pair,
         dataset_size=dataset_size,
     )
-    write_summary_json(summary_dir / "summary.json", summary)
-    write_summary_md(summary_dir / "summary.md", summary)
+    write_summary_json(output_dir / "summary.json", summary)
     return summary
 
 
 def _load_summary_json(path: Path) -> Mapping[str, Any]:
+    """Load a summary JSON file and validate it is a mapping."""
+
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, Mapping):
         raise TypeError(f"Summary JSON must be an object: {path}")
@@ -333,6 +346,8 @@ def _load_summary_json(path: Path) -> Mapping[str, Any]:
 
 
 def _assert_non_degenerate(summary_json: Path) -> None:
+    """Raise if the scenario summary indicates all-zero sensitivities."""
+
     payload = _load_summary_json(summary_json)
     if payload.get("has_nonzero_sensitivity") is True:
         return
@@ -343,7 +358,7 @@ def _assert_non_degenerate(summary_json: Path) -> None:
     )
 
 
-def snapshot_scenario(expected_report_dir: Path, scenario: ScenarioSpec, summary_dir: Path) -> None:
+def snapshot_scenario(expected_report_dir: Path, scenario: ScenarioSpec, output_dir: Path) -> None:
     """Refresh the expected snapshot for a single scenario (summary-only)."""
 
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
@@ -355,16 +370,16 @@ def snapshot_scenario(expected_report_dir: Path, scenario: ScenarioSpec, summary
             expected_case_dir.unlink()
     expected_case_dir.mkdir(parents=True, exist_ok=True)
 
-    src_json = summary_dir / "summary.json"
-    src_md = summary_dir / "summary.md"
-    if not src_json.is_file() or not src_md.is_file():
-        raise FileNotFoundError(f"Missing summary artifacts under: {summary_dir}")
+    src_json = output_dir / "summary.json"
+    if not src_json.is_file():
+        raise FileNotFoundError(f"Missing summary artifacts under: {output_dir}")
 
     (expected_case_dir / "summary.json").write_text(src_json.read_text(encoding="utf-8"), encoding="utf-8")
-    (expected_case_dir / "summary.md").write_text(src_md.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def _diff_text(expected: str, actual: str, *, fromfile: str, tofile: str) -> str:
+    """Return a unified diff between expected and actual text."""
+
     diff = difflib.unified_diff(
         expected.splitlines(keepends=True),
         actual.splitlines(keepends=True),
@@ -374,7 +389,7 @@ def _diff_text(expected: str, actual: str, *, fromfile: str, tofile: str) -> str
     return "".join(diff)
 
 
-def verify_scenario(expected_report_dir: Path, scenario: ScenarioSpec, summary_dir: Path) -> None:
+def verify_scenario(expected_report_dir: Path, scenario: ScenarioSpec, output_dir: Path) -> None:
     """Verify a single scenario by diffing summary-only expected snapshots."""
 
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
@@ -385,17 +400,15 @@ def verify_scenario(expected_report_dir: Path, scenario: ScenarioSpec, summary_d
         )
 
     expected_json = expected_case_dir / "summary.json"
-    expected_md = expected_case_dir / "summary.md"
-    if not expected_json.is_file() or not expected_md.is_file():
+    if not expected_json.is_file():
         raise ExpectedSnapshotMissingError(
             f"Expected snapshot is incomplete under: {expected_case_dir}\n"
-            "Expected: summary.json + summary.md. Run with --snapshot-report to refresh."
+            "Expected: summary.json. Run with --snapshot-report to refresh."
         )
 
-    actual_json = summary_dir / "summary.json"
-    actual_md = summary_dir / "summary.md"
-    if not actual_json.is_file() or not actual_md.is_file():
-        raise FileNotFoundError(f"Missing actual summary artifacts under: {summary_dir}")
+    actual_json = output_dir / "summary.json"
+    if not actual_json.is_file():
+        raise FileNotFoundError(f"Missing actual summary artifacts under: {output_dir}")
 
     _assert_non_degenerate(actual_json)
 
@@ -408,14 +421,21 @@ def verify_scenario(expected_report_dir: Path, scenario: ScenarioSpec, summary_d
     if json_diff:
         raise VerificationMismatchError(f"Verification failed for {scenario.scenario_id}: summary.json differs.\n{json_diff}")
 
-    md_diff = _diff_text(
-        expected_md.read_text(encoding="utf-8"),
-        actual_md.read_text(encoding="utf-8"),
-        fromfile=str(expected_md),
-        tofile=str(actual_md),
-    )
-    if md_diff:
-        raise VerificationMismatchError(f"Verification failed for {scenario.scenario_id}: summary.md differs.\n{md_diff}")
+
+def _should_keep_layer_report_md(scenario: ScenarioSpec) -> bool:
+    """Return True if the Markdown layer report should be retained for this scenario."""
+
+    return scenario.mode == "all_layers" and scenario.quant_pair == "wint4_afp16"
+
+
+def _merge_summary_into_layer_report_md(output_dir: Path, summary: TutorialPackScenarioSummary) -> None:
+    """Prepend the scenario summary table into the Markdown layer report."""
+
+    report_path = output_dir / "layer-sensitivity-report.md"
+    if not report_path.is_file():
+        return
+    merged = render_summary_md(summary) + "\n\n---\n\n" + report_path.read_text(encoding="utf-8")
+    report_path.write_text(merged, encoding="utf-8")
 
 
 def cleanup_expected_report_dir(expected_report_dir: Path, selected: Iterable[ScenarioSpec]) -> None:
@@ -448,6 +468,8 @@ def cleanup_expected_report_dir(expected_report_dir: Path, selected: Iterable[Sc
 
 
 def _run_subprocess(argv: Sequence[str], *, cwd: Path, log_path: Path) -> None:
+    """Run a subprocess, streaming output to stdout and a log file."""
+
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("w", encoding="utf-8") as log_file:
         process = subprocess.Popen(
@@ -550,9 +572,7 @@ def run_tutorial_pack(request: TutorialPackRunRequest, *, repo_root: Optional[Pa
     workspace_dir = create_workspace_dir(resolved_repo_root, model.workspace_slug)
     for scenario in scenarios:
         output_dir = resolve_output_dir(workspace_dir, scenario)
-        summary_dir = resolve_summary_dir(workspace_dir, scenario)
         output_dir.mkdir(parents=True, exist_ok=True)
-        summary_dir.mkdir(parents=True, exist_ok=True)
 
         run_scenario(
             repo_root=resolved_repo_root,
@@ -563,17 +583,22 @@ def run_tutorial_pack(request: TutorialPackRunRequest, *, repo_root: Optional[Pa
             output_dir=output_dir,
         )
         manifest_json = find_quant_manifest(output_dir)
-        _ = build_and_write_summary(
+        summary = build_and_write_summary(
             manifest_json,
-            summary_dir,
+            output_dir,
             scenario=scenario,
             dataset_size=request.dataset_size,
         )
-        if request.snapshot_report:
-            _assert_non_degenerate(summary_dir / "summary.json")
-            snapshot_scenario(request.expected_report_dir, scenario, summary_dir)
+        if _should_keep_layer_report_md(scenario):
+            _merge_summary_into_layer_report_md(output_dir, summary)
         else:
-            verify_scenario(request.expected_report_dir, scenario, summary_dir)
+            (output_dir / "layer-sensitivity-report.md").unlink(missing_ok=True)
+
+        if request.snapshot_report:
+            _assert_non_degenerate(output_dir / "summary.json")
+            snapshot_scenario(request.expected_report_dir, scenario, output_dir)
+        else:
+            verify_scenario(request.expected_report_dir, scenario, output_dir)
 
     if request.snapshot_report:
         cleanup_expected_report_dir(request.expected_report_dir, scenarios)

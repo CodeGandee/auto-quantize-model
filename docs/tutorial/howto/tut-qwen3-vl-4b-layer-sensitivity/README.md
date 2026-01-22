@@ -7,7 +7,7 @@ Default behavior:
 
 - Runs and verifies **4 scenarios** (2 modes × 2 quant pairs).
 - Uses the **medium** dataset preset by default.
-- Verifies by diffing **only sanitized summaries** against `expected_report/`.
+- Verifies by diffing **only `summary.json`** against `expected_report/`.
 
 ## Prerequisites
 
@@ -58,8 +58,8 @@ shared runner under `src/auto_quantize_model/qwen/` which:
 3. Runs each selected scenario:
    - **all_layers**: VLM all-layers sensitivity (vision + text) per quant-pair.
    - **lm_only**: LM-only sensitivity (text tower) per quant-pair via the Hydra runner.
-4. Generates a schema-locked `summary.json` + `summary.md` per scenario.
-5. Either verifies summaries against `expected_report/` or snapshots `expected_report/` (if `--snapshot-report`).
+4. Generates a schema-locked `summary.json` per scenario.
+5. Either verifies `summary.json` against `expected_report/` or snapshots `expected_report/` (if `--snapshot-report`).
    Snapshot mode writes **summary-only** snapshots and removes stale scenarios not selected.
 
 ## Outputs
@@ -71,18 +71,27 @@ tmp/tutorial_workspace_qwen3_vl_4b_layer_sensitivity_<timestamp>/
 ├── outputs/
 │   ├── all_layers/<quant_pair>/...
 │   └── lm_only/<quant_pair>/...
-└── summaries/
-    ├── all_layers/<quant_pair>/summary.{json,md}
-    └── lm_only/<quant_pair>/summary.{json,md}
 ```
 
 Expected snapshots (tracked, sanitized):
 
 ```text
 docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/
-├── all_layers/<quant_pair>/summary.{json,md}
-└── lm_only/<quant_pair>/summary.{json,md}
+├── all_layers/<quant_pair>/summary.json
+└── lm_only/<quant_pair>/summary.json
 ```
+
+Canonical Markdown report (generated for one scenario only):
+
+```text
+tmp/tutorial_workspace_qwen3_vl_4b_layer_sensitivity_<timestamp>/
+└── outputs/all_layers/wint4_afp16/layer-sensitivity-report.md
+```
+
+This file includes both:
+
+- the stable tutorial summary table (previously `summary.md`), and
+- the per-layer sensitivity table.
 
 ## Troubleshooting
 

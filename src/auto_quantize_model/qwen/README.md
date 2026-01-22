@@ -27,10 +27,9 @@ The shared Qwen3-VL tutorial-pack runner lives in:
   - `pixi run python -m auto_quantize_model.qwen.cli_tutorial_pack_runner --model-id <id> --expected-report-dir <pack>/expected_report "$@"`
 - `expected_report/` directory containing summary-only snapshots:
   - `expected_report/<mode>/<quant_pair>/summary.json`
-  - `expected_report/<mode>/<quant_pair>/summary.md`
+  - (no markdown is required for verification; markdown reports are optional and workspace-local)
 
 3) Validate (manual, GPU):
 
 - `bash docs/tutorial/howto/<your-pack>/run_demo.sh` (verify mode)
 - `bash docs/tutorial/howto/<your-pack>/run_demo.sh --snapshot-report` (refresh snapshots)
-

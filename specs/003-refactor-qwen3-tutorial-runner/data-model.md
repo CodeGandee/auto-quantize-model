@@ -101,14 +101,13 @@ Temporary directory under:
 Contains:
 
 - `outputs/<mode>/<quant_pair>/` (raw runner outputs + logs)
-- `summaries/<mode>/<quant_pair>/` (generated `summary.json` + `summary.md`)
+- `outputs/<mode>/<quant_pair>/summary.json` (generated stable summary for snapshot/verify)
 
 ### Sanitized Summary
 
 Per-scenario stable artifacts used for verification:
 
 - `summary.json`
-- `summary.md`
 
 Key attributes captured in `summary.json`:
 
@@ -127,7 +126,6 @@ Path:
 Structure:
 
 - `expected_report/<mode>/<quant_pair>/summary.json`
-- `expected_report/<mode>/<quant_pair>/summary.md`
 
 ## Relationships
 
@@ -142,10 +140,10 @@ Structure:
 
 - Scenario enumeration is exactly `selected_modes × selected_quant_pairs`.
 - Scenario ID is stable: `"{mode}/{quant_pair}"`.
-- Snapshot mode writes only `summary.json` + `summary.md` per scenario to `expected_report/`.
+- Snapshot mode writes only `summary.json` per scenario to `expected_report/`.
 - Verify mode:
   - fails if the expected snapshot is missing/incomplete,
-  - diffs only `summary.json` + `summary.md`,
+  - diffs only `summary.json`,
   - enforces non-degeneracy (`has_nonzero_sensitivity` must be true).
 - Multi-scenario runs are fail-fast: stop on the first failing scenario and report failure.
 - The runner must not auto-create checkpoint links; missing checkpoint paths are a hard error with instructions.
@@ -155,7 +153,7 @@ Structure:
 - **Planned** → scenario parameters selected (defaults or user overrides).
 - **Validated** → checkpoint and dataset assets checked; run stops here on missing assets.
 - **Executed** → scenario produces raw outputs under the workspace.
-- **Summarized** → per-scenario `summary.json` + `summary.md` produced.
+- **Summarized** → per-scenario `summary.json` produced.
 - **Verified** → summaries match expected snapshots (verify mode), or
 - **Snapshotted** → expected snapshots refreshed (snapshot mode).
 - **Failed** → any failure halts the run immediately (fail-fast).

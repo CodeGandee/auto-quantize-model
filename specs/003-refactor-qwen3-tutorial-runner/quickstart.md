@@ -65,7 +65,8 @@ Expected behavior (after this feature is implemented):
 
 - Both packs delegate orchestration to the shared runner but keep the same flags.
 - Verification fails if `expected_report/` is missing/incomplete.
-- Verification diffs only `summary.json` + `summary.md` per scenario and enforces non-degeneracy.
+- Verification diffs only `summary.json` per scenario and enforces non-degeneracy.
+- A single canonical Markdown report is kept at `outputs/all_layers/wint4_afp16/layer-sensitivity-report.md` (with the tutorial summary table prepended).
 
 ## Subset runs (for iteration)
 
@@ -81,7 +82,7 @@ bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_d
 
 ## Refresh expected outputs (snapshot mode)
 
-Snapshot mode refreshes only `summary.json` + `summary.md` per scenario under `expected_report/`.
+Snapshot mode refreshes only `summary.json` per scenario under `expected_report/`.
 
 ```bash
 cd /data1/huangzhe/code/auto-quantize-model

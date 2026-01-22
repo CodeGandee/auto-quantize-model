@@ -20,11 +20,11 @@ Key constraints (from the feature spec):
 - Preserve the existing tutorial flag contract: `--snapshot-report`, `--device`, `--dataset-size`, `--modes`, `--quant-pairs`.
 - Verification is strict:
   - Fail if `expected_report/` is missing or incomplete.
-  - Diff only per-scenario `summary.json` + `summary.md`.
+  - Diff only per-scenario `summary.json`.
   - Enforce non-degeneracy (at least one non-zero sensitivity value).
 - Execution is fail-fast: stop on the first failing scenario.
 - Do not auto-create model checkpoint links; fail with instructions instead.
-- Snapshot mode writes only per-scenario `summary.json` + `summary.md` to `expected_report/`.
+- Snapshot mode writes only per-scenario `summary.json` to `expected_report/`.
 
 ## Decisions
 
@@ -40,7 +40,6 @@ Key constraints (from the feature spec):
 
 - **Decision**: Use stable `scenario_id = "{mode}/{quant_pair}"` and keep expected snapshot layout:
   - `expected_report/<mode>/<quant_pair>/summary.json`
-  - `expected_report/<mode>/<quant_pair>/summary.md`
 - **Rationale**: Matches current tutorial semantics and keeps the verification surface small and stable across machines.
 - **Alternatives considered**:
   - Include dataset preset and device in the scenario ID: rejected because it expands snapshot churn and makes “golden” outputs less reusable.
@@ -48,8 +47,8 @@ Key constraints (from the feature spec):
 ### D3: Snapshot/verify semantics are summary-only and strict
 
 - **Decision**:
-  - Snapshot mode refreshes only `summary.json` + `summary.md` per scenario and removes stale scenarios not selected.
-  - Verify mode fails when expected snapshots are missing/incomplete and diffs only `summary.*`.
+  - Snapshot mode refreshes only `summary.json` per scenario and removes stale scenarios not selected.
+  - Verify mode fails when expected snapshots are missing/incomplete and diffs only `summary.json`.
   - Verify enforces non-degeneracy via `has_nonzero_sensitivity`.
   - All multi-scenario runs stop at the first failure (fail-fast).
 - **Rationale**: Produces a deterministic, reviewable contract and ensures “verification complete” means a real regression gate.

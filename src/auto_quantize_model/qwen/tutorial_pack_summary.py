@@ -15,6 +15,8 @@ Functions
 ---------
 write_summary_json
     Write stable JSON for verification diffs.
+render_summary_md
+    Render stable Markdown for human review.
 write_summary_md
     Write stable Markdown for human review and diffs.
 """
@@ -31,10 +33,14 @@ DatasetSize = Literal["small", "medium", "large"]
 
 
 def _sorted_manifest_keys(manifest: Mapping[str, Any]) -> list[str]:
+    """Return a stable, sorted list of manifest keys (stringified)."""
+
     return sorted(str(key) for key in manifest.keys())
 
 
 def _require_mapping(parent: Mapping[str, Any], key: str) -> Mapping[str, Any]:
+    """Return a child mapping value or raise if it is missing/invalid."""
+
     value = parent.get(key)
     if not isinstance(value, Mapping):
         raise ValueError(f"Manifest key {key!r} must be a JSON object.")
@@ -42,6 +48,8 @@ def _require_mapping(parent: Mapping[str, Any], key: str) -> Mapping[str, Any]:
 
 
 def _require_int(parent: Mapping[str, Any], key: str) -> int:
+    """Return a positive integer value from a JSON mapping."""
+
     value = parent.get(key)
     if isinstance(value, bool):
         raise ValueError(f"Manifest key {key!r} must be an integer (got bool).")
@@ -54,6 +62,8 @@ def _require_int(parent: Mapping[str, Any], key: str) -> int:
 
 
 def _iter_layer_sensitivities(layer_sensitivity: Any) -> Iterable[float]:
+    """Yield sensitivity values from a layer_sensitivity payload with flexible shape."""
+
     if isinstance(layer_sensitivity, Sequence) and not isinstance(layer_sensitivity, (str, bytes)):
         for item in layer_sensitivity:
             if not isinstance(item, Mapping):
@@ -101,6 +111,8 @@ def _iter_layer_sensitivities(layer_sensitivity: Any) -> Iterable[float]:
 
 
 def _has_nonzero_sensitivity(manifest: Mapping[str, Any]) -> bool:
+    """Return True when the manifest reports at least one non-zero sensitivity score."""
+
     layer_sensitivity = manifest.get("layer_sensitivity")
     for sensitivity in _iter_layer_sensitivities(layer_sensitivity):
         if float(sensitivity) != 0.0:
@@ -234,6 +246,13 @@ def write_summary_json(path: Path, summary: TutorialPackScenarioSummary) -> None
 def write_summary_md(path: Path, summary: TutorialPackScenarioSummary) -> None:
     """Write a stable Markdown table for human review + diffs."""
 
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(render_summary_md(summary), encoding="utf-8")
+
+
+def render_summary_md(summary: TutorialPackScenarioSummary) -> str:
+    """Render a stable Markdown table for human review + diffs."""
+
     payload = summary.to_dict()
     ordered_keys = [
         "scenario_id",
@@ -264,7 +283,4 @@ def write_summary_md(path: Path, summary: TutorialPackScenarioSummary) -> None:
         rendered = json.dumps(value, sort_keys=True) if isinstance(value, (dict, list)) else str(value)
         lines.append(f"| {key} | `{rendered}` |")
     lines.append("")
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines), encoding="utf-8")
-
+    return "\n".join(lines)
