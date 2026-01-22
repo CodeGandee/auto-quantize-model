@@ -125,7 +125,12 @@ Path:
 
 Structure:
 
-- `expected_report/<mode>/<quant_pair>/summary.json`
+- `expected_report/outputs/<mode>/<quant_pair>/summary.json`
+- Optional sanitized artifacts (for inspection/documentation), for example:
+  - `expected_report/outputs/<mode>/<quant_pair>/layer-sensitivity-report.json`
+  - `expected_report/outputs/all_layers/wint4_afp16/layer-sensitivity-report.md`
+  - `expected_report/outputs/<mode>/<quant_pair>/quant_manifest.json`
+  - `expected_report/outputs/<mode>/<quant_pair>/composed-config.yaml`
 
 ## Relationships
 
@@ -140,7 +145,7 @@ Structure:
 
 - Scenario enumeration is exactly `selected_modes × selected_quant_pairs`.
 - Scenario ID is stable: `"{mode}/{quant_pair}"`.
-- Snapshot mode writes only `summary.json` per scenario to `expected_report/`.
+- Snapshot mode writes sanitized outputs per scenario under `expected_report/outputs/` (at minimum `summary.json`).
 - Verify mode:
   - fails if the expected snapshot is missing/incomplete,
   - diffs only `summary.json`,

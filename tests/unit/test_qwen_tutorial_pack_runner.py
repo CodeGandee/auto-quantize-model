@@ -97,7 +97,7 @@ def test_workspace_and_layout_helpers(tmp_path: Path) -> None:
 
     scenario = ScenarioSpec(mode="all_layers", quant_pair="wint4_afp16")
     assert resolve_output_dir(workspace, scenario) == workspace / "outputs" / "all_layers" / "wint4_afp16"
-    assert resolve_expected_case_dir(Path("/expected"), scenario) == Path("/expected") / "all_layers" / "wint4_afp16"
+    assert resolve_expected_case_dir(Path("/expected"), scenario) == Path("/expected") / "outputs" / "all_layers" / "wint4_afp16"
 
 
 def test_run_tutorial_pack_rejects_unknown_model_id() -> None:

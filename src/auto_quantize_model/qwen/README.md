@@ -25,9 +25,9 @@ The shared Qwen3-VL tutorial-pack runner lives in:
 
 - `run_demo.sh` delegating to the shared CLI:
   - `pixi run python -m auto_quantize_model.qwen.cli_tutorial_pack_runner --model-id <id> --expected-report-dir <pack>/expected_report "$@"`
-- `expected_report/` directory containing summary-only snapshots:
-  - `expected_report/<mode>/<quant_pair>/summary.json`
-  - (no markdown is required for verification; markdown reports are optional and workspace-local)
+- `expected_report/` directory containing sanitized output snapshots:
+  - `expected_report/outputs/<mode>/<quant_pair>/summary.json`
+  - optional sanitized artifacts (e.g., `layer-sensitivity-report.md` for `all_layers/wint4_afp16`)
 
 3) Validate (manual, GPU):
 

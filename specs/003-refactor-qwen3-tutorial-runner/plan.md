@@ -19,7 +19,7 @@ Consolidate the duplicated Qwen3-VL tutorial-pack runners into a shared Python r
 **Project Type**: Single Python repo (library under `src/auto_quantize_model/` + runnable scripts under `scripts/`)  
 **Performance Goals**: No explicit runtime/throughput target; runner overhead should be negligible relative to GPU runs and keep startup/validation steps fast (seconds, not minutes).  
 **Constraints**: Deterministic experiment metadata (seed/config/provenance), no committed `tmp/` artifacts, follow repo layout  
-**Scale/Scope**: Typical runs are a small cartesian product of modes × quant-pairs (default 2×2=4 scenarios); workspaces may be large but remain under `tmp/`, while expected snapshots are summary-only and small (per-scenario `summary.json`).
+**Scale/Scope**: Typical runs are a small cartesian product of modes × quant-pairs (default 2×2=4 scenarios); workspaces may be large but remain under `tmp/`, while expected snapshots are sanitized and kept under `expected_report/outputs/` (always per-scenario `summary.json`, plus a small subset of report artifacts for inspection).
 
 ## Constitution Check
 

@@ -82,7 +82,7 @@ bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_d
 
 ## Refresh expected outputs (snapshot mode)
 
-Snapshot mode refreshes only `summary.json` per scenario under `expected_report/`.
+Snapshot mode refreshes sanitized per-scenario outputs under `expected_report/outputs/` (always `summary.json`, plus optional artifacts like the canonical `layer-sensitivity-report.md`).
 
 ```bash
 cd /data1/huangzhe/code/auto-quantize-model

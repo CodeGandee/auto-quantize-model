@@ -1,0 +1,45 @@
+script: run_qwen3_vl_4b_autoquant_all_layers.py
+scheme:
+  name: wint4_afp16_autoquant_all_layers
+  auto_quantize_bits: 8.0
+  auto_quantize_method: gradient
+  auto_quantize_score_size: 128
+  coverage_mode: full
+  coverage_fraction: 1.0
+  quant_formats:
+  - INT4_BLOCKWISE_WEIGHT_ONLY_CFG
+args:
+  model_dir: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-VL-8B-Instruct
+  output_dir: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>
+  vlm_calib_db: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-quantize-calib<ABSOLUTE_PATH>
+  coco_root: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-data
+  max_calib_samples: 128
+  num_calib_batches: 16
+  calib_seq_len: 512
+  batch_size: 8
+  device: cuda:0
+  dataset_size: medium
+  quant_pair: wint4_afp16
+  quant_format: int8
+  effective_bits: null
+  auto_quantize_score_size: 128
+  report_only: false
+dataset:
+  size: medium
+  vlm_calib_db: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-quantize-calib<ABSOLUTE_PATH>
+  coco_root: <ABSOLUTE_PATH>-quantize-model<ABSOLUTE_PATH>-data
+  calib_seq_len: 512
+  batch_size: 8
+  num_calib_batches: 16
+  num_calib_samples: 128
+  max_calib_samples: 128
+quantization:
+  base_format_name: INT4_BLOCKWISE_WEIGHT_ONLY_CFG
+  format_names:
+  - INT4_BLOCKWISE_WEIGHT_ONLY_CFG
+  quant_format: int8
+  quant_pair:
+    name: wint4_afp16
+    weight: int4
+    activation: fp16
+    format_name: INT4_BLOCKWISE_WEIGHT_ONLY_CFG

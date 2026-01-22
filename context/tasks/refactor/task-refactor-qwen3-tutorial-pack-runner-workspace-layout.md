@@ -35,6 +35,7 @@ All other markdown reports should not be generated (or should be removed after t
 - **One markdown artifact**: users want a single human-readable file that includes both the scenario summary and the per-layer table, instead of `summary.md` plus `layer-sensitivity-report.md`.
 - **Reduce noise and disk usage**: generating multiple large markdown reports (per mode × quant-pair) is redundant; keeping a single canonical `layer-sensitivity-report.md` improves UX and avoids clutter.
 - **Preserve verification contract**: snapshot/verify should continue to operate on stable machine-readable artifacts; with this refactor, the stable contract should be `summary.json` only (markdown becomes optional and non-gating).
+  - Note: `expected_report/` should still contain a sanitized `outputs/` tree for documentation/debugging (including the canonical `layer-sensitivity-report.md`), but verification diffs only `summary.json`.
 
 ## How to Refactor (Step-by-Step)
 
@@ -48,7 +49,9 @@ All other markdown reports should not be generated (or should be removed after t
 
 - Update summary generation to write `summary.json` into the scenario’s `output_dir`.
 - Update snapshot/verify code paths to read/copy/diff `summary.json` from `output_dir`.
-- Update expected snapshot semantics to be JSON-only (if the repo previously tracked `summary.md`).
+- Update expected snapshot semantics to write sanitized artifacts under:
+  - `expected_report/outputs/<mode>/<quant_pair>/summary.json`
+  - and (optionally) `expected_report/outputs/all_layers/wint4_afp16/layer-sensitivity-report.md`
 
 ### Step 3: Merge the old `summary.md` content into `layer-sensitivity-report.md`
 
@@ -78,7 +81,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
   - Update any test helpers that create/read `summary.md` (it should no longer exist).
   - Add a unit test for the markdown merge function (summary table appears in the merged report).
 - Integration tests:
-  - Ensure snapshot cleanup and summary-only snapshot contents still hold.
+  - Ensure snapshot cleanup works under `expected_report/outputs/` and verification diffs only `summary.json`.
   - Add an assertion that after a (mocked) run, non-canonical scenarios do not contain `layer-sensitivity-report.md` (if the integration test simulates filesystem).
 
 ### Step 6: Update docs (if needed)
@@ -117,13 +120,14 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
   - `summary.json` next to the artifacts,
   - `layer-sensitivity-report.json` for machine processing,
   - and exactly one markdown report file: `outputs/all_layers/wint4_afp16/layer-sensitivity-report.md`.
-- Snapshot/verify continues to be summary-only and deterministic.
+- Snapshot/verify continues to be summary-only and deterministic (diffing only `summary.json`), while `expected_report/outputs/` retains a sanitized copy of key artifacts for reference.
 
 ## TODO
 
 - [ ] Update workspace creation to remove `summaries/` directory
 - [ ] Move summary writing to `outputs/<mode>/<quant_pair>/summary.json` (stop writing `summary.md`)
 - [ ] Update snapshot/verify code to read/copy/diff `summary.json` from `outputs/` (no markdown diffs)
+- [ ] Update expected snapshots to include `expected_report/outputs/` (sanitized artifacts + canonical markdown report)
 - [ ] Implement a markdown merge step: prepend summary table into canonical `layer-sensitivity-report.md`
 - [ ] Implement markdown report retention policy (keep only `all_layers/wint4_afp16`)
 - [ ] Update unit tests for new paths and behavior

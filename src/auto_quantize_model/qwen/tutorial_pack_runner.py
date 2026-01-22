@@ -8,7 +8,7 @@ under `docs/tutorial/howto/` into a single, testable runner:
 - enumerates scenarios as `modes × quant_pairs`,
 - creates an isolated workspace under `tmp/`,
 - generates schema-locked per-scenario summaries (`summary.json`),
-- supports snapshot mode (refresh expected summaries; remove stale scenarios),
+- supports snapshot mode (refresh sanitized expected outputs under `expected_report/outputs/`; remove stale scenarios),
 - supports verify mode (diff summary-only; strict + fail-fast; non-degeneracy).
 
 The heavy GPU workflows remain implemented elsewhere (Hydra runner / helper
@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import difflib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -300,7 +301,7 @@ def resolve_output_dir(workspace_dir: Path, scenario: ScenarioSpec) -> Path:
 def resolve_expected_case_dir(expected_report_dir: Path, scenario: ScenarioSpec) -> Path:
     """Return the per-scenario expected snapshot directory."""
 
-    return expected_report_dir / scenario.mode / scenario.quant_pair
+    return expected_report_dir / "outputs" / scenario.mode / scenario.quant_pair
 
 
 def find_quant_manifest(output_dir: Path) -> Path:
@@ -358,8 +359,55 @@ def _assert_non_degenerate(summary_json: Path) -> None:
     )
 
 
+def _sanitize_str(value: str) -> str:
+    """Sanitize a string value used in expected snapshots."""
+
+    if value.startswith("/"):
+        return "<ABSOLUTE_PATH>"
+    return value
+
+
+def _sanitize_json_payload(value: Any) -> Any:
+    """Recursively sanitize JSON-like values by replacing absolute paths."""
+
+    if isinstance(value, Mapping):
+        return {str(key): _sanitize_json_payload(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_sanitize_json_payload(item) for item in value]
+    if isinstance(value, str):
+        return _sanitize_str(value)
+    return value
+
+
+def _write_json(path: Path, payload: Any) -> None:
+    """Write JSON with stable formatting (sorted keys, trailing newline)."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _sanitize_text_blob(text: str) -> str:
+    """Sanitize absolute paths in text blobs using a conservative regex."""
+
+    return re.sub(r"(?P<path>/[A-Za-z0-9._\\-~/]+)", "<ABSOLUTE_PATH>", text)
+
+
+def _copy_sanitized_json(src: Path, dst: Path) -> None:
+    """Copy JSON file from src to dst, sanitizing absolute paths."""
+
+    payload = json.loads(src.read_text(encoding="utf-8"))
+    _write_json(dst, _sanitize_json_payload(payload))
+
+
+def _copy_sanitized_text(src: Path, dst: Path) -> None:
+    """Copy text file from src to dst, sanitizing obvious absolute paths."""
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(_sanitize_text_blob(src.read_text(encoding="utf-8")), encoding="utf-8")
+
+
 def snapshot_scenario(expected_report_dir: Path, scenario: ScenarioSpec, output_dir: Path) -> None:
-    """Refresh the expected snapshot for a single scenario (summary-only)."""
+    """Refresh the expected snapshot for a single scenario (sanitized outputs)."""
 
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
     expected_case_dir.parent.mkdir(parents=True, exist_ok=True)
@@ -376,6 +424,22 @@ def snapshot_scenario(expected_report_dir: Path, scenario: ScenarioSpec, output_
 
     (expected_case_dir / "summary.json").write_text(src_json.read_text(encoding="utf-8"), encoding="utf-8")
 
+    report_md = output_dir / "layer-sensitivity-report.md"
+    if report_md.is_file():
+        _copy_sanitized_text(report_md, expected_case_dir / "layer-sensitivity-report.md")
+
+    report_json = output_dir / "layer-sensitivity-report.json"
+    if report_json.is_file():
+        _copy_sanitized_json(report_json, expected_case_dir / "layer-sensitivity-report.json")
+
+    composed_yaml = output_dir / "composed-config.yaml"
+    if composed_yaml.is_file():
+        _copy_sanitized_text(composed_yaml, expected_case_dir / "composed-config.yaml")
+
+    manifests = sorted(output_dir.glob("*_quant_manifest.json"))
+    if manifests:
+        _copy_sanitized_json(manifests[0], expected_case_dir / "quant_manifest.json")
+
 
 def _diff_text(expected: str, actual: str, *, fromfile: str, tofile: str) -> str:
     """Return a unified diff between expected and actual text."""
@@ -390,7 +454,7 @@ def _diff_text(expected: str, actual: str, *, fromfile: str, tofile: str) -> str
 
 
 def verify_scenario(expected_report_dir: Path, scenario: ScenarioSpec, output_dir: Path) -> None:
-    """Verify a single scenario by diffing summary-only expected snapshots."""
+    """Verify a single scenario by diffing `summary.json` against expected snapshots."""
 
     expected_case_dir = resolve_expected_case_dir(expected_report_dir, scenario)
     if not expected_case_dir.is_dir():
@@ -447,7 +511,20 @@ def cleanup_expected_report_dir(expected_report_dir: Path, selected: Iterable[Sc
     if not expected_report_dir.is_dir():
         return
 
-    for mode_dir in expected_report_dir.iterdir():
+    outputs_dir = expected_report_dir / "outputs"
+
+    for entry in expected_report_dir.iterdir():
+        if entry == outputs_dir:
+            continue
+        if entry.is_dir():
+            shutil.rmtree(entry)
+        else:
+            entry.unlink()
+
+    if not outputs_dir.is_dir():
+        return
+
+    for mode_dir in outputs_dir.iterdir():
         if not mode_dir.is_dir():
             mode_dir.unlink()
             continue

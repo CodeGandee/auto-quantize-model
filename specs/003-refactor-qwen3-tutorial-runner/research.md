@@ -24,7 +24,7 @@ Key constraints (from the feature spec):
   - Enforce non-degeneracy (at least one non-zero sensitivity value).
 - Execution is fail-fast: stop on the first failing scenario.
 - Do not auto-create model checkpoint links; fail with instructions instead.
-- Snapshot mode writes only per-scenario `summary.json` to `expected_report/`.
+- Snapshot mode writes sanitized per-scenario outputs under `expected_report/outputs/` (always `summary.json`, plus optional artifacts like the layer sensitivity report).
 
 ## Decisions
 
@@ -39,7 +39,7 @@ Key constraints (from the feature spec):
 ### D2: Scenario identity and layout remain stable and minimal
 
 - **Decision**: Use stable `scenario_id = "{mode}/{quant_pair}"` and keep expected snapshot layout:
-  - `expected_report/<mode>/<quant_pair>/summary.json`
+  - `expected_report/outputs/<mode>/<quant_pair>/summary.json`
 - **Rationale**: Matches current tutorial semantics and keeps the verification surface small and stable across machines.
 - **Alternatives considered**:
   - Include dataset preset and device in the scenario ID: rejected because it expands snapshot churn and makes “golden” outputs less reusable.
@@ -47,14 +47,14 @@ Key constraints (from the feature spec):
 ### D3: Snapshot/verify semantics are summary-only and strict
 
 - **Decision**:
-  - Snapshot mode refreshes only `summary.json` per scenario and removes stale scenarios not selected.
+  - Snapshot mode refreshes sanitized per-scenario outputs under `expected_report/outputs/` and removes stale scenarios not selected.
   - Verify mode fails when expected snapshots are missing/incomplete and diffs only `summary.json`.
   - Verify enforces non-degeneracy via `has_nonzero_sensitivity`.
   - All multi-scenario runs stop at the first failure (fail-fast).
 - **Rationale**: Produces a deterministic, reviewable contract and ensures “verification complete” means a real regression gate.
 - **Alternatives considered**:
   - Warn and skip missing expected snapshots: rejected because it can hide regressions and creates false positives.
-  - Snapshot additional sanitized artifacts: rejected per clarified spec to minimize snapshot size and churn.
+  - Snapshot full raw outputs: rejected due to size/churn and poor portability (only small sanitized artifacts are snapshotted).
 
 ### D4: Checkpoint handling is explicit (no implicit symlink creation)
 

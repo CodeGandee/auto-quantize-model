@@ -12,7 +12,7 @@
 - Q: When `expected_report/` is missing or incomplete in verify mode, should verification fail or be treated as a pass? → A: Fail verification if the expected snapshot is missing/incomplete.
 - Q: When running multiple selected scenarios, should the runner stop on the first failure or attempt all scenarios and report a combined result? → A: Stop on first failing scenario (fail-fast).
 - Q: When the model checkpoint link is missing, should the runner auto-create it or fail with instructions? → A: Never auto-create; fail with instructions.
-- Q: In snapshot mode, should `expected_report/` contain only `summary.*` or additional sanitized artifacts? → A: Snapshot only `summary.json` per scenario.
+- Q: In snapshot mode, should `expected_report/` contain only `summary.*` or additional sanitized artifacts? → A: Snapshot sanitized outputs under `expected_report/outputs/<mode>/<quant_pair>/` (always `summary.json`, plus optional artifacts like the layer sensitivity report).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -25,7 +25,7 @@
 - **Quantization pair**: The quantization configuration used for a scenario (e.g., weights/activations pairing).
 - **Dataset preset**: A named sizing preset (small/medium/large) that trades off runtime vs. stability.
 - **Workspace**: A temporary run directory where full outputs are produced (gitignored).
-- **Expected report snapshot**: The tracked, per-scenario `summary.json` used for verification.
+- **Expected report snapshot**: The tracked, per-scenario sanitized outputs under `expected_report/outputs/` (verification diffs only `summary.json`).
 - **Snapshot mode**: A mode that refreshes the expected report snapshot for selected scenarios.
 - **Verify mode**: A mode that compares produced sanitized summaries against the expected snapshot and fails on diffs.
 - **Non-degenerate result**: A sensitivity report where at least one sensitivity value is non-zero.
@@ -115,7 +115,7 @@ As a maintainer, I want adding a new Qwen3-VL model tutorial pack to require onl
 - **FR-008**: The runner MUST produce schema-locked, sanitized summaries for each scenario in machine-readable form.  
   **Acceptance**: For each requested scenario, `summary.json` is generated and remains compatible with the existing summary schema contract.
 - **FR-009**: The runner MUST support a snapshot workflow that refreshes the expected report snapshot for selected scenarios and removes stale expected scenarios not selected.  
-  **Acceptance**: After snapshot mode, the expected report directory contains exactly the selected scenarios and only `summary.json` for each scenario.
+  **Acceptance**: After snapshot mode, `expected_report/outputs/` contains exactly the selected scenarios, including `summary.json` for each scenario (plus optional sanitized artifacts such as the canonical `layer-sensitivity-report.md`).
 - **FR-010**: The runner MUST support a verification workflow that compares only the sanitized summaries against the expected report snapshot and fails with clear diffs when they differ.  
   **Acceptance**: Verification ignores non-summary artifacts; it fails if the expected snapshot is missing/incomplete; and on mismatch it identifies the scenario and which summary file differs.
 - **FR-011**: The runner’s verification MUST enforce a non-degeneracy gate for sensitivity results.  
@@ -139,7 +139,7 @@ As a maintainer, I want adding a new Qwen3-VL model tutorial pack to require onl
 - **Scenario**: A single run defined by (mode, quantization pair, dataset preset, device) that produces outputs and summaries.
 - **Workspace**: A temporary directory used to store full run outputs and summaries.
 - **Sanitized Summary**: The stable, reviewable artifact used for snapshotting and verification (`summary.json`).
-- **Expected Report Snapshot**: The tracked reference set of per-scenario `summary.json` used as the “golden” verification target.
+- **Expected Report Snapshot**: The tracked reference set of per-scenario sanitized outputs under `expected_report/outputs/` used as the “golden” verification target (diffing only `summary.json`).
 
 ### Assumptions
 

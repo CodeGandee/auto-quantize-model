@@ -95,11 +95,11 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Independent Test**: Run one pack with `--snapshot-report`, then run again without it and confirm verify passes with no diffs and non-degeneracy enforced.
 
-- [X] T030 [US3] Implement snapshot mode (summary-only expected snapshots + stale scenario cleanup) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T030 [US3] Implement snapshot mode (sanitized per-scenario outputs under `expected_report/outputs/` + stale scenario cleanup) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
 - [X] T031 [P] [US3] Extend filesystem integration tests for snapshot/verify behavior in `/data1/huangzhe/code/auto-quantize-model/tests/integration/test_qwen_tutorial_pack_runner_snapshot_verify.py`
 - [X] T032 [P] [US3] Add unit tests for strict verify failures (missing/incomplete expected snapshots) in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
 - [X] T033 [P] [US3] Add unit tests for non-degeneracy gate using fixtures under `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/`
-- [X] T034 [US3] Regenerate and commit summary-only expected snapshots under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
+- [X] T034 [US3] Regenerate and commit expected snapshots under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
 - [ ] T035 [US3] Manually run verify-mode for both packs after snapshot refresh and fix any issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
 
 **Checkpoint**: User Stories 1–3 work; snapshot and verify provide a reliable regression gate.
@@ -128,7 +128,7 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 - [X] T040 [P] Run `pixi run mypy .` and fix new typing issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/` and `/data1/huangzhe/code/auto-quantize-model/tests/`
 - [X] T041 [P] Run `pixi run pytest` and fix new test failures in `/data1/huangzhe/code/auto-quantize-model/tests/unit/` and `/data1/huangzhe/code/auto-quantize-model/tests/integration/`
 - [X] T042 [P] Reconcile docs with behavior (shared runner + snapshot semantics) in `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md` and the tutorial pack READMEs under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/`
-- [X] T043 Ensure artifact hygiene: no committed files under `/data1/huangzhe/code/auto-quantize-model/tmp/` and expected snapshots contain only `summary.json` under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
+- [X] T043 Ensure artifact hygiene: no committed files under `/data1/huangzhe/code/auto-quantize-model/tmp/` and expected snapshots are committed only under `expected_report/outputs/` (at minimum `summary.json`, plus optional sanitized artifacts like the canonical `layer-sensitivity-report.md`) for `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
 
 ---
 

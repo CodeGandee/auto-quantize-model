@@ -52,7 +52,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--snapshot-report",
         action="store_true",
-        help="Refresh expected_report/ summaries (summary-only) instead of verifying.",
+        help="Refresh expected_report/outputs/ (sanitized artifacts) instead of verifying.",
     )
     parser.add_argument(
         "--device",

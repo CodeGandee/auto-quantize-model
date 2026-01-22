@@ -77,8 +77,9 @@ Expected snapshots (tracked, sanitized):
 
 ```text
 docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/
-├── all_layers/<quant_pair>/summary.json
-└── lm_only/<quant_pair>/summary.json
+└── outputs/
+    ├── all_layers/<quant_pair>/summary.json
+    └── lm_only/<quant_pair>/summary.json
 ```
 
 Canonical Markdown report (generated for one scenario only):
@@ -92,6 +93,13 @@ This file includes both:
 
 - the stable tutorial summary table (previously `summary.md`), and
 - the per-layer sensitivity table.
+
+Snapshot mode also writes a sanitized copy of this report under:
+
+```text
+docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/
+└── outputs/all_layers/wint4_afp16/layer-sensitivity-report.md
+```
 
 ## Troubleshooting
 
