@@ -489,7 +489,7 @@ def verify_scenario(expected_report_dir: Path, scenario: ScenarioSpec, output_di
 def _should_keep_layer_report_md(scenario: ScenarioSpec) -> bool:
     """Return True if the Markdown layer report should be retained for this scenario."""
 
-    return scenario.mode == "all_layers" and scenario.quant_pair == "wint4_afp16"
+    return scenario.mode == "all_layers"
 
 
 def _merge_summary_into_layer_report_md(output_dir: Path, summary: TutorialPackScenarioSummary) -> None:

@@ -20,9 +20,9 @@ Specifically:
    - the stable “scenario summary” table (previously `summary.md`), and
    - the per-layer sensitivity table (previously `layer-sensitivity-report.md`)
 
-3) **Limit Markdown “layer sensitivity report” output** so that only this file remains (all other `layer-sensitivity-report.md` files are removed/suppressed):
+3) **Limit Markdown “layer sensitivity report” output** so that reports are generated for the `all_layers` mode only (and removed/suppressed for `lm_only`):
 
-- `tmp/<workspace>/outputs/all_layers/wint4_afp16/layer-sensitivity-report.md`
+- `tmp/<workspace>/outputs/all_layers/<quant_pair>/layer-sensitivity-report.md`
 
 All other markdown reports should not be generated (or should be removed after the run), while keeping machine-readable artifacts intact:
 
@@ -51,7 +51,7 @@ All other markdown reports should not be generated (or should be removed after t
 - Update snapshot/verify code paths to read/copy/diff `summary.json` from `output_dir`.
 - Update expected snapshot semantics to write sanitized artifacts under:
   - `expected_report/outputs/<mode>/<quant_pair>/summary.json`
-  - and (optionally) `expected_report/outputs/all_layers/wint4_afp16/layer-sensitivity-report.md`
+  - and (optionally) `expected_report/outputs/all_layers/<quant_pair>/layer-sensitivity-report.md`
 
 ### Step 3: Merge the old `summary.md` content into `layer-sensitivity-report.md`
 
@@ -63,11 +63,11 @@ All other markdown reports should not be generated (or should be removed after t
 
 This keeps the report file human-friendly while maintaining the stable verification contract in `summary.json`.
 
-### Step 4: Enforce “only one layer-sensitivity-report.md”
+### Step 4: Enforce “only all_layers layer-sensitivity-report.md”
 
 Add a small, explicit policy function, for example:
 
-- Keep Markdown report only when `mode == "all_layers"` and `quant_pair == "wint4_afp16"`.
+- Keep Markdown report only when `mode == "all_layers"` (all quant pairs).
 - For all other scenarios:
   - if the underlying runner produces `layer-sensitivity-report.md`, delete it after the scenario completes, or
   - (preferable if supported) pass a flag/env var to suppress generating that markdown file upstream.
@@ -100,7 +100,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
   - `tmp/<workspace>/summaries/<mode>/<pair>/summary.*`
   - to `tmp/<workspace>/outputs/<mode>/<pair>/summary.json`
 - Markdown reports become “single-canonical”:
-  - Only `outputs/all_layers/wint4_afp16/layer-sensitivity-report.md` remains.
+  - Only `outputs/all_layers/<quant_pair>/layer-sensitivity-report.md` remains (all_layers only; no lm_only markdown).
 - The canonical markdown report becomes “merged”:
   - It includes the per-scenario summary table at the top (previously `summary.md`).
 
@@ -119,7 +119,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
   - raw run logs/artifacts,
   - `summary.json` next to the artifacts,
   - `layer-sensitivity-report.json` for machine processing,
-  - and exactly one markdown report file: `outputs/all_layers/wint4_afp16/layer-sensitivity-report.md`.
+  - and markdown reports for `all_layers` only: `outputs/all_layers/<quant_pair>/layer-sensitivity-report.md`.
 - Snapshot/verify continues to be summary-only and deterministic (diffing only `summary.json`), while `expected_report/outputs/` retains a sanitized copy of key artifacts for reference.
 
 ## TODO
@@ -129,7 +129,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
 - [ ] Update snapshot/verify code to read/copy/diff `summary.json` from `outputs/` (no markdown diffs)
 - [ ] Update expected snapshots to include `expected_report/outputs/` (sanitized artifacts + canonical markdown report)
 - [ ] Implement a markdown merge step: prepend summary table into canonical `layer-sensitivity-report.md`
-- [ ] Implement markdown report retention policy (keep only `all_layers/wint4_afp16`)
+- [ ] Implement markdown report retention policy (keep only `all_layers/<quant_pair>`)
 - [ ] Update unit tests for new paths and behavior
 - [ ] Update integration tests for snapshot/verify behavior under new layout
 - [ ] Update tutorial docs that mention `summaries/` (if any)
@@ -167,7 +167,7 @@ After:
 
 ```python
 run_scenario(...)
-if not (scenario.mode == "all_layers" and scenario.quant_pair == "wint4_afp16"):
+if scenario.mode != "all_layers":
     (output_dir / "layer-sensitivity-report.md").unlink(missing_ok=True)
 ```
 
@@ -185,7 +185,7 @@ After:
 ```python
 summary_md = render_summary_markdown(summary)
 report_path = output_dir / "layer-sensitivity-report.md"
-if report_path.is_file() and (scenario.mode, scenario.quant_pair) == ("all_layers", "wint4_afp16"):
+if report_path.is_file() and scenario.mode == "all_layers":
     report_path.write_text(summary_md + "\n\n---\n\n" + report_path.read_text(encoding="utf-8"), encoding="utf-8")
 ```
 
