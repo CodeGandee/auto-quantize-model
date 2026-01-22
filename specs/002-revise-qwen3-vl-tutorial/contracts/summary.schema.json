@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tutorial Pack Sensitivity Summary (stable)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenario_id",
+    "mode",
+    "quant_pair",
+    "dataset_size",
+    "dataset_calib_seq_len",
+    "dataset_batch_size",
+    "dataset_num_calib_batches",
+    "dataset_num_calib_samples",
+    "dataset_max_calib_samples",
+    "auto_quantize_score_size",
+    "has_layer_sensitivity",
+    "has_autoquant_state",
+    "has_nonzero_sensitivity",
+    "manifest_keys"
+  ],
+  "properties": {
+    "scenario_id": {
+      "type": "string",
+      "description": "Stable scenario identifier (e.g., 'all_layers/wint4_afp16')."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["all_layers", "lm_only"],
+      "description": "Sensitivity mode."
+    },
+    "quant_pair": {
+      "type": "string",
+      "description": "Quant-pair identifier (e.g., 'wint4_afp16')."
+    },
+    "dataset_size": {
+      "type": "string",
+      "enum": ["small", "medium", "large"],
+      "description": "Dataset preset used for calibration/scoring."
+    },
+    "dataset_calib_seq_len": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "dataset_batch_size": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "dataset_num_calib_batches": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "dataset_num_calib_samples": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "dataset_max_calib_samples": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "auto_quantize_score_size": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "scheme_name": {
+      "type": ["string", "null"],
+      "description": "AutoQuant scheme name (when present in the manifest)."
+    },
+    "quant_formats": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Quantization formats used (when present in the manifest)."
+    },
+    "has_layer_sensitivity": {
+      "type": "boolean"
+    },
+    "has_autoquant_state": {
+      "type": "boolean"
+    },
+    "has_nonzero_sensitivity": {
+      "type": "boolean",
+      "description": "True if at least one per-layer sensitivity value is not exactly 0.0."
+    },
+    "manifest_keys": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

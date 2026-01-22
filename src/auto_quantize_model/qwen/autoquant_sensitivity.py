@@ -349,6 +349,14 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
     )
     tokenizer.padding_side = "left"
 
+    lm_model = extract_language_model_from_vl(full_model).to(torch_device)
+    lm_head = getattr(full_model, "lm_head", None)
+    if lm_head is None:
+        raise RuntimeError(
+            "Expected Qwen3-VL model to expose an `lm_head` attribute for LM-only loss computation."
+        )
+    lm_head = cast(torch.nn.Module, lm_head).to(torch_device)
+
     def _estimate_linear_weight_numel(disabled_patterns: List[str]) -> Tuple[int, int]:
         total = 0
         disabled = 0
@@ -380,7 +388,7 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
     try:
         num_calib_samples = len(calib_loader.dataset)  # type: ignore[arg-type]
     except Exception:
-        num_calib_samples = None
+        num_calib_samples = int(max_calib_samples)
 
     dataset_meta: Dict[str, Any] = {
         "name": dataset_name or captions_path.stem,
@@ -394,45 +402,44 @@ def run_qwen3_vl_lm_autoquant_sensitivity(
         "num_calib_batches": len(calib_loader),
     }
 
-    disabled_layers: Optional[List[str]] = None
     coverage_mode = str(scheme.coverage_mode)
     if coverage_mode == "lm_default":
         coverage_mode = "lm_only"
 
-    if coverage_mode == "lm_only":
-        # Keep the vision tower unquantized, but include it in sensitivity reports
-        # by allowing ModelOpt to register NONE-only recipes for these layers.
-        disabled_layers = ["model.visual*"]
-    elif coverage_mode == "full":
-        disabled_layers = None
-    else:
+    if coverage_mode not in ("lm_only", "full"):
         raise ValueError(
             f"Unsupported coverage_mode: {coverage_mode!r}. Expected 'lm_only' or 'full'."
         )
 
-    if disabled_layers:
-        total_weight, disabled_weight = _estimate_linear_weight_numel(disabled_layers)
-        if total_weight > 0 and 0 < disabled_weight < total_weight:
-            # AutoQuant's effective_bits constraint is applied over the entire model. When we disable
-            # (i.e., leave unquantized) some layers (e.g., vision), adjust the overall constraint so
-            # the remaining layers can still target `scheme.auto_quantize_bits` on average.
-            target_bits = float(scheme.auto_quantize_bits)
-            adjusted_bits = (
-                (disabled_weight * 16.0) + ((total_weight - disabled_weight) * target_bits)
-            ) / float(total_weight)
-            adjusted_bits = min(16.0, adjusted_bits + 1e-3)
-            scheme = scheme_with_overrides(scheme, effective_bits=adjusted_bits)
-
-    quantized_model, state_dict = autoquant_causal_lm(
-        model=full_model,
-        scheme=scheme,
-        calib_loader=calib_loader,
-        batch_size=max(batch_size, 1),
-        device=torch_device,
-        pad_token_id=tokenizer.pad_token_id,
-        disabled_layers=disabled_layers,
-        quantization_formats=quantization_formats,
-    )
+    if coverage_mode == "lm_only":
+        quantized_model, state_dict = autoquant_lm(
+            lm_model=lm_model,
+            scheme=scheme,
+            calib_loader=calib_loader,
+            batch_size=max(batch_size, 1),
+            device=torch_device,
+            lm_head=lm_head,
+            pad_token_id=tokenizer.pad_token_id,
+            verbose=True,
+            quantization_formats=quantization_formats,
+        )
+    else:
+        total_weight, disabled_weight = _estimate_linear_weight_numel(["model.visual*"])
+        if total_weight > 0 and disabled_weight > 0:
+            print(
+                "[INFO] coverage_mode=full: vision tower participates in AutoQuant constraints "
+                f"(vision weight fraction: {disabled_weight}/{total_weight})."
+            )
+        quantized_model, state_dict = autoquant_causal_lm(
+            model=full_model,
+            scheme=scheme,
+            calib_loader=calib_loader,
+            batch_size=max(batch_size, 1),
+            device=torch_device,
+            pad_token_id=tokenizer.pad_token_id,
+            disabled_layers=None,
+            quantization_formats=quantization_formats,
+        )
 
     manifest = build_quant_manifest(
         model=quantized_model,
