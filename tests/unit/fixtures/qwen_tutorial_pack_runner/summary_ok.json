@@ -1,0 +1,20 @@
+{
+  "auto_quantize_score_size": 128,
+  "dataset_batch_size": 8,
+  "dataset_calib_seq_len": 512,
+  "dataset_max_calib_samples": 128,
+  "dataset_num_calib_batches": 16,
+  "dataset_num_calib_samples": 128,
+  "dataset_size": "medium",
+  "has_autoquant_state": true,
+  "has_layer_sensitivity": true,
+  "has_nonzero_sensitivity": true,
+  "manifest_keys": [
+    "dataset"
+  ],
+  "mode": "all_layers",
+  "quant_formats": null,
+  "quant_pair": "wint4_afp16",
+  "scenario_id": "all_layers/wint4_afp16",
+  "scheme_name": null
+}

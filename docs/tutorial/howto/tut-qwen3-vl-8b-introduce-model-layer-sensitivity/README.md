@@ -51,7 +51,8 @@ bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_d
 
 ## What `run_demo.sh` does
 
-`run_demo.sh` is the tutorial pack’s public interface. It:
+`run_demo.sh` is the tutorial pack’s public interface. It delegates to the
+shared runner under `src/auto_quantize_model/qwen/` which:
 
 1. Ensures required assets exist (checkpoint link + datasets) and fails fast with actionable guidance.
 2. Creates a fresh workspace under `tmp/`.
@@ -60,6 +61,7 @@ bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_d
    - **lm_only**: LM-only sensitivity (text tower) per quant-pair via the Hydra runner.
 4. Generates a schema-locked `summary.json` + `summary.md` per scenario.
 5. Either verifies summaries against `expected_report/` or snapshots `expected_report/` (if `--snapshot-report`).
+   Snapshot mode writes **summary-only** snapshots and removes stale scenarios not selected.
 
 ### Why does the all-layers runner live under a “4B” path?
 
@@ -120,7 +122,8 @@ Remediation:
 ## References
 
 - Runner: `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- Summarizer: `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/scripts/summarize_manifest.py`
+- Shared CLI: `src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py`
+- Shared runner: `src/auto_quantize_model/qwen/tutorial_pack_runner.py`
 - Summary builder: `src/auto_quantize_model/qwen/tutorial_pack_summary.py`
 - All-layers runner: `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
 - LM-only runner: `scripts/qwen/qwen3_lm_sensitivity.py`

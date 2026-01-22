@@ -24,11 +24,11 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Purpose**: Create the shared runner/CLI scaffolding and test fixtures.
 
-- [ ] T001 Create shared runner module skeleton in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T002 [P] Create shared CLI module skeleton in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py`
-- [ ] T003 [P] Export runner/CLI symbols from `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/__init__.py`
-- [ ] T004 [P] Create unit test file scaffold in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
-- [ ] T005 [P] Add JSON fixtures for summary gate tests under `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/summary_ok.json` and `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/summary_degenerate.json`
+- [X] T001 Create shared runner module skeleton in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T002 [P] Create shared CLI module skeleton in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py`
+- [X] T003 [P] Export runner/CLI symbols from `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/__init__.py`
+- [X] T004 [P] Create unit test file scaffold in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T005 [P] Add JSON fixtures for summary gate tests under `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/summary_ok.json` and `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/summary_degenerate.json`
 
 ---
 
@@ -38,14 +38,14 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **⚠️ CRITICAL**: No user story work should start until this phase is complete.
 
-- [ ] T006 Implement core data models (model spec, dataset preset, scenario spec) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T007 Implement dataset preset resolution (budgets + required asset paths) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T008 Implement mode/quant-pair parsing + scenario enumeration helpers in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T009 Implement workspace + expected-report path layout helpers in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T010 [P] Add unit tests for dataset preset resolution in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
-- [ ] T011 [P] Add unit tests for scenario enumeration and selector validation in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
-- [ ] T012 [P] Add unit tests for workspace/expected-report layout helpers in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
-- [ ] T013 [P] Create filesystem-level integration test scaffold in `/data1/huangzhe/code/auto-quantize-model/tests/integration/test_qwen_tutorial_pack_runner_snapshot_verify.py`
+- [X] T006 Implement core data models (model spec, dataset preset, scenario spec) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T007 Implement dataset preset resolution (budgets + required asset paths) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T008 Implement mode/quant-pair parsing + scenario enumeration helpers in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T009 Implement workspace + expected-report path layout helpers in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T010 [P] Add unit tests for dataset preset resolution in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T011 [P] Add unit tests for scenario enumeration and selector validation in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T012 [P] Add unit tests for workspace/expected-report layout helpers in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T013 [P] Create filesystem-level integration test scaffold in `/data1/huangzhe/code/auto-quantize-model/tests/integration/test_qwen_tutorial_pack_runner_snapshot_verify.py`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -57,18 +57,18 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Independent Test**: From `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md`, run both packs’ `run_demo.sh` in verify mode and observe success with no diffs.
 
-- [ ] T014 [P] [US1] Implement model configuration registry for 4B/8B and model-id validation errors in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T015 [US1] Implement asset gating (checkpoint link + dataset assets + device validation) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T016 [US1] Implement scenario execution adapters (all-layers + LM-only) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T017 [US1] Implement manifest discovery (find `*_quant_manifest.json`) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T018 [US1] Implement summary generation via `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_summary.py` in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T019 [US1] Implement verify-mode behavior (diff only `summary.json` + `summary.md`, fail-fast) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T020 [P] [US1] Implement CLI arguments + delegation (preserve stable flags, add `--model-id` and `--expected-report-dir`) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py`
-- [ ] T021 [P] [US1] Replace 4B tutorial runner with a thin wrapper delegating to the shared CLI in `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/run_demo.sh`
-- [ ] T022 [P] [US1] Replace 8B tutorial runner with a thin wrapper delegating to the shared CLI in `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T023 [P] [US1] Remove pack-local summarizer/sanitizer scripts (now owned by shared runner) under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/scripts/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/scripts/`
-- [ ] T024 [P] [US1] Update pack READMEs to reference the shared runner and remove pack-local script references in `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/README.md` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
-- [ ] T025 [P] [US1] Add unit tests for CLI parsing and model-id validation in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T014 [P] [US1] Implement model configuration registry for 4B/8B and model-id validation errors in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T015 [US1] Implement asset gating (checkpoint link + dataset assets + device validation) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T016 [US1] Implement scenario execution adapters (all-layers + LM-only) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T017 [US1] Implement manifest discovery (find `*_quant_manifest.json`) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T018 [US1] Implement summary generation via `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_summary.py` in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T019 [US1] Implement verify-mode behavior (diff only `summary.json` + `summary.md`, fail-fast) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T020 [P] [US1] Implement CLI arguments + delegation (preserve stable flags, add `--model-id` and `--expected-report-dir`) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py`
+- [X] T021 [P] [US1] Replace 4B tutorial runner with a thin wrapper delegating to the shared CLI in `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/run_demo.sh`
+- [X] T022 [P] [US1] Replace 8B tutorial runner with a thin wrapper delegating to the shared CLI in `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [X] T023 [P] [US1] Remove pack-local summarizer/sanitizer scripts (now owned by shared runner) under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/scripts/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/scripts/`
+- [X] T024 [P] [US1] Update pack READMEs to reference the shared runner and remove pack-local script references in `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/README.md` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
+- [X] T025 [P] [US1] Add unit tests for CLI parsing and model-id validation in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
 - [ ] T026 [US1] Manually run verify-mode commands from `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md` and fix issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
 
 **Checkpoint**: User Story 1 is fully functional and independently testable.
@@ -81,9 +81,9 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Independent Test**: Run one pack with `--modes lm_only --quant-pairs wint4_afp16` and confirm only `lm_only/wint4_afp16` is executed and verified.
 
-- [ ] T027 [US2] Wire `--modes` and `--quant-pairs` from `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py` into scenario enumeration in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T028 [P] [US2] Add unit tests for subset selection in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
-- [ ] T029 [US2] Validate subset examples (and update if needed) in `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md`
+- [X] T027 [US2] Wire `--modes` and `--quant-pairs` from `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py` into scenario enumeration in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T028 [P] [US2] Add unit tests for subset selection in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T029 [US2] Validate subset examples (and update if needed) in `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md`
 
 **Checkpoint**: User Stories 1 and 2 both work and are independently testable.
 
@@ -95,11 +95,11 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Independent Test**: Run one pack with `--snapshot-report`, then run again without it and confirm verify passes with no diffs and non-degeneracy enforced.
 
-- [ ] T030 [US3] Implement snapshot mode (summary-only expected snapshots + stale scenario cleanup) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
-- [ ] T031 [P] [US3] Extend filesystem integration tests for snapshot/verify behavior in `/data1/huangzhe/code/auto-quantize-model/tests/integration/test_qwen_tutorial_pack_runner_snapshot_verify.py`
-- [ ] T032 [P] [US3] Add unit tests for strict verify failures (missing/incomplete expected snapshots) in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
-- [ ] T033 [P] [US3] Add unit tests for non-degeneracy gate using fixtures under `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/`
-- [ ] T034 [US3] Regenerate and commit summary-only expected snapshots under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
+- [X] T030 [US3] Implement snapshot mode (summary-only expected snapshots + stale scenario cleanup) in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
+- [X] T031 [P] [US3] Extend filesystem integration tests for snapshot/verify behavior in `/data1/huangzhe/code/auto-quantize-model/tests/integration/test_qwen_tutorial_pack_runner_snapshot_verify.py`
+- [X] T032 [P] [US3] Add unit tests for strict verify failures (missing/incomplete expected snapshots) in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T033 [P] [US3] Add unit tests for non-degeneracy gate using fixtures under `/data1/huangzhe/code/auto-quantize-model/tests/unit/fixtures/qwen_tutorial_pack_runner/`
+- [X] T034 [US3] Regenerate and commit summary-only expected snapshots under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
 - [ ] T035 [US3] Manually run verify-mode for both packs after snapshot refresh and fix any issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py`
 
 **Checkpoint**: User Stories 1–3 work; snapshot and verify provide a reliable regression gate.
@@ -112,9 +112,9 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Independent Test**: Add a dummy/placeholder model registry entry (no GPU run required) and confirm the runner validates model-id selection and produces an actionable “missing checkpoint link” error for that model.
 
-- [ ] T036 [US4] Extract the model registry into `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_registry.py` and update `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py` to use it
-- [ ] T037 [P] [US4] Document “how to add a new pack” in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/README.md` (required registry fields + wrapper snippet)
-- [ ] T038 [P] [US4] Add unit tests for registry extension behavior and error messages in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
+- [X] T036 [US4] Extract the model registry into `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_registry.py` and update `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/tutorial_pack_runner.py` to use it
+- [X] T037 [P] [US4] Document “how to add a new pack” in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/README.md` (required registry fields + wrapper snippet)
+- [X] T038 [P] [US4] Add unit tests for registry extension behavior and error messages in `/data1/huangzhe/code/auto-quantize-model/tests/unit/test_qwen_tutorial_pack_runner.py`
 
 **Checkpoint**: All user stories are independently functional.
 
@@ -124,11 +124,11 @@ description: "Task list: refactor Qwen3-VL tutorial-pack runners into a shared P
 
 **Purpose**: Quality gates, documentation consistency, and repo hygiene.
 
-- [ ] T039 [P] Run `pixi run ruff check .` and fix new lint issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/` and `/data1/huangzhe/code/auto-quantize-model/tests/`
-- [ ] T040 [P] Run `pixi run mypy .` and fix new typing issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/` and `/data1/huangzhe/code/auto-quantize-model/tests/`
-- [ ] T041 [P] Run `pixi run pytest` and fix new test failures in `/data1/huangzhe/code/auto-quantize-model/tests/unit/` and `/data1/huangzhe/code/auto-quantize-model/tests/integration/`
-- [ ] T042 [P] Reconcile docs with behavior (shared runner + snapshot semantics) in `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md` and the tutorial pack READMEs under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/`
-- [ ] T043 Ensure artifact hygiene: no committed files under `/data1/huangzhe/code/auto-quantize-model/tmp/` and expected snapshots contain only `summary.json` + `summary.md` under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
+- [X] T039 [P] Run `pixi run ruff check .` and fix new lint issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/` and `/data1/huangzhe/code/auto-quantize-model/tests/`
+- [X] T040 [P] Run `pixi run mypy .` and fix new typing issues in `/data1/huangzhe/code/auto-quantize-model/src/auto_quantize_model/qwen/` and `/data1/huangzhe/code/auto-quantize-model/tests/`
+- [X] T041 [P] Run `pixi run pytest` and fix new test failures in `/data1/huangzhe/code/auto-quantize-model/tests/unit/` and `/data1/huangzhe/code/auto-quantize-model/tests/integration/`
+- [X] T042 [P] Reconcile docs with behavior (shared runner + snapshot semantics) in `/data1/huangzhe/code/auto-quantize-model/specs/003-refactor-qwen3-tutorial-runner/quickstart.md` and the tutorial pack READMEs under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/`
+- [X] T043 Ensure artifact hygiene: no committed files under `/data1/huangzhe/code/auto-quantize-model/tmp/` and expected snapshots contain only `summary.json` + `summary.md` under `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/` and `/data1/huangzhe/code/auto-quantize-model/docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/`
 
 ---
 
