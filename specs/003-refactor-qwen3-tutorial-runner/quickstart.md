@@ -66,7 +66,7 @@ Expected behavior (after this feature is implemented):
 - Both packs delegate orchestration to the shared runner but keep the same flags.
 - Verification fails if `expected_report/` is missing/incomplete.
 - Verification diffs only `summary.json` per scenario and enforces non-degeneracy.
-- Markdown reports are kept for all `all_layers` scenarios at `outputs/all_layers/<quant_pair>/layer-sensitivity-report.md` (with the tutorial summary table prepended).
+- Markdown reports are kept for all scenarios at `outputs/<mode>/<quant_pair>/layer-sensitivity-report.md` (with the tutorial summary table prepended).
 
 ## Subset runs (for iteration)
 

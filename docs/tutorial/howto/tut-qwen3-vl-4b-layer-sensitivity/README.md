@@ -82,11 +82,11 @@ docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/
     └── lm_only/<quant_pair>/summary.json
 ```
 
-Markdown reports (generated for all `all_layers` quant-pairs):
+Markdown reports (generated for all scenarios):
 
 ```text
 tmp/tutorial_workspace_qwen3_vl_4b_layer_sensitivity_<timestamp>/
-└── outputs/all_layers/<quant_pair>/layer-sensitivity-report.md
+└── outputs/<mode>/<quant_pair>/layer-sensitivity-report.md
 ```
 
 This file includes both:
@@ -98,7 +98,7 @@ Snapshot mode also writes a sanitized copy of this report under:
 
 ```text
 docs/tutorial/howto/tut-qwen3-vl-4b-layer-sensitivity/expected_report/
-└── outputs/all_layers/<quant_pair>/layer-sensitivity-report.md
+└── outputs/<mode>/<quant_pair>/layer-sensitivity-report.md
 ```
 
 ## Troubleshooting

@@ -20,11 +20,11 @@ Specifically:
    - the stable “scenario summary” table (previously `summary.md`), and
    - the per-layer sensitivity table (previously `layer-sensitivity-report.md`)
 
-3) **Limit Markdown “layer sensitivity report” output** so that reports are generated for the `all_layers` mode only (and removed/suppressed for `lm_only`):
+3) **Keep Markdown “layer sensitivity report” output** so that reports are generated for all scenarios (both `all_layers` and `lm_only`):
 
-- `tmp/<workspace>/outputs/all_layers/<quant_pair>/layer-sensitivity-report.md`
+- `tmp/<workspace>/outputs/<mode>/<quant_pair>/layer-sensitivity-report.md`
 
-All other markdown reports should not be generated (or should be removed after the run), while keeping machine-readable artifacts intact:
+Keep machine-readable artifacts intact:
 
 - `summary.json` (required for snapshot/verify)
 - `layer-sensitivity-report.json` (kept for programmatic inspection/debugging)
@@ -63,14 +63,11 @@ All other markdown reports should not be generated (or should be removed after t
 
 This keeps the report file human-friendly while maintaining the stable verification contract in `summary.json`.
 
-### Step 4: Enforce “only all_layers layer-sensitivity-report.md”
+### Step 4: Enforce “layer-sensitivity-report.md for all scenarios”
 
 Add a small, explicit policy function, for example:
 
-- Keep Markdown report only when `mode == "all_layers"` (all quant pairs).
-- For all other scenarios:
-  - if the underlying runner produces `layer-sensitivity-report.md`, delete it after the scenario completes, or
-  - (preferable if supported) pass a flag/env var to suppress generating that markdown file upstream.
+- Keep Markdown reports for all scenarios (no deletion).
 
 Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary.json`.
 
@@ -100,7 +97,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
   - `tmp/<workspace>/summaries/<mode>/<pair>/summary.*`
   - to `tmp/<workspace>/outputs/<mode>/<pair>/summary.json`
 - Markdown reports become “single-canonical”:
-  - Only `outputs/all_layers/<quant_pair>/layer-sensitivity-report.md` remains (all_layers only; no lm_only markdown).
+  - Reports exist for all scenarios under `outputs/<mode>/<quant_pair>/layer-sensitivity-report.md`.
 - The canonical markdown report becomes “merged”:
   - It includes the per-scenario summary table at the top (previously `summary.md`).
 
@@ -119,7 +116,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
   - raw run logs/artifacts,
   - `summary.json` next to the artifacts,
   - `layer-sensitivity-report.json` for machine processing,
-  - and markdown reports for `all_layers` only: `outputs/all_layers/<quant_pair>/layer-sensitivity-report.md`.
+  - and markdown reports for all scenarios: `outputs/<mode>/<quant_pair>/layer-sensitivity-report.md`.
 - Snapshot/verify continues to be summary-only and deterministic (diffing only `summary.json`), while `expected_report/outputs/` retains a sanitized copy of key artifacts for reference.
 
 ## TODO
@@ -129,7 +126,7 @@ Also ensure the runner never deletes `layer-sensitivity-report.json` or `summary
 - [ ] Update snapshot/verify code to read/copy/diff `summary.json` from `outputs/` (no markdown diffs)
 - [ ] Update expected snapshots to include `expected_report/outputs/` (sanitized artifacts + canonical markdown report)
 - [ ] Implement a markdown merge step: prepend summary table into canonical `layer-sensitivity-report.md`
-- [ ] Implement markdown report retention policy (keep only `all_layers/<quant_pair>`)
+- [ ] Implement markdown report retention policy (keep `layer-sensitivity-report.md` for all scenarios)
 - [ ] Update unit tests for new paths and behavior
 - [ ] Update integration tests for snapshot/verify behavior under new layout
 - [ ] Update tutorial docs that mention `summaries/` (if any)
@@ -167,8 +164,7 @@ After:
 
 ```python
 run_scenario(...)
-if scenario.mode != "all_layers":
-    (output_dir / "layer-sensitivity-report.md").unlink(missing_ok=True)
+# Keep layer-sensitivity-report.md for both modes and all quant pairs.
 ```
 
 ### 3) Merge `summary.md` content into the canonical report
