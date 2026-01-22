@@ -31,8 +31,8 @@ description: "Task list: Revise Qwen3-VL-8B tutorial pack (introduce + layer sen
 
 **Purpose**: Add shared config/building blocks needed by the tutorial pack runners.
 
-- [ ] T001 Add Qwen3-VL-8B Hydra model config in `conf/model/qwen3_vl_8b_instruct/arch/qwen3_vl_8b_instruct.default.yaml`
-- [ ] T002 [P] Add Qwen3-VL-8B infer defaults in `conf/model/qwen3_vl_8b_instruct/infer/qwen3_vl_8b_instruct.default.yaml`
+- [x] T001 Add Qwen3-VL-8B Hydra model config in `conf/model/qwen3_vl_8b_instruct/arch/qwen3_vl_8b_instruct.default.yaml`
+- [x] T002 [P] Add Qwen3-VL-8B infer defaults in `conf/model/qwen3_vl_8b_instruct/infer/qwen3_vl_8b_instruct.default.yaml`
 
 ---
 
@@ -42,13 +42,13 @@ description: "Task list: Revise Qwen3-VL-8B tutorial pack (introduce + layer sen
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T003 Implement stable summary builder (schema-locked) in `src/auto_quantize_model/qwen/tutorial_pack_summary.py`
-- [ ] T004 Add unit tests for summary builder and non-degeneracy detection in `tests/unit/test_qwen_tutorial_pack_summary.py`
-- [ ] T005 Update tutorial summarizer CLI wrapper to emit `summary.json` + `summary.md` using the summary builder in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/scripts/summarize_manifest.py`
-- [ ] T006 Update `run_demo.sh` CLI parsing to match the contract (`--snapshot-report`, `--device`, `--dataset-size`, `--modes`, `--quant-pairs`) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T007 Add dataset preset resolution + fail-fast missing-asset checks (COCO root, VLM DB, captions) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T008 Implement per-scenario output layout (workspace + outputs + summaries) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T009 Implement verification loop that diffs only sanitized summaries against `expected_report/` (with actionable guidance) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T003 Implement stable summary builder (schema-locked) in `src/auto_quantize_model/qwen/tutorial_pack_summary.py`
+- [x] T004 Add unit tests for summary builder and non-degeneracy detection in `tests/unit/test_qwen_tutorial_pack_summary.py`
+- [x] T005 Update tutorial summarizer CLI wrapper to emit `summary.json` + `summary.md` using the summary builder in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/scripts/summarize_manifest.py`
+- [x] T006 Update `run_demo.sh` CLI parsing to match the contract (`--snapshot-report`, `--device`, `--dataset-size`, `--modes`, `--quant-pairs`) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T007 Add dataset preset resolution + fail-fast missing-asset checks (COCO root, VLM DB, captions) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T008 Implement per-scenario output layout (workspace + outputs + summaries) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T009 Implement verification loop that diffs only sanitized summaries against `expected_report/` (with actionable guidance) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
 
 **Checkpoint**: Foundation ready — user story implementation can begin.
 
@@ -70,12 +70,12 @@ and confirm:
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] Batch VLM calibration dataloader to honor `batch_size` + `num_calib_batches` in `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
-- [ ] T011 [US1] Add `--quant-pair` support (load `conf/quant_pair/*.yaml`, resolve `format_name`, set stable scheme/manifest names) in `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
-- [ ] T012 [US1] Record complete dataset metadata (`size`, `calib_seq_len`, `batch_size`, `num_calib_batches`, `num/max_calib_samples`) in the manifest in `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
-- [ ] T013 [US1] Wire all-layers scenario execution (2 quant pairs) using repo dataset assets + medium defaults in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T014 [US1] Generate and commit sanitized expected snapshots for all-layers scenarios under `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/all_layers/`
-- [ ] T015 [US1] Update all-layers documentation + output layout examples (and explain “4B helper” naming) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
+- [x] T010 [US1] Batch VLM calibration dataloader to honor `batch_size` + `num_calib_batches` in `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
+- [x] T011 [US1] Add `--quant-pair` support (load `conf/quant_pair/*.yaml`, resolve `format_name`, set stable scheme/manifest names) in `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
+- [x] T012 [US1] Record complete dataset metadata (`size`, `calib_seq_len`, `batch_size`, `num_calib_batches`, `num/max_calib_samples`) in the manifest in `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
+- [x] T013 [US1] Wire all-layers scenario execution (2 quant pairs) using repo dataset assets + medium defaults in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T014 [US1] Generate and commit sanitized expected snapshots for all-layers scenarios under `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/all_layers/`
+- [x] T015 [US1] Update all-layers documentation + output layout examples (and explain “4B helper” naming) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
 
 **Checkpoint**: User Story 1 is runnable and independently verifiable (via `--modes all_layers`).
 
@@ -96,10 +96,10 @@ and confirm:
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] Run LM-only scenarios via Hydra runner (`scripts/qwen/qwen3_lm_sensitivity.py`) with overrides for model=8B, dataset preset, device, and scenario output dirs in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T017 [US2] Ensure LM-only manifests consistently include required dataset metadata fields for summarization in `scripts/qwen/qwen3_lm_sensitivity.py`
-- [ ] T018 [US2] Generate and commit sanitized expected snapshots for LM-only scenarios under `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/lm_only/`
-- [ ] T019 [US2] Update LM-only documentation to explain the “all-zero sensitivities” failure mode and the tutorial’s remediation path in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
+- [x] T016 [US2] Run LM-only scenarios via Hydra runner (`scripts/qwen/qwen3_lm_sensitivity.py`) with overrides for model=8B, dataset preset, device, and scenario output dirs in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T017 [US2] Ensure LM-only manifests consistently include required dataset metadata fields for summarization in `scripts/qwen/qwen3_lm_sensitivity.py`
+- [x] T018 [US2] Generate and commit sanitized expected snapshots for LM-only scenarios under `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/lm_only/`
+- [x] T019 [US2] Update LM-only documentation to explain the “all-zero sensitivities” failure mode and the tutorial’s remediation path in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
 
 **Checkpoint**: User Story 2 is runnable and independently verifiable (via `--modes lm_only`).
 
@@ -118,10 +118,10 @@ Confirm verification passes (no summary diffs) and summaries assert non-degenera
 
 ### Implementation for User Story 5
 
-- [ ] T020 [US5] Extend snapshot mode to refresh `expected_report/<mode>/<quant_pair>/` for all selected scenarios and delete stale snapshot dirs in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T021 [US5] Enforce non-degeneracy at verification time (fail if `has_nonzero_sensitivity=false` with actionable guidance) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- [ ] T022 [US5] Remove synthetic calibration input generation and delete `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/inputs/coco2017_captions_small.txt`
-- [ ] T023 [US5] Sync contracts with implementation: update `specs/002-revise-qwen3-vl-tutorial/contracts/run_demo_cli.md` (and `specs/002-revise-qwen3-vl-tutorial/contracts/summary.schema.json` if needed)
+- [x] T020 [US5] Extend snapshot mode to refresh `expected_report/<mode>/<quant_pair>/` for all selected scenarios and delete stale snapshot dirs in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T021 [US5] Enforce non-degeneracy at verification time (fail if `has_nonzero_sensitivity=false` with actionable guidance) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
+- [x] T022 [US5] Remove synthetic calibration input generation and delete `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/inputs/coco2017_captions_small.txt`
+- [x] T023 [US5] Sync contracts with implementation: update `specs/002-revise-qwen3-vl-tutorial/contracts/run_demo_cli.md` (and `specs/002-revise-qwen3-vl-tutorial/contracts/summary.schema.json` if needed)
 
 **Checkpoint**: Snapshot/verify is robust and maintainable for all 4 scenarios.
 
@@ -131,10 +131,10 @@ Confirm verification passes (no summary diffs) and summaries assert non-degenera
 
 **Purpose**: Final cleanup, docs polish, and validation steps.
 
-- [ ] T024 [P] Update validated quickstart commands (including subset-run examples) in `specs/002-revise-qwen3-vl-tutorial/quickstart.md`
-- [ ] T025 [P] Add manual GPU validation checklist in `tests/manual/qwen/test_tut_qwen3_vl_8b_layer_sensitivity.md`
-- [ ] T026 Update tutorial README troubleshooting and prerequisites (dataset + checkpoint link) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
-- [ ] T027 Run `pixi run ruff check .`, `pixi run mypy .`, and `pixi run pytest` and record any follow-ups in `specs/002-revise-qwen3-vl-tutorial/research.md`
+- [x] T024 [P] Update validated quickstart commands (including subset-run examples) in `specs/002-revise-qwen3-vl-tutorial/quickstart.md`
+- [x] T025 [P] Add manual GPU validation checklist in `tests/manual/qwen/test_tut_qwen3_vl_8b_layer_sensitivity.md`
+- [x] T026 Update tutorial README troubleshooting and prerequisites (dataset + checkpoint link) in `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/README.md`
+- [x] T027 Run `pixi run ruff check .`, `pixi run mypy .`, and `pixi run pytest` and record any follow-ups in `specs/002-revise-qwen3-vl-tutorial/research.md`
 
 ---
 

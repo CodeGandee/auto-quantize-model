@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+"""
+Run VLM all-layers AutoQuant sensitivity for Qwen3-VL checkpoints.
+
+Despite the "4b" path naming, this script is parameterized by `--model-dir` and
+can be used with Qwen3-VL-8B-Instruct (or other compatible checkpoints).
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -75,6 +82,38 @@ def select_autoquant_scheme(quant_format: str) -> AutoQuantSchemeConfig:
     if quant_format == "int8":
         return AUTOQUANT_INT8_ALL_LAYERS
     raise ValueError(f"Unsupported quant_format: {quant_format!r}")
+
+
+@dataclass(frozen=True)
+class QuantPairConfig:
+    """Quant-pair configuration loaded from `conf/quant_pair/<name>.yaml`."""
+
+    name: str
+    weight: str
+    activation: str
+    format_name: str
+
+
+def load_quant_pair(name: str) -> QuantPairConfig:
+    """Load a quant-pair YAML config from `conf/quant_pair/<name>.yaml`."""
+
+    path = Path("conf") / "quant_pair" / f"{name}.yaml"
+    if not path.is_file():
+        raise FileNotFoundError(f"Quant-pair config not found: {path}")
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TypeError(f"Quant-pair config must be a mapping: {path}")
+
+    for key in ("name", "weight", "activation", "format_name"):
+        if key not in payload:
+            raise ValueError(f"Quant-pair config is missing {key!r}: {path}")
+
+    return QuantPairConfig(
+        name=str(payload["name"]),
+        weight=str(payload["weight"]),
+        activation=str(payload["activation"]),
+        format_name=str(payload["format_name"]),
+    )
 
 
 class CocoVlmDataset(Dataset[Mapping[str, torch.Tensor]]):
@@ -176,20 +215,47 @@ def build_vlm_calib_dataloader(
     tokenizer: AutoTokenizer,
     processor: AutoProcessor,
     batch_size: int,
+    num_calib_batches: int,
     max_samples: int,
     max_length: int,
-) -> Iterable[Mapping[str, torch.Tensor]]:
+) -> List[Mapping[str, torch.Tensor]]:
     dataset = CocoVlmDataset(
         calib_db=calib_db,
         coco_root=coco_root,
         tokenizer=tokenizer,
         processor=processor,
-        max_samples=max_samples,
+        max_samples=min(int(max_samples), max(int(batch_size), 1) * max(int(num_calib_batches), 1)),
         max_length=max_length,
     )
-    # For VLM calibration we keep things simple and treat each sample
-    # as its own "batch" to avoid padding/collation issues across images.
-    return [dataset[index] for index in range(len(dataset))]
+
+    samples: List[Mapping[str, torch.Tensor]] = [dataset[index] for index in range(len(dataset))]
+    if not samples:
+        raise RuntimeError("Calibration dataset yielded no samples.")
+
+    def _collate(items: Sequence[Mapping[str, torch.Tensor]]) -> Mapping[str, torch.Tensor]:
+        keys = list(items[0].keys())
+        batch: Dict[str, torch.Tensor] = {}
+        for key in keys:
+            tensors: List[torch.Tensor] = []
+            for item in items:
+                value = item.get(key)
+                if not isinstance(value, torch.Tensor):
+                    raise TypeError(f"Expected tensor field {key!r} in calibration sample.")
+                tensors.append(value)
+            batch[key] = torch.cat(tensors, dim=0)
+        return batch
+
+    safe_batch = max(int(batch_size), 1)
+    safe_num_batches = max(int(num_calib_batches), 1)
+    batches: List[Mapping[str, torch.Tensor]] = []
+    for start in range(0, len(samples), safe_batch):
+        if len(batches) >= safe_num_batches:
+            break
+        chunk = samples[start : start + safe_batch]
+        if not chunk:
+            continue
+        batches.append(_collate(chunk))
+    return batches
 
 
 def create_forward_step(auto_quantize_method: str, device: torch.device) -> Callable:
@@ -438,6 +504,15 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="Maximum number of image+caption samples to use for calibration.",
     )
     parser.add_argument(
+        "--num-calib-batches",
+        type=int,
+        default=None,
+        help=(
+            "Number of calibration batches to use. If omitted, defaults to "
+            "ceil(max_calib_samples / batch_size)."
+        ),
+    )
+    parser.add_argument(
         "--calib-seq-len",
         type=int,
         default=512,
@@ -454,6 +529,22 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         type=str,
         default="cuda",
         help="Torch device to use (default: cuda).",
+    )
+    parser.add_argument(
+        "--dataset-size",
+        type=str,
+        default=None,
+        choices=["small", "medium", "large"],
+        help="Optional dataset preset key (small|medium|large) recorded into the manifest.",
+    )
+    parser.add_argument(
+        "--quant-pair",
+        type=str,
+        default=None,
+        help=(
+            "Quant-pair name (loads conf/quant_pair/<name>.yaml) and selects "
+            "the ModelOpt quantization format (e.g., wint4_afp16)."
+        ),
     )
     parser.add_argument(
         "--quant-format",
@@ -505,10 +596,27 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             suffix = "large" if int(args.max_calib_samples) >= 512 else "small"
             args.output_dir = Path("tmp") / f"qwen3_vl_4b_autoquant_all_layers_int8_{suffix}"
     try:
-        scheme = select_autoquant_scheme(args.quant_format)
-    except ValueError as exc:  # noqa: BLE001
+        quant_pair = load_quant_pair(args.quant_pair) if args.quant_pair is not None else None
+    except (OSError, ValueError, TypeError) as exc:  # noqa: BLE001
         print(f"[ERROR] {exc}")
         return 1
+
+    if quant_pair is not None:
+        scheme = AutoQuantSchemeConfig(
+            name=f"{quant_pair.name}_autoquant_all_layers",
+            auto_quantize_bits=8.0,
+            auto_quantize_method="gradient",
+            auto_quantize_score_size=128,
+            coverage_mode="full",
+            coverage_fraction=1.0,
+            quant_formats=[quant_pair.format_name],
+        )
+    else:
+        try:
+            scheme = select_autoquant_scheme(args.quant_format)
+        except ValueError as exc:  # noqa: BLE001
+            print(f"[ERROR] {exc}")
+            return 1
 
     # Apply CLI overrides to the selected scheme in an immutable way.
     if args.effective_bits is not None:
@@ -618,12 +726,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         f"[INFO] Building VLM calibration dataloader from {args.vlm_calib_db} "
         f"and COCO root {args.coco_root}",
     )
+    num_calib_batches = (
+        int(args.num_calib_batches)
+        if args.num_calib_batches is not None
+        else max((int(args.max_calib_samples) + max(int(args.batch_size), 1) - 1) // max(int(args.batch_size), 1), 1)
+    )
     calib_loader = build_vlm_calib_dataloader(
         calib_db=args.vlm_calib_db,
         coco_root=args.coco_root,
         tokenizer=tokenizer,
         processor=processor,
         batch_size=max(args.batch_size, 1),
+        num_calib_batches=num_calib_batches,
         max_samples=args.max_calib_samples,
         max_length=args.calib_seq_len,
     )
@@ -654,25 +768,31 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         model_id=str(args.model_dir),
     )
 
-    num_calib_samples: Optional[int] = None
-    try:
-        dataset_len = len(calib_loader.dataset)  # type: ignore[arg-type]
-        num_calib_samples = min(int(dataset_len), int(args.max_calib_samples))
-    except Exception:
-        num_calib_samples = None
+    num_calib_samples = 0
+    for batch in calib_loader:
+        batch_size = None
+        for value in batch.values():
+            if isinstance(value, torch.Tensor):
+                batch_size = int(value.shape[0])
+                break
+        if batch_size is not None:
+            num_calib_samples += batch_size
 
     manifest["dataset"] = {
+        "size": args.dataset_size,
         "vlm_calib_db": str(args.vlm_calib_db),
         "coco_root": str(args.coco_root),
         "calib_seq_len": int(args.calib_seq_len),
         "batch_size": int(args.batch_size),
-        "num_calib_samples": num_calib_samples,
+        "num_calib_batches": int(len(calib_loader)),
+        "num_calib_samples": int(num_calib_samples),
         "max_calib_samples": int(args.max_calib_samples),
     }
     manifest["quantization"] = {
-        "base_format_name": scheme.quant_formats[0] if scheme.quant_formats else None,
+        "base_format_name": quant_pair.format_name if quant_pair is not None else (scheme.quant_formats[0] if scheme.quant_formats else None),
         "format_names": list(scheme.quant_formats),
         "quant_format": str(args.quant_format),
+        "quant_pair": asdict(quant_pair) if quant_pair is not None else None,
     }
 
     composed_config_path = args.output_dir / "composed-config.yaml"
@@ -685,9 +805,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "vlm_calib_db": str(args.vlm_calib_db),
             "coco_root": str(args.coco_root),
             "max_calib_samples": int(args.max_calib_samples),
+            "num_calib_batches": int(num_calib_batches),
             "calib_seq_len": int(args.calib_seq_len),
             "batch_size": int(args.batch_size),
             "device": str(args.device),
+            "dataset_size": args.dataset_size,
+            "quant_pair": args.quant_pair,
             "quant_format": str(args.quant_format),
             "effective_bits": args.effective_bits,
             "auto_quantize_score_size": args.auto_quantize_score_size,

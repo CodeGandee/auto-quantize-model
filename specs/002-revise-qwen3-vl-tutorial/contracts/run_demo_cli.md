@@ -30,6 +30,8 @@ Notes:
 
 - Default execution with no options runs and verifies all 4 scenarios (2 modes × 2 quant pairs).
 - If dataset assets for the chosen dataset-size are missing, the script fails fast with actionable guidance.
+- The script enforces non-degeneracy: if any scenario summary reports `has_nonzero_sensitivity=false`,
+  the run fails (both in verify mode and in snapshot mode).
 
 ## Environment Variables
 

@@ -40,6 +40,11 @@ cd /data1/huangzhe/code/auto-quantize-model
 datasets/coco2017/bootstrap.sh --path /absolute/path/to/coco2017
 ```
 
+4) Ensure repo calibration assets exist (tracked in-repo):
+
+- `/data1/huangzhe/code/auto-quantize-model/datasets/vlm-quantize-calib/coco2017_vlm_calib_{small,medium,large}.db`
+- `/data1/huangzhe/code/auto-quantize-model/datasets/vlm-quantize-calib/coco2017_captions_{small,medium,large}.txt`
+
 ## Run the tutorial pack (verify mode)
 
 From repo root:
@@ -54,6 +59,18 @@ Expected behavior (after this feature is implemented):
 - Default executes and verifies all **4 scenarios** (2 modes × 2 worked quant pairs).
 - Default uses the **medium** dataset preset.
 - Verification diffs only the sanitized summaries against `expected_report/`.
+
+## Subset runs (for iteration)
+
+```bash
+cd /data1/huangzhe/code/auto-quantize-model
+
+# All-layers only (both quant pairs).
+bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh --modes all_layers
+
+# LM-only only, one quant pair.
+bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh --modes lm_only --quant-pairs wint4_afp16
+```
 
 ## Refresh expected outputs (snapshot mode)
 
