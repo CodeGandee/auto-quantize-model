@@ -1,41 +1,43 @@
-# YOLO low-bit quantization 现状（PTQ + QAT）
+# YOLO (You Only Look Once) low-bit quantization 现状（Post-Training Quantization (PTQ) + Quantization-Aware Training (QAT)）
 
 ### 0) 元信息（Metadata）
 - **Title**: YOLO low-bit quantization 现状（PTQ + QAT）
 - **Date**: 2026-02-02
-- **Scope**: COCO 上 YOLOv5 + YOLOv7 系列结果（基于下列 3 篇公开论文）
+- **Scope**: Microsoft COCO (Common Objects in Context, COCO) 上 YOLOv5 + YOLOv7 系列结果（基于下列 3 篇公开论文）
 - **Package contents**: 本报告 markdown + `figures/` 目录（提取的关键图）
 - **Papers reviewed (public)**:
-  - **gupta2024-oscillations**
+  - **Reducing the Side-Effects of Oscillations in Training of Quantized YOLO Networks (gupta2024-oscillations)**
+    - Venue: IEEE/CVF Winter Conference on Applications of Computer Vision (WACV), 2024.
     - IEEE citation: K. Gupta and A. Asthana, “Reducing the Side-Effects of Oscillations in Training of Quantized YOLO Networks,” WACV, 2024. doi: N/A.
     - arXiv: `https://arxiv.org/abs/2311.05109`
-    - Open access PDF (CVF): `https://openaccess.thecvf.com/content/WACV2024/papers/Gupta_Reducing_the_Side-Effects_of_Oscillations_in_Training_of_Quantized_YOLO_WACV_2024_paper.pdf`
+    - Open access PDF (Computer Vision Foundation (CVF)): `https://openaccess.thecvf.com/content/WACV2024/papers/Gupta_Reducing_the_Side-Effects_of_Oscillations_in_Training_of_Quantized_YOLO_WACV_2024_paper.pdf`
     - Local TeX source (workspace-only): 见文末 **Local references**
-  - **nagel2022-oscillations**
+  - **Overcoming Oscillations in Quantization-Aware Training (nagel2022-oscillations)**
+    - Venue: International Conference on Machine Learning (ICML), 2022.
     - IEEE citation: M. Nagel, M. Fournarakis, Y. Bondarenko, and T. Blankevoort, “Overcoming Oscillations in Quantization-Aware Training,” ICML, 2022. doi: N/A.
     - arXiv: `https://arxiv.org/abs/2203.11086`
-    - Proceedings PDF (PMLR): `https://proceedings.mlr.press/v162/nagel22a/nagel22a.pdf`
+    - Proceedings PDF (Proceedings of Machine Learning Research (PMLR)): `https://proceedings.mlr.press/v162/nagel22a/nagel22a.pdf`
     - Local TeX source (workspace-only): 见文末 **Local references**
-  - **qyolo-2023**
+  - **Q-YOLO: Efficient Inference for Real-time Object Detection (qyolo-2023)**
     - IEEE citation: M. Wang, H. Sun, J. Shi, X. Liu, B. Zhang, and X. Cao, “Q-YOLO: Efficient Inference for Real-time Object Detection,” 2023. doi: N/A.
     - arXiv: `https://arxiv.org/abs/2307.04816`
     - Code (GitHub): `https://github.com/Meize0729/Q-YOLO`
     - Local TeX source (workspace-only): 见文末 **Local references**
 - **Primary evaluation settings assumed in this report**:
   - Dataset(s): COCO 2017（论文中声明使用 `train2017` 做 calibration/training；`val2017` 做 evaluation）
-  - Metric(s): COCO AP（也常写作 mAP@0.5:0.95，除非论文另有说明）
+  - Metric(s): COCO Average Precision (AP)（也常写作 mean Average Precision (mAP)@0.5:0.95，除非论文另有说明）
   - Image size / preprocessing: 640×640（`qyolo-2023` 明确给出；`gupta2024-oscillations` 使用 YOLO defaults）
-  - Baseline FP32 reference: 各论文表格中报告的 FP32 数值（不同论文之间不保证完全一致）
+  - Baseline 32-bit floating point (FP32) reference: 各论文表格中报告的 FP32 数值（不同论文之间不保证完全一致）
 
 ### 1) 执行摘要（Executive summary，最多 1 页）
-- **Best reported PTQ result (headline)**: Q-YOLO PTQ @ W4A4 on COCO val2017 — YOLOv7x: AP 37.6（Δ −14.9 vs FP32 52.5）。
-- **Best reported QAT result (headline)**: Gupta et al. QAT（EMA + post-hoc correction）@ “4-bit” on COCO — YOLOv7: AP 48.9（Δ −2.3 vs FP32 51.2）。
+- **Best reported Post-Training Quantization (PTQ) result (headline)**: Q-YOLO PTQ @ W4A4 on COCO val2017 — YOLOv7x: AP 37.6（Δ −14.9 vs FP32 52.5）。
+- **Best reported Quantization-Aware Training (QAT) result (headline)**: Gupta et al. QAT（Exponential Moving Average (EMA) + post-hoc Quantization Correction (QC)）@ “4-bit” on COCO — YOLOv7: AP 48.9（Δ −2.3 vs FP32 51.2）。
 - **Key takeaways (3–7 bullets)**:
-  - 在被审阅的 PTQ pipeline 中，INT8 PTQ 对 YOLOv5/v7 可以接近无损，但 4-bit PTQ 相比 FP32 仍会出现大幅 accuracy collapse。
+  - 在被审阅的 PTQ pipeline 中，8-bit integer (INT8) PTQ 对 YOLOv5/v7 可以接近无损，但 4-bit PTQ 相比 FP32 仍会出现大幅 accuracy collapse。
   - 对 YOLO detection 来说，同一 bit-width 下，QAT（甚至 3–4 bits）往往能显著优于 PTQ。
-  - 由 STE 驱动的 oscillations（weights 以及 quantization scale/step parameters）是 low-bit QAT 的核心稳定性/精度瓶颈之一。
+  - 由 Straight-Through Estimator (STE) 驱动的 oscillations（weights 以及 quantization scale/step parameters）是 low-bit QAT 的核心稳定性/精度瓶颈之一。
   - “Layer exceptions”（例如 first/last layers 维持更高精度）仍是维持 accuracy 的关键手段。
-  - 部署现实：主流 inference stack 大多标准化在 INT8（且常要求 symmetric），因此除非具备自定义 kernels/hardware，否则 INT4 的落地空间有限。
+  - 部署现实：主流 inference stack 大多标准化在 INT8（且常要求 symmetric），因此除非具备自定义 kernels/hardware，否则 4-bit integer (INT4) 的落地空间有限。
 - **What’s still unclear / not comparable across papers (3–7 bullets)**:
   - 各论文的 FP32 baseline 存在小幅差异（可能来自 codebase/training/eval 设置差别），导致跨论文 Δ 对比噪声较大。
   - “4-bit” 并不总是同一个定义：有的工作对 first/last layers 做高精度保留；有的未完整声明所有 layer exceptions。
@@ -47,16 +49,16 @@
   - `Wb-Ab` 表示 weight bit-width 为 `b`、activation bit-width 为 `b`（例如 `W4A4`）。
   - 如果 first/last layers 存在 exceptions，本报告会在 Notes 列标注（论文中也常见该做法）。
 - **Quantization scope**:
-  - **PTQ（Q-YOLO）**: quantizes backbone/neck/head；同时保留 input/output layer accuracy（意味着这些层通常 retained higher precision）。
-  - **QAT（Gupta et al.）**: quantizes weights + activations；常见做法是 first/last layers 保持 8-bit，同时也报告了“fully 4-bit” variant。
+  - **Post-Training Quantization (PTQ)**（Q-YOLO）: quantizes backbone/neck/head；同时保留 input/output layer accuracy（意味着这些层通常 retained higher precision）。
+  - **Quantization-Aware Training (QAT)**（Gupta et al.）: quantizes weights + activations；常见做法是 first/last layers 保持 8-bit，同时也报告了“fully 4-bit” variant。
 - **Calibration protocol (PTQ)**:
   - Q-YOLO: 1500 张 COCO `train2017` 图像做 calibration；activation histograms 使用 2048 bins；通过 histogram search 选择 clipping/range。
 - **Training protocol (QAT)**:
-  - Gupta et al.: 从 pretrained FP model 开始做 100-epoch QAT；LSQ-style learned step size；对 latent weights/scale factors 做 EMA；外加 1-epoch 的 post-hoc correction。
+  - Gupta et al.: 从 pretrained FP model 开始做 100-epoch QAT；Learned Step Size Quantization (LSQ)-style learned step size；对 latent weights/scale factors 做 Exponential Moving Average (EMA)；外加 1-epoch 的 post-hoc Quantization Correction (QC)。
 - **Hardware / kernel availability assumptions**:
   - Q-YOLO 明确讨论 TensorRT/OpenVINO 部署；并报告 INT8 speed（受 framework constraint 影响）。
 - **Important comparability caveats**:
-  - Detection AP 对 preprocessing、NMS/postprocess 以及具体 YOLO implementation 很敏感；跨论文对比应主要视为方向性参考。
+  - Detection AP 对 preprocessing、Non-Maximum Suppression (NMS)/postprocess 以及具体 YOLO implementation 很敏感；跨论文对比应主要视为方向性参考。
   - 论文中报告的 “4-bit” 常包含 layer precision exceptions；除非论文明确说明，否则应把 “W4A4” 视为 “mostly W4A4”。
 
 ### 3) PTQ 现状（results + interpretation）
@@ -71,13 +73,13 @@
 
 - Dataset: COCO val2017
 - Metric: AP（COCO AP / mAP@0.5:0.95）
-- Quant scheme: W symmetric per-channel；A asymmetric per-layer；UH histogram search for activation range
+- Quant scheme: weights (W) symmetric per-channel；activations (A) asymmetric per-layer；UH activation quantization (UH) histogram search for activation range
 - Calibration: 1500 COCO train2017 images
 - Notes: input/output layers 通常会 retained（非端到端 fully quantized）
 
 #### 3.2 解读（Interpretation）
 ##### Method overview（方法概述）
-Q-YOLO（qyolo-2023）是一个面向 YOLO 的 end-to-end PTQ pipeline，核心针对 YOLO 中常见的 activation distribution imbalance。其关键点是 UH：固定一个经验性的 activation lower bound（与 SiLU 的分布形态相关），再用 histogram-based search 选择 activation upper bound，使得 quantization error（用 MSE proxy）最小。
+Q-YOLO（qyolo-2023）是一个面向 YOLO 的 end-to-end PTQ pipeline，核心针对 YOLO 中常见的 activation distribution imbalance。其关键点是 UH activation quantization (UH)：固定一个经验性的 activation lower bound（与 Sigmoid Linear Unit (SiLU) 的分布形态相关），再用 histogram-based search 选择 activation upper bound，使得 quantization error（用 Mean Squared Error (MSE) proxy）最小。
 
 ```text
 # Q-YOLO PTQ pipeline（简化版；核心 = 用 UH 选 activation range）
@@ -108,7 +110,7 @@ def uh_search_max(hist, a_min, bits):
         a_max = bin_center(hist, i)                          # 候选 upper bound
         fp = hist_centers(hist, 0, i)                        # 用 bin centers 近似 FP32 values
         qdq = dequantize(quantize_asymmetric(fp, a_min, a_max, bits))
-        mse = mean_squared_error(fp, qdq)                    # quantization error proxy
+        mse = mean_squared_error(fp, qdq)                    # Mean Squared Error (MSE) proxy
         if mse < best_mse:
             best_max, best_mse = a_max, mse
     return best_max
@@ -153,17 +155,19 @@ def uh_search_max(hist, a_min, bits):
 
 - Dataset: COCO
 - Metric: mAP (AP)
-- Quant scheme: per-tensor（LSQ-style）weight+activation QAT with EMA + QC（Ours “EMA+QC”）
-- QAT recipe highlights: 100 epochs；Adam lr=1e-4；EMA decay 0.9999；+1 epoch correction（BN stats fixed）
+- Quant scheme: per-tensor（LSQ-style）weight+activation QAT with Exponential Moving Average + Quantization Correction (EMA+QC)（Ours “EMA+QC”）
+- QAT recipe highlights: 100 epochs；Adam learning rate (lr)=1e-4；EMA decay 0.9999；+1 epoch correction（Batch Normalization (BN) stats fixed）
 - Notes: QAT 期间 first/last layers 以 8-bit quantization 处理（detection 常见做法）
 
 #### 4.2 解读（Interpretation）
 ##### Method overview（方法概述）
 Gupta et al.（gupta2024-oscillations）聚焦于 YOLO 在 STE-based low-bit QAT 中的 oscillations 问题，并提出两个互补机制：
 
-1) **EMA model**：在 QAT 过程中对 latent weights 以及 learned quantization step sizes（weights/activations）做 exponential moving average（EMA），并用 EMA-smoothed parameters 做最终 inference/evaluation。
+1) **Exponential Moving Average (EMA) model**：在 QAT 过程中对 latent weights 以及 learned quantization step sizes（weights/activations）做 exponential moving average（EMA），并用 EMA-smoothed parameters 做最终 inference/evaluation。
 
-2) **QC (post-hoc quantization correction)**：在标准 QAT 结束后，追加一个低成本的 correction phase（1 epoch），学习每层的 affine scale/shift（可 fold 到 BN），用于补偿由于 weights/step oscillations 在 quantization thresholds 附近跳变而累积的 quantization error。
+2) **Quantization Correction (QC)**：在标准 QAT 结束后，追加一个低成本的 post-hoc correction phase（1 epoch），学习每层的 affine scale/shift（可 fold 到 Batch Normalization (BN)），用于补偿由于 weights/step oscillations 在 quantization thresholds 附近跳变而累积的 quantization error。
+
+下面 pseudo code 的记号约定：`W` = latent weights；`sW` = weight quantization step size；`sA` = activation quantization step size。
 
 ```text
 # QAT with EMA（简化版；LSQ-style step-size learning，per-tensor quantization）
@@ -210,7 +214,7 @@ fold_into_BN_or_scales(gamma, beta)                              # absorb 到 BN
 - Practical takeaway: 对 YOLO low-bit QAT，显式处理 oscillations（EMA、dampening/freezing、post-hoc correction）通常能显著降低 4-bit 的 AP 损失。
 
 ##### Limitations（局限与训练/部署代价）
-- **efficient YOLO 的 extremely low precision（4-bit and lower）仍然困难**：论文明确指出即便使用 SOTA QAT methods，在 4-bit 及更低 precision 上仍然很难。
+- **efficient YOLO 的 extremely low precision（4-bit and lower）仍然困难**：论文明确指出即便使用 state-of-the-art (SOTA) QAT methods，在 4-bit 及更低 precision 上仍然很难。
   > “It is difficult to achieve extremely low precision (4-bit and lower) for efficient YOLO models even with SOTA QAT methods…”  
   > — gupta2024-oscillations, Abstract
 - **oscillation 不仅影响 latent weights，也影响 scale factors（weights + activations）**：论文指出 oscillation 会同时影响 latent weights 与（weights/activations 的）scale factors。
@@ -223,7 +227,7 @@ fold_into_BN_or_scales(gamma, beta)                              # absorb 到 BN
   > “Per-channel quantization with depth-wise convolutions can sometimes be inferior to per-tensor quantization.”  
   > — gupta2024-oscillations, Comparison against per-channel quantization
 
-#### Appendix (QAT): Gupta et al. “Ours (EMA+QC)” across YOLO variants
+#### Appendix (QAT): Gupta et al. “Ours (Exponential Moving Average + Quantization Correction (EMA+QC))” across YOLO variants
 以下数值来自 Table `tab:yolo-qat-ours` in gupta2024-oscillations。Δ 为相对同表 FP32 列的差值。
 
 | Model | FP32 | “4-bit” AP | Δ | “3-bit” AP | Δ | “4-bit*” AP | Δ |
@@ -285,19 +289,19 @@ fold_into_BN_or_scales(gamma, beta)                              # absorb 到 BN
 ### 6) 实践建议（Practical recommendations）
 - **For PTQ experiments**:
   - 先把 INT8 PTQ 跑通并达到稳定 parity（验证 pipeline end-to-end），再尝试 INT4。
-  - activation-aware 的 range setting（histogram/MSE/KL-style）优先；在看到 heavy imbalance/outliers 时避免对 activations 用 MinMax。
+  - activation-aware 的 range setting（histogram/MSE/Kullback–Leibler (KL)-style）优先；在看到 heavy imbalance/outliers 时避免对 activations 用 MinMax。
   - 对 sensitive layers 保持 higher precision（input/output、first/last conv、以及任何 fragile head components），并明确记录哪些 layers 被排除/保留。
   - 记录 per-layer activation histograms 与 percentile stats（quantization 前/后），用于尽早发现 imbalance。
 - **For QAT experiments**:
   - 把 “oscillation management” 当作一等调参项：EMA of weights/steps、显式 dampening/freezing、以及 small post-hoc correction 都可能带来显著提升。
   - first/last layers 保持 8-bit 作为强默认；在收敛稳定后再尝试 “fully 4-bit”。
-  - 明确 BN handling（必要时 freeze stats；显式说明 BN folding），并在 ≤4 bits 使用更保守的 optimizer/LR。
+  - 明确 BN handling（必要时 freeze stats；显式说明 BN folding），并在 ≤4 bits 使用更保守的 optimizer/learning rate。
 - **Minimum reporting checklist (for future runs)**:
   - 精确的 YOLO codebase/version + checkpoint + dataset split
-  - Metric 定义（AP vs AP50 等）、image size、NMS/postprocess settings
+  - Metric 定义（AP vs AP50（AP at Intersection over Union (IoU)=0.5）等）、image size、NMS/postprocess settings
   - bit-widths + granularity + symmetric/asymmetric + per-layer exceptions
   - PTQ: calibration set size/selection 与 range-setting method
-  - QAT: epochs/LR/optimizer、BN treatment、distillation/EMA/correction steps
+  - QAT: epochs/learning rate/optimizer、BN treatment、distillation/EMA/correction steps
   - latency 与 deployment target + kernels/framework constraints（INT8 vs INT4 reality）
 
 ### 7) References
