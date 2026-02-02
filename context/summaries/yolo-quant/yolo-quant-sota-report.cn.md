@@ -73,6 +73,8 @@
 | qyolo-2023 | YOLOv7x | 37.6 | 52.5 | −14.9 | 4 | 4 | 640 |
 
 Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+> “Finally, the fully-quantized network is deployed either on integer arithmetic hardware or simulated on GPUs…”  
+> — Q-YOLO: Efficient Inference for Real-time Object Detection (qyolo-2023), PTQ process overview
 
 - Dataset: COCO val2017
 - Metric: AP（COCO AP / mAP@0.5:0.95）
@@ -147,6 +149,8 @@ def uh_search_max(hist, a_min, bits):
 | YOLOv7x | 52.5 | 52.3 | 52.0 | 52.4 | 36.8 | 37.6 |
 
 Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+> “Finally, the fully-quantized network is deployed either on integer arithmetic hardware or simulated on GPUs…”  
+> — Q-YOLO: Efficient Inference for Real-time Object Detection (qyolo-2023), PTQ process overview
 
 ### 4) QAT 现状（results + interpretation）
 
@@ -159,6 +163,8 @@ Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 lo
 | gupta2024-oscillations | YOLOv7 | 46.8 | 51.2 | −4.4 | 3 | 3 | 640 |
 
 Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+> “…$q(\\vec{w}; s, u, v) = s \\cdot \\mathrm{clip}(\\mathrm{round}(\\vec{w}/s), u, v)$… where … ‘\\mathrm{round}’ is the round-to-nearest operator…”  
+> — Reducing the Side-Effects of Oscillations in Training of Quantized YOLO Networks (gupta2024-oscillations), Preliminaries (quantization function)
 
 - Dataset: COCO
 - Metric: mAP (AP)
@@ -248,6 +254,8 @@ fold_into_BN_or_scales(gamma, beta)                              # absorb 到 BN
 | YOLOv7 | 51.2 | 48.9 | −2.3 | 46.8 | −4.4 | 47.6 | −3.6 |
 
 Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+> “…$q(\\vec{w}; s, u, v) = s \\cdot \\mathrm{clip}(\\mathrm{round}(\\vec{w}/s), u, v)$… where … ‘\\mathrm{round}’ is the round-to-nearest operator…”  
+> — Reducing the Side-Effects of Oscillations in Training of Quantized YOLO Networks (gupta2024-oscillations), Preliminaries (quantization function)
 
 #### Appendix (QAT): Baseline comparison (Gupta et al. re-implementations on YOLO)
 以下数值来自 Table `tab:compare-baselines` in gupta2024-oscillations。
@@ -264,6 +272,8 @@ Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 lo
 | 3-bit | Ours (EMA+QC) | 18.2 | 30.2 | 31.0 |
 
 Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+> “…$q(\\vec{w}; s, u, v) = s \\cdot \\mathrm{clip}(\\mathrm{round}(\\vec{w}/s), u, v)$… where … ‘\\mathrm{round}’ is the round-to-nearest operator…”  
+> — Reducing the Side-Effects of Oscillations in Training of Quantized YOLO Networks (gupta2024-oscillations), Preliminaries (quantization function)
 
 ### 5) Challenges & open problems（含证据引用）
 - **Activation range/outlier management（PTQ bottleneck at ≤4 bits）**：YOLO activations 可能高度不均衡（SiLU），导致 MinMax/naive clipping 把 quantization levels 浪费在低概率的 extreme values 上；即便做 truncation 也可能显著伤害 AP。
