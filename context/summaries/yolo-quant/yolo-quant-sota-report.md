@@ -36,6 +36,7 @@
   - 8-bit integer (INT8) PTQ can be near-lossless for YOLOv5/v7 in the reviewed PTQ pipeline, but 4-bit PTQ still collapses a lot vs FP32.
   - For YOLO detection, QAT (even at 3–4 bits) can be dramatically better than PTQ at the same bit-width.
   - Straight-Through Estimator (STE)-driven oscillations (weights and scale/step parameters) are a central stability/accuracy bottleneck for low-bit QAT.
+    > The Straight-Through Estimator (STE) is a surrogate-gradient trick for non-differentiable quantization: use quantize/dequantize in the forward pass, but in backprop replace `d/dx quantize(x)` with an identity (or clipped-identity) gradient so gradients can flow.
   - “Layer exceptions” (e.g., keeping first/last layers higher precision) remain a key ingredient for keeping accuracy.
   - Deployment reality: common inference stacks largely standardize on INT8 (and often symmetric), limiting practical 4-bit integer (INT4) unless you have custom kernels/hardware.
 - **What’s still unclear / not comparable across papers (3–7 bullets)**:
