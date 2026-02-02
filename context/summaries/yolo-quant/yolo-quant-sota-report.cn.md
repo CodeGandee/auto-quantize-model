@@ -1,4 +1,4 @@
-# YOLO (You Only Look Once) low-bit quantization 现状（Post-Training Quantization (PTQ) + Quantization-Aware Training (QAT)）
+# You Only Look Once (YOLO) low-bit quantization 现状（Post-Training Quantization (PTQ) + Quantization-Aware Training (QAT)）
 
 ### 0) 元信息（Metadata）
 - **Title**: YOLO low-bit quantization 现状（PTQ + QAT）
