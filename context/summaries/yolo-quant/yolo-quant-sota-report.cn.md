@@ -72,6 +72,8 @@
 | qyolo-2023 | YOLOv7 | 37.3 | 50.8 | −13.5 | 4 | 4 | 640 |
 | qyolo-2023 | YOLOv7x | 37.6 | 52.5 | −14.9 | 4 | 4 | 640 |
 
+Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+
 - Dataset: COCO val2017
 - Metric: AP（COCO AP / mAP@0.5:0.95）
 - Quant scheme: weights (W) symmetric per-channel；activations (A) asymmetric per-layer；UH activation quantization (UH) histogram search for activation range
@@ -144,6 +146,8 @@ def uh_search_max(hist, a_min, bits):
 | YOLOv7  | 50.8 | 50.6 | 50.5 | 50.7 | 16.7 | 37.3 |
 | YOLOv7x | 52.5 | 52.3 | 52.0 | 52.4 | 36.8 | 37.6 |
 
+Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+
 ### 4) QAT 现状（results + interpretation）
 
 #### 4.1 Snapshot table（best/representative QAT results）
@@ -153,6 +157,8 @@ def uh_search_max(hist, a_min, bits):
 | gupta2024-oscillations | YOLOv7 | 48.9 | 51.2 | −2.3 | 4 | 4 | 640 |
 | gupta2024-oscillations | YOLOv5s | 30.2 | 37.4 | −7.2 | 3 | 3 | 640 |
 | gupta2024-oscillations | YOLOv7 | 46.8 | 51.2 | −4.4 | 3 | 3 | 640 |
+
+Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
 
 - Dataset: COCO
 - Metric: mAP (AP)
@@ -241,6 +247,8 @@ fold_into_BN_or_scales(gamma, beta)                              # absorb 到 BN
 | YOLOv7-tiny | 37.5 | 35.2 | −2.3 | 31.0 | −6.5 | 34.3 | −3.2 |
 | YOLOv7 | 51.2 | 48.9 | −2.3 | 46.8 | −4.4 | 47.6 | −3.6 |
 
+Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
+
 #### Appendix (QAT): Baseline comparison (Gupta et al. re-implementations on YOLO)
 以下数值来自 Table `tab:compare-baselines` in gupta2024-oscillations。
 
@@ -254,6 +262,8 @@ fold_into_BN_or_scales(gamma, beta)                              # absorb 到 BN
 | 3-bit | Osc. dampening | 16.4 | 27.5 | 29.2 |
 | 3-bit | Ours (EMA) | 16.4 | 28.5 | 30.3 |
 | 3-bit | Ours (EMA+QC) | 18.2 | 30.2 | 31.0 |
+
+Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 low-bit floating point）。
 
 ### 5) Challenges & open problems（含证据引用）
 - **Activation range/outlier management（PTQ bottleneck at ≤4 bits）**：YOLO activations 可能高度不均衡（SiLU），导致 MinMax/naive clipping 把 quantization levels 浪费在低概率的 extreme values 上；即便做 truncation 也可能显著伤害 AP。
