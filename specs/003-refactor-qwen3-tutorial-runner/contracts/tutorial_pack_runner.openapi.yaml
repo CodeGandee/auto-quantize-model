@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Qwen3-VL Tutorial Pack Runner (Conceptual API Contract)
+  version: 0.1.0
+  description: |
+    Conceptual contract for the shared Qwen3-VL tutorial pack runner.
+
+    The implementation is expected to be a CLI; this document captures a stable,
+    testable contract for the core user actions (run verify vs snapshot) in a
+    tool-agnostic way.
+paths:
+  /tutorial-pack-runs:
+    post:
+      summary: Execute a tutorial pack run (verify or snapshot)
+      description: |
+        Starts a synchronous tutorial pack run. The run enumerates scenarios as
+        the cartesian product of `modes` and `quant_pairs`, and fails fast on the
+        first failing scenario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./tutorial_pack_run_request.schema.json"
+      responses:
+        "200":
+          description: Run completed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - status
+                  - scenarios
+                properties:
+                  status:
+                    type: string
+                    enum: ["ok"]
+                  scenarios:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - scenario_id
+                        - mode
+                        - quant_pair
+                      properties:
+                        scenario_id:
+                          type: string
+                        mode:
+                          type: string
+                          enum: ["all_layers", "lm_only"]
+                        quant_pair:
+                          type: string
+        "400":
+          description: Invalid request (bad mode/quant-pair selection, missing required fields).
+        "409":
+          description: Verification requested but expected snapshots are missing/incomplete.
+        "500":
+          description: Run failed (missing assets, degenerate sensitivity, diff mismatch, or runtime error).

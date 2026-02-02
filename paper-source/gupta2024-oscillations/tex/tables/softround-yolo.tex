@@ -1,0 +1,29 @@
+
+
+
+\begin{table}
+% \setlength{\tabcolsep}{1.5pt}
+    % \vspace{-2ex}
+    \small
+    \centering
+    \caption{\em Comparison between hard-rounding and soft-rounding (k=0.45). Here, soft-rounding outperforms hard-rounding function which is actually even used during \acrshort{QAT}.}
+\vspace{-2ex}
+\begin{tabular}{l|ccc}
+\toprule
+Method                         & \#-bits & \yoloa-n & 
+\yoloa-s \\
+\midrule
+Full precision                 & FP      & 28.0       & 37.4     \\
+\midrule
+\multirow{2}{*}{Hard Rounding} & 4-bit       & 20.6    & 32.5    \\
+
+                               & 3-bit        & 15.2     & 27.2     \\
+                \midrule
+\multirow{2}{*}{Soft Rounding} & \cellcolor{myGray} 4-bit        & \cellcolor{myGray}\textbf{21.2}     & \cellcolor{myGray}\textbf{32.6}     \\
+                               & \cellcolor{myGray} 3-bit        & \cellcolor{myGray} \textbf{16.2}     & \cellcolor{myGray} \textbf{27.7}    
+\\
+\bottomrule
+\end{tabular}
+\vspace{-2ex}
+\label{tab:softround-yolo5}
+\end{table}

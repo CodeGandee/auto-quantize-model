@@ -1,0 +1,63 @@
+In this section, we evaluate the effectiveness of our proposed methods for overcoming oscillations and compare them against other QAT methods on ImageNet \citep{imagenet}. We focus on low-bit quantization, 4 and 3 bits, of efficient networks with depth-wise separable convolutions, where the effect of weight oscillation is most pronounced. We start with our ablation studies, where we only quantize the weights in a network and, finally, present results for low-bit weight and activation quantization.
+
+\subsection{Experimental setup}
+
+
+
+\label{sec:experimentalconv.3.1_setup}
+
+% \paragraph{Networks} We evaluate our methods using the \rn{18} \citep{resnet}, \mnv{2} \cite{mobilenetv2}, \mnv{3}-Small \citep{MobileNetV3} and EfficientNet-Lite \citep{EfficientNet}.
+
+\paragraph{Quantization}
+We follow the example of existing QAT literature and apply LSQ-type \citep{lsq} weight and activation quantization: we quantize all weights to a low bit-width while keeping the weights of the first and last layer to 8-bits, and quantize the input to all layers expect for the normalizing layers. We use per-tensor quantization \cite{krishnamoorthi} and learn the quantization scaling factor.
+
+\paragraph{Optimization}
+In all cases, we start from a pre-trained full-precision network and instantiate the weight and activation quantization parameters using MSE range estimation \citep{whitepaper}. We use SGD with a momentum of 0.9 and train using a cosine annealing learning-rate decay. We train for 20 epochs with only weight quantization for the ablation studies. For weight and activation quantization in section \ref{sec:comparison_to_qat_methods}, we train all models for 90 epochs. Depending on the network and quantization bit-width we train with a learning rate of either 0.01 or 0.0033. 
+
+
+% we sweep through learning rates and present the results for the best one. 
+% We train for 20 epochs using the Adam \cite{kingma2014adam} optimizer on both weights and quantization parameters and use a cosine annealing learning-rate decay (without restarts) $100\times$ than the initial learning rate. For each quantization regime, we sweep through learning rates and present the results for the best one. 
+
+\subsection{Ablation studies}
+\label{sec:ablation_studies}
+\paragraph{Oscillation dampening}
+In table \ref{tbl:ocillation_dampening_ablation} we study how the strength of the dampening loss affects the network's final accuracy and the proportion of oscillating weights at the end of training. In the first three rows, we observe that as we increase the coefficient $\lambda$, the proportion of oscillating weights decreases and the gap between pre and post-BN re-estimation accuracy closes. However, too much dampening harms the final accuracy, suggesting that excessive regularization inhibits beneficial movement of weights between quantization levels.
+
+Our solution to this problem is to gradually increase the regularization strength during training. This allows the latent weights to move more freely in the first stages of training, while reducing harmful oscillations close to convergence by applying a stronger regularization. We find that a cosine annealing schedule for $\lambda$ works well in practice. \citet{binreg} also notice that such a regularization is harmful at the early stages of training but instead adopt a two-stage optimization process. We see that such a strategy can significantly dampen the oscillations while not harming the accuracy. The best damping configuration improves almost 1\% over the post-BN re-estimation baseline and more than 5\% over the pre-BN re-estimation baseline.
+
+In figure \ref{fig:bin_distribution_freezing_damp} (left), we also visualize the effect of dampening on the latent weight distribution of the same depth-wise separable layer as in figure \ref{fig:mv2_bin_distribution}. As intended, the latent weights are now clustered around the quantization bin centres with hardly any weights at the decision boundary. 
+
+\input{tables/oscillation_dampening_ablation}
+
+\input{tables/weigth_freezing_ablation}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=1.\linewidth]{figures/mnv2_bin_dist_lsq_binReg_freeze_v2.png} 
+\vspace{-0.8cm}
+\caption{ Histogram of the distance of latent weights of layer conv.3.1 of \mnv{2} from their closest quantization grid-point after training with oscillation dampening (left) or iterative weight freezing (right).} 
+\vspace{-0.1cm}
+\label{fig:bin_distribution_freezing_damp}
+\end{figure}
+
+
+\paragraph{Iterative weight freezing}
+% \input{tables/weigth_freezing_ablation}
+In table \ref{tbl:weight_freezing_ablation}, we demonstrate the effectiveness of our iterative weight freezing algorithm for various freezing thresholds. Using a constant threshold throughout training, we see that the amount of remaining oscillations significantly reduces with a decreasing threshold and only some low frequency oscillations remain in the network. We also see that the pre-BN re-estimation accuracy is  closer to the the post-BN re-estimation accuracy, as one would expect when there are fewer oscillations at the end of training. 
+
+\input{tables/final_results}
+However, we note that if the oscillation threshold becomes too low, too many weights get frozen in the early stages of training reducing the final accuracy. To address this, we apply an annealing schedule to the freezing threshold similar to the one used in dampening. This allows us to use a stronger freezing threshold and freeze almost all oscillations towards the end of training, when they are most disruptive.  The best freezing threshold improves almost 1\% over the post BN re-estimation baseline and more than 5\% over the pre BN re-estimation baseline. Its accuracy is on par with the oscillation dampening while having significantly less remaining oscillations (0.04\% vs 1.11\%).
+
+In figure \ref{fig:bin_distribution_freezing_damp} (right), we see how iterative weight freezing changes the latent weight distribution of layer conv.3.1 of \mnv{2}. The majority of the latent weights are now frozen at the bin centres removing the peaks observed at the decision boundary in figure \ref{fig:mv2_bin_distribution}.
+
+
+% shows the final latent latent weight distribution for the depth-wise separable
+
+% In figure \ref{fig:bin_distribution_freezing_damp} (right) we visualize how freezing affects the final latent weight distribution for the depth-wise separable convolution conv.3.1 of \mnv{2}. The distribution peaks at the quantization boundaries anymore from figure \ref{fig:mv2_bin_distribution} (right) are now gone as these weight have now been frozen to the quantization bin centre.
+
+\subsection{Comparison to other QAT methods}
+\label{sec:comparison_to_qat_methods}
+We compare our methods for overcoming oscillation  to other QAT alternatives and demonstrate their effectiveness in low-bit quantization of popular efficient neural networks. To compare to existing methods in the literature we quantize both weights and activations. 
+In table \ref{tbl:final_results_mnv2}, we show the results for \mnv{2} and demonstrate that both our algorithms outperform all competing QAT techniques in literature for 3 and 4-bit quantization. We also achieve state-of-the-art results for \mnv{3}-Small and \efnet{lite} in tables \ref{tbl:final_results_mnv3} and \ref{tbl:final_results_en_lite}, respectively. In all cases, our oscillation prevention methods significantly improve ($>1\%$) over the commonly used LSQ baseline, showing the general applicability of our methods to other efficient networks.
+
+We note that oscillation dampening leads to an increase of approximately 33\% in training time compared to the LSQ baseline. A similar trend was also observed by \cite{binreg}. On the other hand, iterative weight freezing has a negligible computational overhead while achieving similar performance.

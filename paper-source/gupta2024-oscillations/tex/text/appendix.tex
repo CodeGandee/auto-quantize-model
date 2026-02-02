@@ -1,0 +1,63 @@
+Here, we provide additional experimental results and analysis. First, we provide a comparison between vanilla baseline methods and results using \qc{} on the baselines on \yoloa{} and \yolob{}. Later, we also provide ablation studies of various setups of \qc{} and show the stability of \exma{} for the decay parameter $(\alpha)$. 
+
+\section{Comparisons with vanilla baselines and \qc{} based baselines}
+\input{tables/baseline-qc}
+Further, we also perform experiments to evaluate the effectiveness of \qc{} on the baseline \acrshort{QAT} methods such as \acrshort{LSQ}~\cite{lsq} and Oscillation dampening~\cite{nagel2022overcoming} on object detection task on \coco{} dataset and the results are reported in \tabref{tab:baseline-qc}. Our \qc{} approach to correct the error induced due to oscillating weights and scale factors cannot only improve the detection performance of quantized models of \exma{} but also the baseline methods. Despite that, our combined approach with both \exma{} and \qc{} outperforms all the baselines with \qc{} consistently at 4-bit as well as 3-bit quantization on \yoloa{} and \yolob{} variants.
+
+\section{Ablation on different \qc{} setups}
+\input{tables/qc-ablation}
+\qc{} can correct the error induced due to oscillations after the quantization by employing the per-channel scale and shift correction factors. These scale factors can also be chosen per-tensor. To evaluate the effectiveness of different components of \qc{} such as scale and shift correction factors, we provide ablation studies in \tabref{tab:qc-ablation}. We also provide results on both per-tensor and per-channel setup of \qc{}. It is important to note that both scale and shift parameters are equally important in both per-tensor and per-channel \qc{} setup and neither alone can effectively reduce oscillation-based error. Also, even the simple per-tensor setup of \qc{} improves the \exma{} performance but as expected it cannot meet the performance achieved by the per-channel \qc{} setting.
+
+\section{Effect of varying decay factor in \exma{}}
+\input{tables/diff-ema-momentum}
+To check the stability of \exma{} to varying decay factors, we trained different 4-bit \yoloa{-n} models using \coco{} datasets and the comparisons are provided in \tabref{tab:diff-mom-ema}. As shown, our \exma{} approach is quite stable to different decay parameters. \exma{} takes into into account $\approx1-(1-\alpha)$ iterations to compute the average weights or scale factors. Typically, oscillations are consistent over $\ge100$ iterations, and taking an average of scale factors or weights over $\ge 100$ iterations works effectively in mitigating the oscillation side-effects in the final \acrshort{QAT} model. 
+
+\section{Oscillation in scale factors with or without \exma{}}
+To show the effect of \exma{} on the quantization scale factors during the training, we also provide the plots for scale factors during the last 4K iterations of training with or without \exma{} in \figref{fig:scale-wt-yolov5} and \figref{fig:scale-act-yolov5} for scale factors of weights and activations respectively. It can be seen that \exma{} leads to a smoother transition of quantization scale factors for both weights and activations throughout the training and thus lead to stable training of quantized \yolo{} models.
+\begin{figure*}[ht]
+     \centering
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=0.99\textwidth]{figures/appendix/model/wts_stepsize.pdf.pdf}
+         \caption{}
+         % \label{fig:latent_yolo}
+     \end{subfigure}
+    %  \hfill
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=0.99\textwidth]{figures/appendix/ema/wts_stepsize.pdf.pdf}
+         \caption{}
+         % \label{fig:scalefactor_wt_yolo}
+     \end{subfigure}
+    % \vspace{-1ex}
+        \caption{\em Effect of \exma{} on oscillation issue in \yoloa{}-n variant trained on \coco{} dataset at 4-bit precision using \acrshort{LSQ}~\cite{lsq}. (a) Scale factors for weight quantization in the vanilla model during the last 4K iterations of 2nd-5th conv layer, (b) Scale factors for weight quantization in \exma{} model during the last 4K iterations of 2nd-5th conv layer. Here, it can be observed that \exma{} makes the quantization scale factors stable for all the layers and gets rid of the oscillation issue.}
+        \label{fig:scale-wt-yolov5}
+    % \vspace{-3ex}
+\end{figure*}
+
+\begin{figure*}[ht]
+     \centering
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=0.99\textwidth]{figures/appendix/model/acts_stepsize.pdf.pdf}
+         \caption{}
+         % \label{fig:latent_yolo}
+     \end{subfigure}
+    %  \hfill
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=0.99\textwidth]{figures/appendix/ema/acts_stepsize.pdf.pdf}
+         \caption{}
+         % \label{fig:scalefactor_act_yolo}
+     \end{subfigure}
+    % \vspace{-1ex}
+        \caption{\em Effect of \exma{} on oscillation issue in \yoloa{}-n variant trained on \coco{} dataset at 4-bit precision using \acrshort{LSQ}~\cite{lsq}. (a) Scale factors for activation quantization in the vanilla model during the last 4K iterations of 2nd-5th conv layer, (b) Scale factors for activation quantization in \exma{} model during the last 4K iterations of 2nd-5th conv layer. Here, it can be observed that \exma{} makes the quantization scale factors stable for all the layers and gets rid of the oscillation issue.}
+        \label{fig:scale-act-yolov5}
+    % \vspace{-3ex}
+\end{figure*}
+
+
+
+
+ 
+

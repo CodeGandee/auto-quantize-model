@@ -1,0 +1,118 @@
+% WACV 2024 Paper Template
+% based on the CVPR 2023 template (https://media.icml.cc/Conferences/CVPR2023/cvpr2023-author_kit-v1_1-1.zip) with 2-track changes from the WACV 2023 template (https://github.com/wacv-pcs/WACV-2023-Author-Kit)
+% based on the CVPR template provided by Ming-Ming Cheng (https://github.com/MCG-NKU/CVPR_Template)
+% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+%%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
+% \usepackage[review,algorithms]{wacv}      % To produce the REVIEW version for the algorithms track
+%\usepackage[review,applications]{wacv}      % To produce the REVIEW version for the applications track
+% \usepackage{wacv}              % To produce the CAMERA-READY version
+\usepackage[pagenumbers]{wacv} % To force page numbers, e.g. for an arXiv version
+
+% Include other packages here, before hyperref.
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[smallcaps]{glossaries}[=v4.46]
+
+% It is strongly recommended to use hyperref, especially for the review version.
+% hyperref with option pagebackref eases the reviewers' job.
+% Please disable hyperref *only* if you encounter grave issues, e.g. with the
+% file validation for the camera-ready version.
+%
+% If you comment hyperref and then uncomment it, you should delete
+% ReviewTempalte.aux before re-running LaTeX.
+% (Or just hit 'q' on the first LaTeX run, let it finish, and you
+%  should be clear).
+\usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
+\usepackage{tabularray}
+\usepackage{mathtools}
+
+\input{math_commands}
+\input{macros}
+
+\usepackage{colortbl}
+
+\definecolor{myGray}{gray}{0.9}
+% \definecolor{myGray}{gray}{0.85}
+% \definecolor{myGray}{gray}{0.87}
+
+\definecolor{Gray}{gray}{0.85}
+\newcolumntype{z}{>{\columncolor{myGray}}c}
+\newcolumntype{a}{>{\columncolor{myGrayy}}c}
+\newcolumntype{b}{>{\columncolor{myGrayyy}}c}
+
+
+
+
+
+% Support for easy cross-referencing
+\usepackage[capitalize]{cleveref}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{section}{Section}{Sections}
+\Crefname{table}{Table}{Tables}
+\crefname{table}{Tab.}{Tabs.}
+
+
+%%%%%%%%% PAPER ID  - PLEASE UPDATE
+\def\confName{WACV}
+\def\confYear{2024}
+
+
+\begin{document}
+
+%%%%%%%%% TITLE - PLEASE UPDATE
+\title{Reducing the Side-Effects of Oscillations in Training of Quantized  \\ YOLO Networks}
+
+
+
+\author{%
+  Kartik Gupta ~~~~~~~~~
+  Akshay Asthana %\\
+\\
+Seeing Machines, Australia\\
+{\tt\small \{kartik.gupta,akshay.asthana\}@seeingmachines.com}\\
+}
+
+\maketitle
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+Quantized networks use less computational and memory resources and are suitable for deployment on edge devices. While quantization-aware training (\acrshort{QAT}) is a well-studied approach to quantize the networks at low precision, most research focuses on over-parameterized networks for classification with limited studies on popular and edge device friendly single-shot object detection and semantic segmentation methods like \yolo. Moreover, majority of \acrshort{QAT} methods rely on \gls{STE} approximation which suffers from an oscillation phenomenon resulting in sub-optimal network quantization. In this paper, we show that it is difficult to achieve extremely low precision (4-bit and lower) for efficient \yolo models even with SOTA \acrshort{QAT} methods due to oscillation issue and existing methods to overcome this problem are not effective on these models. To mitigate the effect of oscillation, we first propose Exponentially Moving Average (\exma{}) based update to the \acrshort{QAT} model. Further, we propose a simple \acrshort{QAT} correction method, namely \qc{}, that takes only a single epoch of training after standard \gls{QAT} procedure to correct the error induced by oscillating weights and activations resulting in a more accurate quantized model. With extensive evaluation on \coco dataset using various \yoloa and \yolob variants, we show that our correction method improves quantized \yolo networks consistently on both object detection and segmentation tasks at low-precision (4-bit and 3-bit).
+
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\input{text/intro.tex}
+\input{text/relatedwork.tex}
+\input{text/prelim.tex}
+\input{text/oscillation-in-yolo.tex}
+\input{text/method}
+\input{text/experiments}
+\input{text/conclusion}
+
+\onecolumn
+\appendices
+    % {\centering
+    %  {\huge \bf Reducing the Side-Effects of Oscillations in Training \\ of Quantized YOLO Networks}\\
+    %  {\huge \bf -- Supplementary Material --\\[2.5mm]  \par
+    % }
+    %  % {\large (Author Names)}
+    % }
+    % \bigskip
+
+
+%%%%%%%%% BODY TEXT
+\input{text/appendix}
+
+\twocolumn
+%%%%%%%%% REFERENCES
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{od-qat}
+}
+
+\end{document}

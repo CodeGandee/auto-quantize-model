@@ -1,0 +1,107 @@
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | c |  c }
+    \toprule
+
+  Method & W/A &    Val. Acc. (\%)  \\
+        \midrule
+Full-precision & 32/32 & 71.7 \\
+\midrule
+LSQ* \citep{lsq}         & 4/4 & 69.5 (-2.3) \\ %71.8
+PACT \cite{pact2018}    & 4/4 & 61.4  (-10.3)\\ % Assume 71.8
+DSQ \citep{DSQ}         & 4/4 & 64.8 (-6.9) \\
+EWGS \citep{EWGS}       & 4/4 & 70.3 (-1.6) \\ % 71.9
+% PROFIT \citep{profit}   & 4/4 & 71.6 \\
+LSQ + BR \citep{binreg} & 4/4 & 70.4 (-1.4)\\ %71.8
+LSQ + Dampen (ours)     & 4/4 & \textbf{70.5} (-1.2) \\
+LSQ + Freeze (ours)     & 4/4 & \textbf{70.6} (-1.1) \\
+\midrule
+LSQ* \citep{lsq}         & 3/3 & 65.3 (-6.5)  \\
+LSQ + BR \citep{binreg} & 3/3 & 67.4 (-4.4) \\
+LSQ + Dampen (ours)     & 3/3 & \textbf{67.8} (-3.9)  \\
+LSQ + Freeze (ours)     & 3/3 & \textbf{67.6} (-4.1) \\
+\bottomrule
+\end{tabular}
+ \caption{Comparison of oscillation dampening and freezing with other QAT methods for \mnv{2} on ImageNet classification. We report validation accuracy (\%) and the difference to the corresponding full precision baseline. Note, both \citet{binreg} and \citet{EWGS} use a slightly higher baseline model. *results from \citet{binreg}.}
+ \vspace{-0.1cm}
+ \label{tbl:final_results_mnv2}
+\end{table}
+
+
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | c |  c }
+    \toprule
+
+  Method & W/A &    Val. Acc. (\%)  \\
+        \midrule
+Full-precision & 32/32 & 65.1 \\
+\midrule
+LSQ* \citep{lsq}         & 4/4 & 61.0  \\
+LSQ + BR \citep{binreg} & 4/4 & 61.5 \\
+LSQ + Dampen (ours)     & 4/4 & \textbf{63.7}  \\ 
+LSQ + Freeze (ours)     & 4/4 &  \textbf{63.6} \\
+\midrule
+LSQ* \citep{lsq}         & 3/3 &  52.0 \\
+LSQ + BR \citep{binreg} & 3/3 &   56.0 \\
+LSQ + Dampen (ours)     & 3/3 &   \textbf{59.0}  \\
+LSQ + Freeze (ours)     & 3/3 &   \textbf{58.9} \\
+\bottomrule
+\end{tabular}
+ \caption{Comparison of oscillation dampening and freezing with other QAT methods for \mnv{3}-Small on ImageNet classification. We report validation accuracy (\%). *results from \citet{binreg}.}
+ \label{tbl:final_results_mnv3}
+\end{table}
+
+
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | c |  c }
+    \toprule
+
+  Method & W/A &    Val. Acc. (\%)  \\
+        \midrule
+Full-precision          & 32/32 & 75.4 \\
+\midrule
+LSQ* \citep{lsq}         & 4/4 &  72.3 \\
+LSQ + Dampen (ours)     & 4/4 &  \textbf{73.5} \\
+LSQ + Freeze (ours)     & 4/4 &  \textbf{73.5} \\
+\midrule
+LSQ* \citep{lsq}         & 3/3 &  69.7 \\
+LSQ + Dampen (ours)     & 3/3 &  \textbf{71.1}  \\
+LSQ + Freeze (ours)     & 3/3 &  \textbf{71.0} \\
+\bottomrule
+\end{tabular}
+ \caption{Comparison of oscillation dampening and freezing for EfficientNet-lite on ImageNet classification. We report validation accuracy (\%). *our re-implementation.}
+ \label{tbl:final_results_en_lite}
+\end{table}
+
+
+% \begin{table*}[t]
+%     \centering
+%     \begin{tabular}{ l | c |   c  c  c}
+%     \toprule
+
+%   Method & W/A &    \mnv{2} &  \mnv{3}-Small& EfficientNet-lite \\
+%         \midrule
+% Full-precision & 32/32 & 71.72 & 65.1 & 75.42 \\
+% \midrule
+% LSQ \citep{lsq}       & 4/4 & 69.5+ &  - & 72.34* \\
+% PACT \cite{pact2018}  & 4/4 & 61.4 &  - & -\\
+% DSQ \citep{DSQ}      & 4/4 & 64.8 &  - & -  \\
+% EWGS \citep{EWGS}    & 4/4 & 70.3 & - & - \\
+% PROFIT \citep{profit}  & 4/4 & 71.6 & - & - \\
+% LSQ + BR \citep{binreg} & 4/4 & 70.4 & - & - \\
+% LSQ + Dampen (ours) & 4/4 &   & - & - \\
+% LSQ + Freeze (ours)  & 4/4 &   & - & 73.48 \\
+% \midrule
+% LSQ \citep{lsq}       & 3/3 & 65.3+ &  - & 69.72* \\
+% LSQ + BR \citep{binreg}  & 3/3 & 67.4 & - & - \\
+% LSQ + Dampen (ours)  & 3/3 &   & - & - \\
+% LSQ + Freeze (ours)  & 3/3 &   & - & 70.94 \\
+% \bottomrule
+% \end{tabular}
+%  \caption{Comparison of method with other QAT methods on ImageNet classification. We report average top-1 validation accuracy over 3 seeds. +results from \citet{binreg}, *our implementation}
+%  \label{tbl:final_results}
+% \end{table*}
+
+

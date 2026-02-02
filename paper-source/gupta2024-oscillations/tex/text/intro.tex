@@ -1,0 +1,22 @@
+\section{Introduction}
+Deep neural networks have achieved remarkable success in various applications, including image classification, object detection, and semantic segmentation. However, deploying these models on edge devices such as mobile phones, smart cameras, and drones poses a significant challenge due to their limited computational and memory resources. These devices typically have limited battery life, storage capacity, and processing power, making it challenging to execute complex neural networks.
+To overcome these challenges, researchers have developed techniques for optimizing neural networks to reduce their computational and memory requirements while maintaining their accuracy. One such line of research is \gls{QAT}, which reduces the number of bits used to represent the network parameters, and activations resulting in smaller model sizes and faster inference times. Existing \acrshort{QAT} \cite{lsq, liu2022nonuniform, nagel2021white, krishnamoorthi} methods have made remarkable progress in quantizing neural networks at ultra-low precision with the effectiveness of {\em \acrfull{STE}} approximation still being a point of study. Previous works~\cite{Gong2019DSQ, quantization_nets} have proposed smooth approximation of rounding function to avoid the use \acrshort{STE} approximation but \acrshort{STE} is still considered to be the de-facto method for approximating gradient of quantization function during propagation due to its simplicity. Furthermore, recent works \cite{nagel2022overcoming, defossez2022differentiable} have shown oscillation issue affects quantization performance of efficient network architecture at low-precision due to \acrshort{STE} approximation in \acrshort{QAT}. 
+
+Apart from that, the majority of \acrshort{QAT} literature focuses on image classification, and quantization performance achieved on such classification tasks does not necessarily translate onto downstream tasks such as object detection, and semantic segmentation. In this paper, we focus on the more challenging task of quantizing the single-shot efficient detection networks such as \yoloa{}~\cite{yolov5} and \yolob{}~\cite{wang2022yolov7} at low-precision (3-bits and 4-bits). Furthermore, we show that the oscillation issue is even more prevalent on these networks and the gap between full-precision and quantized performance is far from what is usually observed in \acrshort{QAT} literature. We also show that apart from latent weights, learnable scale factors for both weights and activations are also affected by the oscillation issue in \yolo{} models and latent weights around quantization boundaries are sometimes closer to optimality than quantization levels. This indicates that per-tensor quantization worsens the issue of oscillation.
+
+To deal with the issues of oscillations in \yolo, we propose {\em Exponential Moving Average (\exma{})} in \acrshort{QAT}, that smoothens out the effect of oscillations and {\em Quantization Correction (\qc)}, that corrects the error induced due to oscillation after each quantized layer as a post-hoc step after performing \acrshort{QAT}. By mitigating side-effects of oscillations, these two methods in combination achieve state-of-the-art quantization results at 3-bit and 4-bit on \yoloa{} and \yolob{} for both object detection and semantic segmentation on extremely challenging \coco{} dataset. 
+
+Below we summarize the contributions of this paper:
+% \vspace{-1ex}
+\begin{itemize}[leftmargin=*]
+\item We show that quantization on most recent efficient \yolo{} models such as \yoloa{} and \yolob{} is extremely challenging even with state-of-the-art \acrshort{QAT} methods due to oscillation issue.
+% \vspace{-1ex}
+\item Our analysis finds that the oscillation phenomenon does not only affect latent weights but also affects the training of learnable scale factors for both weights and activations. 
+% \vspace{-3ex}
+\item We propose two simple methods namely \exma{} and \qc{}, that can be used in combination with any \acrshort{QAT} technique to reduce the side-effects of oscillations during \acrshort{QAT} on efficient networks. 
+% \vspace{-1ex}
+\item With extensive experiments on \coco{} dataset for both object detection and semantic segmentation tasks, we show that our methods in combination consistently improve quantized \yoloa{} and \yolob{} variants and establish a state-of-the-art at ultra-low precision (4-bits and 3-bits).
+\end{itemize}
+
+
+

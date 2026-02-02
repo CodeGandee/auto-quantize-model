@@ -1,0 +1,18 @@
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | c | c c }
+    \toprule
+  Network & Bits &  pre-BN & post-BN \\
+        \midrule
+\rn{18} & 4 & 70.15\textsuperscript{0.03} & 70.20\textsuperscript{0.02} \\
+\rn{18} & 3 & 69.63\textsuperscript{0.01}  & 69.70\textsuperscript{0.05} \\
+\midrule
+\mnv{2}& 8 & 71.79\textsuperscript{0.07}  & 71.89\textsuperscript{0.05}\\ 
+\mnv{2}& 4 & 68.99\textsuperscript{0.44} & 71.01\textsuperscript{0.05}\\ 
+\mnv{2}& 3 & 64.97\textsuperscript{1.23} & 69.50\textsuperscript{0.04}\\
+ % Single run results, run over 3 seeds
+\bottomrule
+\end{tabular}
+ \caption{Validation accuracy (\%) on ImageNet before (pre-BN) and after BN re-estimation (post-BN) for networks trained using low bit weight quantization \citep{lsq} for 20 epochs. We report the average of 3 seeds and the STD in the superscript.}
+ \label{tbl:bn_reestimation_diff}
+\end{table}

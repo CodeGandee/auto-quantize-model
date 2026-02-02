@@ -1,0 +1,421 @@
+%      $Id: macros.tex 506 2009-10-05 16:57:07Z daniel $    
+
+%%%%%%%%%%%%%%%%
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{framed}
+\usepackage{pbox}
+\usepackage{afterpage}
+\usepackage{url}
+\usepackage{array}
+\usepackage{amsfonts}
+% \usepackage[table]{xcolor}
+
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{relsize}
+\usepackage{xspace}
+%\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+\newcommand{\otoprule}{\midrule[\heavyrulewidth]}
+
+\newcommand{\kartik}[1]{\textcolor{magenta}{KG: #1}}
+\newcommand{\fix}[1]{\todo[color=fixcolor]{#1}}
+
+
+
+% \newcommand{\eg}{e.g.}
+% \newcommand{\ie}{i.e.}
+%
+% misc
+%
+%\newcommand{\comment}[1]{\todo[color=commentcolor]{#1}}
+\newcommand{\ifix}[1]{\todo[inline,color=fixcolor]{#1}}
+\newcommand{\icomment}[1]{\todo[inline,color=commentcolor]{#1}}
+\newcommand{\itodo}[1]{\todo[inline]{#1}}
+\newcommand{\ignore}[1]{}
+\newcommand{\mccenter}[1]{\multicolumn{1}{c|}{#1}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+%%% AJ
+\usepackage{framed}	% frame
+%\usepackage{epstopdf}
+\usepackage{url}
+%\usepackage{epsfig}
+\usepackage{enumerate}
+\usepackage{color}
+
+% table
+\usepackage{changepage}
+
+% algorithm
+% \usepackage{algpseudocode}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+
+% theorem
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{dfn}{Definition}%[section]
+\newtheorem{pro}{Proposition}%[section]
+\newtheorem{exm}{Example}%[section]
+\newtheorem{asm}{Assumption}%[section]
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}{Lemma}%[section]
+\newtheorem{cor}{Corollary}%[section]
+\newtheorem*{lem1}{Lemma}
+\newtheorem*{thm1}{Theorem}
+
+\newcommand{\SKIP}[1]{}
+\newcommand{\calV}{\mathcal{V}^m}
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calL}{\mathcal{L}}
+\newcommand{\calO}{\mathcal{O}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\hcalV}{\hat{\calV}}
+\newcommand{\hcalE}{\hat{\calE}}
+\newcommand{\hcalG}{\hat{\calG}}
+\newcommand{\bfx}{\mathbf{x}}
+\newcommand{\tbfx}{\tilde{\mathbf{x}}}
+\newcommand{\bff}{\mathbf{f}}
+\newcommand{\bfy}{\mathbf{y}}
+\newcommand{\bfz}{\mathbf{z}}
+\renewcommand{\tE}{\tilde{E}}
+\newcommand{\I}{\mathbbm{1}}
+\newcommand{\calX}{\mathcal{X}}
+\newcommand{\bfalpha}{\boldsymbol{\alpha}}
+\newcommand{\bfbeta}{\boldsymbol{\beta}}
+\newcommand{\bfgamma}{\boldsymbol{\gamma}}
+\newcommand{\bfphi}{\boldsymbol{\phi}}
+\newcommand{\bfQ}{\textbf{Q}}
+\newcommand{\bftQ}{\tilde{\textbf{Q}}}
+\newcommand{\bfone}{\boldsymbol{1}}
+\newcommand{\bfzero}{\boldsymbol{0}}
+\newcommand{\bfI}{\boldsymbol{I}}
+\renewcommand{\R}{\rm I\!R}
+\newcommand{\bfs}{\mathbf{s}}
+\newcommand{\hbfs}{\hat{\bfs}}
+\newcommand{\hs}{\hat{s}}
+\newcommand{\tbfs}{\tilde{\mathbf{s}}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\barv}{\bar{v}}
+\newcommand{\barV}{\bar{V}}
+\newcommand{\allpixels}{\{1\ldots n\}}
+\newcommand{\barN}{\bar{N}}
+\newcommand{\bfprox}{\mathbf{prox}}
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\tcalC}{\tilde{\calC}}
+\newcommand{\tbfalpha}{\tilde{\bfalpha}}
+\newcommand{\bfh}{\mathbf{h}}
+\newcommand{\tbfy}{\tilde{\bfy}}
+\newcommand{\ty}{\tilde{y}}
+\newcommand{\bfp}{\mathbf{p}}
+\newcommand{\bfbI}{\mathbf{I}}
+\newcommand{\barcalV}{\bar{\calV}}
+\newcommand{\calY}{\mathcal{Y}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\calK}{\mathcal{K}}
+\newcommand{\calN}{\mathcal{N}}
+\newcommand{\calU}{\mathcal{U}}
+\newcommand{\bfd}{\mathbf{d}}
+\newcommand{\calB}{\mathcal{B}}
+\newcommand{\barx}{\bar{x}}
+\newcommand{\calW}{\mathcal{W}}
+\newcommand{\bfw}{\mathbf{w}}
+\newcommand{\bfpsi}{\boldsymbol{\psi}}
+\newcommand{\baru}{\bar{u}}
+\newcommand{\bfu}{\mathbf{u}}
+\newcommand{\bftheta}{\boldsymbol{\theta}}
+\newcommand{\bftau}{\boldsymbol{\tau}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\calT}{\mathcal{T}}
+\newcommand{\bfa}{\mathbf{a}}
+\newcommand{\bfb}{\mathbf{b}}
+\newcommand{\bfm}{\mathbf{m}}
+\newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\bfq}{\mathbf{q}}
+\newcommand{\tbfw}{\tilde{\mathbf{w}}}
+\newcommand{\tbfu}{\tilde{\mathbf{u}}}
+\newcommand{\tbfv}{\tilde{\mathbf{v}}}
+\newcommand{\calS}{\Delta^m}
+\newcommand{\tbfq}{\tilde{\mathbf{q}}}
+\renewcommand{\sign}{\operatorname{sign}}
+\newcommand{\dist}{\operatorname{dist}}
+\renewcommand{\softmax}{\operatorname{softmax}}
+\newcommand{\hardmax}{\operatorname{hardmax}}
+\renewcommand{\sigmoid}{\operatorname{sigmoid}}
+\newcommand{\htanh}{\operatorname{hardtanh}}
+\newcommand{\sparsemax}{\operatorname{sparsemax}}
+\newcommand{\prox}{\operatorname{prox}}
+\renewcommand{\tL}{\tilde{L}}
+\newcommand{\tu}{\tilde{u}}
+\newcommand{\tv}{\tilde{v}}
+\newcommand{\tw}{\tilde{w}}
+\newcommand{\tx}{\tilde{x}}
+\newcommand{\tell}{\tilde{\ell}}
+\newcommand{\bfg}{\mathbf{g}}
+\newcommand{\bbfu}{\bar{\bfu}}
+\newcommand{\bbfw}{\bar{\bfw}}
+\newcommand{\hL}{\hat{L}}
+\newcommand{\hP}{\hat{P}}
+\newcommand{\heta}{\hat{\eta}}
+
+\newcommand{\alldatapoints}{\{1,\ldot,s n\}}
+\newcommand{\bfW}{\mathbf{W}}
+\newcommand{\alllayers}{\{1,\ldots, \ell\}}
+\newcommand{\onelesslayers}{\{1,\ldots, \ell-1\}}
+\newcommand{\loss}{\Delta}
+\newcommand{\nonlin}{\sigma}
+\newcommand{\allweights}{\{1,\ldots, m\}}
+\newcommand{\projQ}{P_{\calQ^m}}
+\newcommand{\projS}{P_{\calS}}
+\newcommand{\projV}{P_{\calV}}
+\newcommand{\projVj}{P_{\calV_j}}
+\newcommand{\iproj}{P^{-1}}
+\newcommand{\kl}[2]{\operatorname{KL(#1\|#2)}}
+\renewcommand{\E}{\mathbb{E}}
+\newcommand{\bcalD}{\bar{\calD}}
+\newcommand{\bcalC}{\bar{\calC}}
+\newcommand{\primal}{\calX\cap\calC}
+\newcommand{\bfv}{\mathbf{v}}
+\newcommand{\bbfg}{\bar{\bfg}}
+\newcommand{\bg}{\bar{g}}
+\newcommand{\tPhi}{\tilde{\Phi}}
+\newcommand{\mdtanhs}{\acrshort{MD}-$\tanh$-\acrshort{S}}
+\newcommand{\mdsms}{\acrshort{MD}-$\softmax$-\acrshort{S}}
+\newcommand{\mdtanh}{\acrshort{MD}-$\tanh$}
+\newcommand{\mdsm}{\acrshort{MD}-$\softmax$}
+
+
+
+\def\amin#1{{\underset{#1}{\operatorname{argmin}}}}%
+\def\amax#1{{\underset{#1}{\operatorname{argmax}}}}%
+
+\newcommand{\TODO}[1]{[\textbf{\textcolor{red}{TODO:}}\emph{\textcolor{red}{#1}}]}
+\newcommand{\NOTE}[1]{[\textbf{\textcolor{blue}{Note:}}\emph{\textcolor{blue}{#1}}]}
+\def\myref#1{{\color{red}{#1}}}%
+%\def\NOTE#1{}
+\newcommand{\LineForAll}[2]{%
+    \State\algorithmicforall\ {#1}\ \algorithmicdo\ {#2}
+}
+
+\setlength{\fboxsep}{-1pt}%
+\setlength{\fboxrule}{1pt}%
+\usepackage{xcolor}
+%\newcommand{\mybox}[2]{{\color{#1}\fbox{\normalcolor#2}}}
+\newcommand{\mybox}[2]{#2}
+
+\usepackage{bbm}
+
+% \graphicspath{{images/}}
+
+%\def\cite#1{{\citep{#1}}}%
+
+% chapter-appendices
+\usepackage[page]{appendix}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+
+\AtBeginEnvironment{subappendices}{%
+%\newpage
+\section*{Appendix}
+\addcontentsline{toc}{section}{Appendix}
+%\counterwithin{figure}{section}
+%\counterwithin{table}{section}
+}
+
+\usepackage{xspace}
+% Add a period to the end of an abbreviation unless there's one
+% already, then \xspace.
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\cf{\emph{c.f}\onedot} \def\Cf{\emph{C.f}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
+\def\etal{\emph{et al}\onedot}
+\makeatother
+
+\usepackage{enumitem}
+\newenvironment{tight_itemize}{
+\begin{itemize}[leftmargin=10pt]
+  \setlength{\topsep}{0pt}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+\newenvironment{tight_enumerate}{
+\begin{enumerate}[leftmargin=10pt]
+  \setlength{\topsep}{0pt}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% from iclr
+
+% Mark sections of captions for referring to divisions of figures
+\renewcommand{\figleft}{{\em (Left)}}
+\renewcommand{\figcenter}{{\em (Center)}}
+\renewcommand{\figright}{{\em (Right)}}
+\renewcommand{\figtop}{{\em (Top)}}
+\renewcommand{\figbottom}{{\em (Bottom)}}
+\renewcommand{\captiona}{{\em (a)}}
+\renewcommand{\captionb}{{\em (b)}}
+\renewcommand{\captionc}{{\em (c)}}
+\renewcommand{\captiond}{{\em (d)}}
+
+% Highlight a newly defined term
+\renewcommand{\newterm}[1]{{\bf #1}}
+
+
+% Figure reference, capital. For start of sentence
+\def\figref#1{Fig.~\ref{#1}}
+\def\twofigref#1#2{Figs.~\ref{#1} and~\ref{#2}}
+% Section reference, capital.
+\def\secref#1{Sec.~\ref{#1}}
+% Reference to an equation, upper case
+\def\eqref#1{Eq.~(\ref{#1})}
+\def\twoeqref#1#2{Eqs.~(\ref{#1})~and~(\ref{#2})}
+% A raw reference to an equation---avoid using if possible
+\def\plaineqref#1{(\ref{#1})}
+\def\twoplaineqref#1#2{(\ref{#1})~and~(\ref{#2})}
+\def\algref#1{Algorithm~\ref{#1}}
+\def\twoalgref#1#2{Algorithms~\ref{#1} and~\ref{#2}}
+\def\twotabref#1#2{Tables~\ref{#1} and~\ref{#2}}
+\def\threetabref#1#2#3{Tables~\ref{#1},~\ref{#2}~and~\ref{#3}}
+\def\tabref#1{Table~\ref{#1}}
+
+\def\thmref#1{Theorem~\ref{#1}}
+\def\proref#1{Proposition~\ref{#1}}
+\def\dfnref#1{Definition~\ref{#1}}
+\def\exmref#1{Example~\ref{#1}}
+\def\tabref#1{Table~\ref{#1}}
+\def\manytabref#1#2{Tables~\ref{#1}-\ref{#2}}
+
+\def\ceil#1{\lceil #1 \rceil}
+\def\floor#1{\lfloor #1 \rfloor}
+
+% \algnewcommand\INPUT{\item[\textbf{Input:}]}%
+% \algnewcommand\OUTPUT{\item[\textbf{Output:}]}%
+
+% \usepackage[acronym,smallcaps]{glossaries} 
+\glsdisablehyper
+\newacronym{SGD}{sgd}{Stochastic Gradient Descent}
+\newacronym{GD}{gd}{Gradient Descent}
+\newacronym{DNN}{dnn}{Deep Neural Networks}
+\newacronym{NN}{nn}{Neural Network}
+\newacronym{fc}{fc}{fully-connected}
+\newacronym{KL}{kl}{KL}
+\newacronym{S}{s}{S}
+\newacronym{LR}{lr}{LR}
+\newacronym{STE}{ste}{Straight Through Estimator}
+\newacronym{QN}{qn}{Quantization Networks}
+\newacronym{QAT}{qat}{Quantization-Aware Training}
+\newacronym{FC}{fc}{FC}
+\newacronym{BN}{bn}{Batch Normalization}
+\newacronym{EMA}{ema}{Exponential Moving Average}
+\newacronym{PTQ}{ptq}{Post-training Quantization}
+\newacronym{LSQ}{lsq}{Learnable Step-size Quantization}
+
+\newacronym{QC}{qc}{Quantization Correction}
+\newacronym{YOLO}{yolo}{You Only look Once}
+\newacronym{YOLO5}{yolo5}{YOLO5}
+\newacronym{YOLO7}{yolo7}{YOLO7}
+\newacronym{ADAM}{adam}{ADAM}
+
+% \newcommand{\yoloa}{\acrshort{YOLO5}\xspace}
+% \newcommand{\yolob}{\acrshort{YOLO7}\xspace}
+\newcommand{\exma}{\acrshort{EMA}}
+\newcommand{\qc}{\acrshort{QC}}
+% \newcommand{\yoloa}{\textsc{YOLO5}\xspace}
+
+\newcommand{\coco}{{\small COCO}\xspace}
+\newcommand{\yoloa}{{\small YOLO5}\xspace}
+\newcommand{\yolo}{{\small YOLO}\xspace}
+\newcommand{\yolob}{{\small YOLO7}\xspace}
+
+\newcommand{\slenet}[1]{{\small LeNet#1}}
+\newcommand{\salexnet}[1]{{\small AlexNet#1}}
+\newcommand{\svgg}[1]{{\small VGG#1}}
+\newcommand{\sresnet}[1]{{\small ResNet#1}}
+\newcommand{\swrn}[1]{{\small WRN#1}}
+\newcommand{\srnn}[1]{{\small RNN#1}}
+\newcommand{\slstm}[1]{{\small LSTM#1}}
+\newcommand{\sgru}[1]{{\small GRU#1}}
+\newcommand{\srelu}{{\small ReLU}}
+\newcommand{\smobilenet}[1]{{\small MobileNet#1}}
+\newcommand{\sefficientnet}[1]{{\small EfficientNet#1}}
+\newcommand{\smobnet}[1]{{\small Mob.Net#1}}
+\newcommand{\seffnet}[1]{{\small Eff.Net#1}}
+% architecture (no size preset - change accordingly in the context)
+\newcommand{\vlenet}[1]{LeNet#1}
+\newcommand{\valexnet}[1]{AlexNet#1}
+\newcommand{\vvgg}[1]{VGG#1}
+\newcommand{\vresnet}[1]{{ResNet#1}}
+\newcommand{\vwrn}[1]{WRN#1}
+\newcommand{\vrnn}[1]{RNN#1}
+\newcommand{\vlstm}[1]{LSTM#1}
+\newcommand{\vgru}[1]{GRU#1}
+\newcommand{\vmobilenet}[1]{{MobileNet#1}}
+\newcommand{\vefficientnet}[1]{{EfficientNet#1}}
+% methods
+\newcommand{\lwc}{{\small LWC}}
+\newcommand{\dns}{{\small DNS}}
+\newcommand{\lc}{{\small LC}}
+\newcommand{\sws}{{\small SWS}}
+\newcommand{\svd}{{\small SVD}}
+\newcommand{\obd}{{\small OBD}}
+\newcommand{\lobs}{{\small L-OBS}}
+\newcommand{\css}{{\small CSS}}
+\newcommand{\snip}{{\small SNIP}}
+% initialization
+\newcommand{\initrn}{{\small RN}}
+\newcommand{\inittn}{{\small TN}}
+\newcommand{\initvsx}{{\small VS-X}}
+\newcommand{\initvsh}{{\small VS-H}}
+% datasets
+\newcommand{\mnist}{{\small MNIST}}
+\newcommand{\fmnist}{{\small Fashion-MNIST}}
+\newcommand{\cifar}[1]{{\small CIFAR#1}}
+\newcommand{\vcifar}[1]{{CIFAR#1}}
+\newcommand{\tinyimagenet}{{TinyImageNet}}
+\newcommand{\imagenet}{{ImageNet}}
+\newcommand{\femnist}[1]{{\small FEMNIST}}
+
+\newcommand{\pql}[1]{\acrshort{PQL}$_#1$}
+
+% Define check marks 
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}} % try 51, 52
+\newcommand{\xmark}{\ding{55}} % try 53, 54, 55, 56
+
+\usepackage{wrapfig}
+% \usepackage{slashbox}
+
+% macro to switch supplementary
+\newif\ifsupp
+\suppfalse
+\def\suppcopy{\global\supptrue}
+\newif\ifarxiv
+\arxivfalse
+\def\arxivcopy{\global\arxivtrue}
+\newif\iffinal
+\finalfalse
+\def\finalcopy{\global\finaltrue}
+
+\newcommand{\citenew}[1]{(\cite{#1})}
+% \newcommand{\citenew}[1]{\cite{#1}}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "doa"
+%%% End:

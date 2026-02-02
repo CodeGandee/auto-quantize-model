@@ -8,7 +8,7 @@ Default behavior:
 
 - Runs and verifies **4 scenarios** (2 modes × 2 quant pairs).
 - Uses the **medium** dataset preset by default.
-- Verifies by diffing **only sanitized summaries** against `expected_report/`.
+- Verifies by diffing **only `summary.json`** against `expected_report/`.
 
 ## Prerequisites
 
@@ -51,15 +51,17 @@ bash docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_d
 
 ## What `run_demo.sh` does
 
-`run_demo.sh` is the tutorial pack’s public interface. It:
+`run_demo.sh` is the tutorial pack’s public interface. It delegates to the
+shared runner under `src/auto_quantize_model/qwen/` which:
 
 1. Ensures required assets exist (checkpoint link + datasets) and fails fast with actionable guidance.
 2. Creates a fresh workspace under `tmp/`.
 3. Runs each selected scenario:
    - **all_layers**: VLM all-layers sensitivity (vision + text) per quant-pair.
    - **lm_only**: LM-only sensitivity (text tower) per quant-pair via the Hydra runner.
-4. Generates a schema-locked `summary.json` + `summary.md` per scenario.
-5. Either verifies summaries against `expected_report/` or snapshots `expected_report/` (if `--snapshot-report`).
+4. Generates a schema-locked `summary.json` per scenario.
+5. Either verifies `summary.json` against `expected_report/` or snapshots `expected_report/` (if `--snapshot-report`).
+   Snapshot mode writes **summary-only** snapshots and removes stale scenarios not selected.
 
 ### Why does the all-layers runner live under a “4B” path?
 
@@ -77,17 +79,34 @@ tmp/tutorial_workspace_qwen3_vl_8b_layer_sensitivity_<timestamp>/
 ├── outputs/
 │   ├── all_layers/<quant_pair>/...
 │   └── lm_only/<quant_pair>/...
-└── summaries/
-    ├── all_layers/<quant_pair>/summary.{json,md}
-    └── lm_only/<quant_pair>/summary.{json,md}
 ```
 
 Expected snapshots (tracked, sanitized):
 
 ```text
 docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/
-├── all_layers/<quant_pair>/summary.{json,md}
-└── lm_only/<quant_pair>/summary.{json,md}
+└── outputs/
+    ├── all_layers/<quant_pair>/summary.json
+    └── lm_only/<quant_pair>/summary.json
+```
+
+Markdown reports (generated for all scenarios):
+
+```text
+tmp/tutorial_workspace_qwen3_vl_8b_layer_sensitivity_<timestamp>/
+└── outputs/<mode>/<quant_pair>/layer-sensitivity-report.md
+```
+
+This file includes both:
+
+- the stable tutorial summary table (previously `summary.md`), and
+- the per-layer sensitivity table.
+
+Snapshot mode also writes a sanitized copy of this report under:
+
+```text
+docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/expected_report/
+└── outputs/<mode>/<quant_pair>/layer-sensitivity-report.md
 ```
 
 ## Troubleshooting
@@ -120,7 +139,8 @@ Remediation:
 ## References
 
 - Runner: `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/run_demo.sh`
-- Summarizer: `docs/tutorial/howto/tut-qwen3-vl-8b-introduce-model-layer-sensitivity/scripts/summarize_manifest.py`
+- Shared CLI: `src/auto_quantize_model/qwen/cli_tutorial_pack_runner.py`
+- Shared runner: `src/auto_quantize_model/qwen/tutorial_pack_runner.py`
 - Summary builder: `src/auto_quantize_model/qwen/tutorial_pack_summary.py`
 - All-layers runner: `models/qwen3_vl_4b_instruct/helpers/qwen3_vl_4b_autoquant_all_layers/run_qwen3_vl_4b_autoquant_all_layers.py`
 - LM-only runner: `scripts/qwen/qwen3_lm_sensitivity.py`

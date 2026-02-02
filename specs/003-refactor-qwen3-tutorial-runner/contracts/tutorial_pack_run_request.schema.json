@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TutorialPackRunRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model_id",
+    "expected_report_dir",
+    "snapshot_report",
+    "device",
+    "dataset_size",
+    "modes",
+    "quant_pairs"
+  ],
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier selecting the Qwen3-VL model configuration to run."
+    },
+    "expected_report_dir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Path to the tutorial pack's expected_report/ directory (used for snapshot/verify)."
+    },
+    "snapshot_report": {
+      "type": "boolean",
+      "description": "If true, refresh expected snapshots; if false, verify against existing snapshots."
+    },
+    "device": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Compute device selector string (e.g., cuda:0 or cpu)."
+    },
+    "dataset_size": {
+      "type": "string",
+      "enum": [
+        "small",
+        "medium",
+        "large"
+      ],
+      "description": "Dataset preset key used to resolve calibration budgets and required assets."
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "all_layers",
+          "lm_only"
+        ]
+      },
+      "description": "Sensitivity modes to run."
+    },
+    "quant_pairs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Quantization pair identifiers to run."
+    }
+  }
+}

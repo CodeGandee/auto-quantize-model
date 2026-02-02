@@ -1,0 +1,44 @@
+% \vspace{-1ex}
+\section{Experiments}
+% \vspace{-1ex}
+\input{tables/yolo-qat-ours2}
+
+In this section, we evaluate the effectiveness of our proposed \exma{} and \qc{} mechanisms to deal with side-effects of oscillations during \acrshort{QAT} on various \yoloa{} and \yolob{} variants on \coco{} dataset \cite{lin2014microsoft}. In all the experiments, we perform both weights and activation quantization. We present state-of-the-art results for low-precision (4-bit and 3-bit) on all \yoloa{} and \yolob{} variants for object detection. We also compare our method against standard baselines such as \acrshort{LSQ}~\cite{lsq} and Oscillation dampening~\cite{nagel2022overcoming}. We also perform some ablation studies to reflect the improvement of our method in comparison to per-channel quantization. Finally, we establish a state-of-the-art quantized \yoloa{} model on the task of semantic segmentation using \coco{} dataset. In summary, our results establish new state-of-the-art for quantized \yoloa{} and \yolob{} at low-bit precision while outperforming comparable baselines. 
+% \vspace{-2.5ex}
+
+\paragraph{Experimental Setup.} 
+Similar to \cite{nagel2022overcoming}, we apply \acrshort{LSQ}~\cite{lsq} based weight and activation quantization. Since object detection is a complex downstream task and quantization can be very challenging, following the practice of existing literature \cite{lsq}, we quantize the first and last layer with 8-bit. During \acrshort{QAT}, we use per-tensor quantization \cite{krishnamoorthi} and learn the quantization scaling factor using backpropagation \cite{lsq} with a learning rate of 0.0001 in \acrshort{ADAM} optimizer. Our \acrshort{QAT} starts from a pre-trained full-precision network and is performed for 100 epochs. For all our \acrshort{QAT} experiments, we use \exma{} decay rate of 0.9999. In \qc{}, we train using \acrshort{ADAM} optimizer with a learning rate of 0.0001 to learn the correction scale factors and shift factors. We train correction factors for a single epoch while keeping the \acrfull{BN} statistics fixed. Rest of hyperparameters are used as default based on official \yoloa{}\footnote{\yoloa{}:  \href{https://github.com/ultralytics/yolov5}{https://github.com/ultralytics/yolov5}} and \yolob{}\footnote{\yolob{}: \href{https://github.com/WongKinYiu/yolov7}{https://github.com/WongKinYiu/yolov7}} implementations. Since, both \acrshort{LSQ} and Oscillation dampening perform experiments only on \imagenet{}, we reimplemented their methods for the task of object detection on \yolo{}. All our results are reported with standard object detection or semantic segmentation metric, namely mAP. Our code is in PyTorch and the experiments are performed on NVIDIA A-40 GPUs. 
+
+
+% \vspace{-1.5ex}
+\subsection{Results on \yolo{} based object detection}
+% \vspace{-1ex}
+
+We evaluate both of our \exma{} and \qc{} techniques using \acrshort{LSQ}~\cite{lsq} on \yoloa{} and \yolob{} variants on \coco{} dataset for object detection task. We present results at different levels of precision \ie 3-bit, 4-bit, and 4-bit with even the first and last layer quantized to 4-bit. The object detection of quantized \yoloa{} and \yolob{} networks obtained by our proposed methods and their full precision (FP32) training are reported in~\tabref{tab:yolo-qat-ours}. 
+\input{tables/baselines-compare}
+
+Our \qc{} method just by performing a post-hoc correction step consistently improves the \exma{} significantly for all different network architectures at 4-bit and 3-bit quantization. The improvement are especially significant on most efficient variants namely \yoloa{-n} and \yoloa{-s} at 3-bit ($\approx4-6\%$) and 4-bit ($\approx2\%$). Furthermore, even in the case of full quantization where even the first and last layers are quantized, our 4-bit quantization results using \qc{} consistently improve on our \acrshort{QAT} models trained with \exma{}. This clearly shows that latent weights that are stuck along the quantization thresholds can still be very useful if the error induced by those weights can be corrected using correction scale factors and shift factors learnt in our \qc{} method. Overall, our combined \exma{} and \qc{} method can reduce the gap between full precision models and 4-bit quantized models for all \yoloa{} and \yolob{} variants with a margin of around $\le 2.5\%$.
+
+% \vspace{-2ex}
+
+\subsection{Comparison against baselines}
+% \vspace{-1ex}
+\input{tables/perchannel-compare}
+\input{tables/segment-yolo}
+
+We also perform evaluation comparisons of our \exma{} and \qc{} techniques using \acrshort{LSQ} \cite{lsq} on \yoloa{} and \yolob{} variants on \coco{} dataset for object detection task against baseline methods namely, LSQ~\cite{lsq} and Oscillation dampening~\cite{nagel2022overcoming} at 4-bit and 3-bit quantization using \yoloa{} and \yolob{} on \coco{} dataset. Both \acrshort{LSQ}~\cite{lsq} and Oscillation dampening do not perform experiments on object detection and \yolo{} networks, so we re-implement their methods to create the baselines following their papers. The comparisons are done using the mAP metric and the results are reported in \tabref{tab:compare-baselines}. Both our \exma{} and \qc{} methods outperform \acrshort{LSQ} consistently and the gap between \acrshort{LSQ} and \qc{} is significant on both \yoloa{} and \yolob{} architectures with a margin of $\approx2-3\%$ consistently. Our \exma{} models are either comparable or sometimes even better than Oscillation dampening, reflecting the efficacy of \exma{} in reducing the effect of oscillation, especially resulting from activation quantization as oscillation dampening does not account for oscillation issue in activation quantization. Furthermore, our \qc{} method increases the gap ($\approx 2-3\%$) even further between our method and Oscillation dampening across both \yoloa{} and \yolob{} variants at 3-bit and 4-bit quantization.
+
+% \vspace{-1.5ex}
+\subsection{Comparison against per-channel quantization}
+% \vspace{-1ex}
+
+
+As mentioned in \secref{sec:qat-correction}, \qc{} scale and shift factors can be folded either in the succeeding \acrfull{BN} layer after the convolution layer or into quantization scale factors by converting per-tensor quantization to per-channel quantization. It has been noted previously that per-channel quantization tends to be more unstable \cite{whitepaper} for efficient networks with depth-wise convolutions due to a single scale factor being learnt for a depth-wise convolution filter (for eg. with size $3 \times 3$). Therefore, we further also provide experimental comparisons of our \qc{} method against per-channel quantization to reflect the efficacy of our method in improving the stability of per-channel \acrshort{QAT} by choosing \qc{} as a post-hoc correction step after \acrshort{QAT}. For this evaluation, we perform \acrshort{QAT} with \exma{} using per-tensor and per-channel quantization. We perform \qc{} only in case of per-tensor quantization and report the results in \tabref{tab:perchannel-compare}. First of all, as previous studies also noted, it can be observed that per-channel quantization with depth-wise convolutions can sometimes be inferior to per-tensor quantization. Furthermore, our \qc{} method on per-tensor quantization consistently produces better performance on both \yoloa{} and \yolob{} at 3-bit as well as 4-bit quantization with a margin of $\approx 3-4\%$ on \yolob and $\approx 2-4\%$ on \yoloa{} variants.
+
+\vspace{1ex}
+
+\subsection{Results on \yolo{} based semantic segmentation}
+\vspace{0.5ex}
+We further also evaluate our methods to quantize \yoloa{} variants at 3-bit and 4-bit on semantic segmentation task. We perform these experiments using \coco{} dataset and present results with mAP metric for the box and segmentation mask in \tabref{tab:segment-yolo}. Similar to the observations in the object detection task, our \qc{} method consistently improves the \exma{} method with a margin of $\approx 1-3 \%$ across \yoloa{-n} and \yoloa{-s} variants quantized at 3-bit and 4-bit. Furthermore, \qc{} in combination with \exma{} reduces the gap between full precision counterparts consistently on both detection box and segmentation mask metrics. 
+
+

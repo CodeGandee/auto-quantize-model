@@ -1,0 +1,6488 @@
+{
+  "autoquant_state": {
+    "constraints": {
+      "effective_bits": 7.999822671454537
+    },
+    "is_satisfied": true,
+    "keys": [
+      "candidate_stats",
+      "best"
+    ],
+    "score": 1.1428729817271233
+  },
+  "dataset": {
+    "batch_size": 8,
+    "calib_seq_len": 512,
+    "coco_root": "<ABSOLUTE_PATH>",
+    "max_calib_samples": 128,
+    "num_calib_batches": 16,
+    "num_calib_samples": 128,
+    "size": "medium",
+    "vlm_calib_db": "<ABSOLUTE_PATH>"
+  },
+  "layer_sensitivity": {
+    "lm_head.quant_recipe": {
+      "costs": [
+        97239040.0,
+        388956160.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.002347084693610668,
+      "rank": 18,
+      "scores": [
+        0.002347084693610668,
+        0.0
+      ]
+    },
+    "model.language_model.layers.0.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.16674619913101196,
+      "rank": 152,
+      "scores": [
+        0.16674619913101196,
+        0.0
+      ]
+    },
+    "model.language_model.layers.0.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0320848049595952,
+      "rank": 97,
+      "scores": [
+        0.0320848049595952,
+        0.0
+      ]
+    },
+    "model.language_model.layers.0.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0038968424778431654,
+      "rank": 29,
+      "scores": [
+        0.0038968424778431654,
+        0.0
+      ]
+    },
+    "model.language_model.layers.0.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.014068229822441936,
+      "rank": 67,
+      "scores": [
+        0.014068229822441936,
+        0.0
+      ]
+    },
+    "model.language_model.layers.1.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.337589979171753,
+      "rank": 217,
+      "scores": [
+        2.337589979171753,
+        0.0
+      ]
+    },
+    "model.language_model.layers.1.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.07059744745492935,
+      "rank": 124,
+      "scores": [
+        0.07059744745492935,
+        0.0
+      ]
+    },
+    "model.language_model.layers.1.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.003232398070394993,
+      "rank": 25,
+      "scores": [
+        0.003232398070394993,
+        0.0
+      ]
+    },
+    "model.language_model.layers.1.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.011182034388184547,
+      "rank": 61,
+      "scores": [
+        0.011182034388184547,
+        0.0
+      ]
+    },
+    "model.language_model.layers.10.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.3640718460083008,
+      "rank": 173,
+      "scores": [
+        0.3640718460083008,
+        0.0
+      ]
+    },
+    "model.language_model.layers.10.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.026631898246705532,
+      "rank": 92,
+      "scores": [
+        0.026631898246705532,
+        0.0
+      ]
+    },
+    "model.language_model.layers.10.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.01302307192236185,
+      "rank": 65,
+      "scores": [
+        0.01302307192236185,
+        0.0
+      ]
+    },
+    "model.language_model.layers.10.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.10737390071153641,
+      "rank": 139,
+      "scores": [
+        0.10737390071153641,
+        0.0
+      ]
+    },
+    "model.language_model.layers.11.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.20844252407550812,
+      "rank": 158,
+      "scores": [
+        0.20844252407550812,
+        0.0
+      ]
+    },
+    "model.language_model.layers.11.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.025583368726074696,
+      "rank": 89,
+      "scores": [
+        0.025583368726074696,
+        0.0
+      ]
+    },
+    "model.language_model.layers.11.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0064457012340426445,
+      "rank": 42,
+      "scores": [
+        0.0064457012340426445,
+        0.0
+      ]
+    },
+    "model.language_model.layers.11.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.04418200068175793,
+      "rank": 108,
+      "scores": [
+        0.04418200068175793,
+        0.0
+      ]
+    },
+    "model.language_model.layers.12.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.293879896402359,
+      "rank": 168,
+      "scores": [
+        0.293879896402359,
+        0.0
+      ]
+    },
+    "model.language_model.layers.12.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.02987766917794943,
+      "rank": 94,
+      "scores": [
+        0.02987766917794943,
+        0.0
+      ]
+    },
+    "model.language_model.layers.12.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.008292105980217457,
+      "rank": 52,
+      "scores": [
+        0.008292105980217457,
+        0.0
+      ]
+    },
+    "model.language_model.layers.12.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.1118107195943594,
+      "rank": 141,
+      "scores": [
+        0.1118107195943594,
+        0.0
+      ]
+    },
+    "model.language_model.layers.13.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.08759840577840805,
+      "rank": 133,
+      "scores": [
+        0.08759840577840805,
+        0.0
+      ]
+    },
+    "model.language_model.layers.13.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.033202845603227615,
+      "rank": 98,
+      "scores": [
+        0.033202845603227615,
+        0.0
+      ]
+    },
+    "model.language_model.layers.13.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.022615822032094002,
+      "rank": 86,
+      "scores": [
+        0.022615822032094002,
+        0.0
+      ]
+    },
+    "model.language_model.layers.13.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.03818748379126191,
+      "rank": 103,
+      "scores": [
+        0.03818748379126191,
+        0.0
+      ]
+    },
+    "model.language_model.layers.14.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.42951712012290955,
+      "rank": 175,
+      "scores": [
+        0.42951712012290955,
+        0.0
+      ]
+    },
+    "model.language_model.layers.14.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.038763572461903095,
+      "rank": 104,
+      "scores": [
+        0.038763572461903095,
+        0.0
+      ]
+    },
+    "model.language_model.layers.14.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.02313712053000927,
+      "rank": 87,
+      "scores": [
+        0.02313712053000927,
+        0.0
+      ]
+    },
+    "model.language_model.layers.14.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.07222134061157703,
+      "rank": 126,
+      "scores": [
+        0.07222134061157703,
+        0.0
+      ]
+    },
+    "model.language_model.layers.15.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.19651351869106293,
+      "rank": 156,
+      "scores": [
+        0.19651351869106293,
+        0.0
+      ]
+    },
+    "model.language_model.layers.15.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.03720555268228054,
+      "rank": 101,
+      "scores": [
+        0.03720555268228054,
+        0.0
+      ]
+    },
+    "model.language_model.layers.15.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.07027094066143036,
+      "rank": 123,
+      "scores": [
+        0.07027094066143036,
+        0.0
+      ]
+    },
+    "model.language_model.layers.15.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.06823174562305212,
+      "rank": 119,
+      "scores": [
+        0.06823174562305212,
+        0.0
+      ]
+    },
+    "model.language_model.layers.16.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.4744262099266052,
+      "rank": 178,
+      "scores": [
+        0.4744262099266052,
+        0.0
+      ]
+    },
+    "model.language_model.layers.16.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.04485846310853958,
+      "rank": 109,
+      "scores": [
+        0.04485846310853958,
+        0.0
+      ]
+    },
+    "model.language_model.layers.16.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.03881562128663063,
+      "rank": 105,
+      "scores": [
+        0.03881562128663063,
+        0.0
+      ]
+    },
+    "model.language_model.layers.16.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.057474744506180286,
+      "rank": 117,
+      "scores": [
+        0.057474744506180286,
+        0.0
+      ]
+    },
+    "model.language_model.layers.17.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.020150434225797653,
+      "rank": 79,
+      "scores": [
+        0.020150434225797653,
+        0.0
+      ]
+    },
+    "model.language_model.layers.17.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.014938637148588896,
+      "rank": 70,
+      "scores": [
+        0.014938637148588896,
+        0.0
+      ]
+    },
+    "model.language_model.layers.17.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.039991263300180435,
+      "rank": 106,
+      "scores": [
+        0.039991263300180435,
+        0.0
+      ]
+    },
+    "model.language_model.layers.17.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.04652780573815107,
+      "rank": 111,
+      "scores": [
+        0.04652780573815107,
+        0.0
+      ]
+    },
+    "model.language_model.layers.18.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.15154309570789337,
+      "rank": 148,
+      "scores": [
+        0.15154309570789337,
+        0.0
+      ]
+    },
+    "model.language_model.layers.18.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.014079682063311338,
+      "rank": 68,
+      "scores": [
+        0.014079682063311338,
+        0.0
+      ]
+    },
+    "model.language_model.layers.18.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.006701341830193996,
+      "rank": 47,
+      "scores": [
+        0.006701341830193996,
+        0.0
+      ]
+    },
+    "model.language_model.layers.18.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.055555413011461496,
+      "rank": 115,
+      "scores": [
+        0.055555413011461496,
+        0.0
+      ]
+    },
+    "model.language_model.layers.19.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.02018098719418049,
+      "rank": 80,
+      "scores": [
+        0.02018098719418049,
+        0.0
+      ]
+    },
+    "model.language_model.layers.19.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.01076247077435255,
+      "rank": 60,
+      "scores": [
+        0.01076247077435255,
+        0.0
+      ]
+    },
+    "model.language_model.layers.19.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.005227872636169195,
+      "rank": 36,
+      "scores": [
+        0.005227872636169195,
+        0.0
+      ]
+    },
+    "model.language_model.layers.19.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.04352512024343014,
+      "rank": 107,
+      "scores": [
+        0.04352512024343014,
+        0.0
+      ]
+    },
+    "model.language_model.layers.2.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.109418272972107,
+      "rank": 198,
+      "scores": [
+        1.109418272972107,
+        0.0
+      ]
+    },
+    "model.language_model.layers.2.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.19596830755472183,
+      "rank": 155,
+      "scores": [
+        0.19596830755472183,
+        0.0
+      ]
+    },
+    "model.language_model.layers.2.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0047412593849003315,
+      "rank": 34,
+      "scores": [
+        0.0047412593849003315,
+        0.0
+      ]
+    },
+    "model.language_model.layers.2.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.034492289181798697,
+      "rank": 99,
+      "scores": [
+        0.034492289181798697,
+        0.0
+      ]
+    },
+    "model.language_model.layers.20.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.007177595980465412,
+      "rank": 48,
+      "scores": [
+        0.007177595980465412,
+        0.0
+      ]
+    },
+    "model.language_model.layers.20.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.005615741480141878,
+      "rank": 39,
+      "scores": [
+        0.005615741480141878,
+        0.0
+      ]
+    },
+    "model.language_model.layers.20.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0021758147049695253,
+      "rank": 16,
+      "scores": [
+        0.0021758147049695253,
+        0.0
+      ]
+    },
+    "model.language_model.layers.20.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.05516376765444875,
+      "rank": 114,
+      "scores": [
+        0.05516376765444875,
+        0.0
+      ]
+    },
+    "model.language_model.layers.21.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00746340025216341,
+      "rank": 50,
+      "scores": [
+        0.00746340025216341,
+        0.0
+      ]
+    },
+    "model.language_model.layers.21.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.004407969070598483,
+      "rank": 32,
+      "scores": [
+        0.004407969070598483,
+        0.0
+      ]
+    },
+    "model.language_model.layers.21.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0009914536494761705,
+      "rank": 13,
+      "scores": [
+        0.0009914536494761705,
+        0.0
+      ]
+    },
+    "model.language_model.layers.21.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.024222538340836763,
+      "rank": 88,
+      "scores": [
+        0.024222538340836763,
+        0.0
+      ]
+    },
+    "model.language_model.layers.22.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.008989226073026657,
+      "rank": 54,
+      "scores": [
+        0.008989226073026657,
+        0.0
+      ]
+    },
+    "model.language_model.layers.22.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.005709431832656264,
+      "rank": 40,
+      "scores": [
+        0.005709431832656264,
+        0.0
+      ]
+    },
+    "model.language_model.layers.22.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00199203216470778,
+      "rank": 15,
+      "scores": [
+        0.00199203216470778,
+        0.0
+      ]
+    },
+    "model.language_model.layers.22.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.019332800060510635,
+      "rank": 78,
+      "scores": [
+        0.019332800060510635,
+        0.0
+      ]
+    },
+    "model.language_model.layers.23.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.015439960174262524,
+      "rank": 71,
+      "scores": [
+        0.015439960174262524,
+        0.0
+      ]
+    },
+    "model.language_model.layers.23.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.005756882485002279,
+      "rank": 41,
+      "scores": [
+        0.005756882485002279,
+        0.0
+      ]
+    },
+    "model.language_model.layers.23.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0017891336465254426,
+      "rank": 14,
+      "scores": [
+        0.0017891336465254426,
+        0.0
+      ]
+    },
+    "model.language_model.layers.23.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.010647311806678772,
+      "rank": 59,
+      "scores": [
+        0.010647311806678772,
+        0.0
+      ]
+    },
+    "model.language_model.layers.24.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.015450027771294117,
+      "rank": 72,
+      "scores": [
+        0.015450027771294117,
+        0.0
+      ]
+    },
+    "model.language_model.layers.24.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.005381074734032154,
+      "rank": 38,
+      "scores": [
+        0.005381074734032154,
+        0.0
+      ]
+    },
+    "model.language_model.layers.24.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0009447389747947454,
+      "rank": 12,
+      "scores": [
+        0.0009447389747947454,
+        0.0
+      ]
+    },
+    "model.language_model.layers.24.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.007864547078497708,
+      "rank": 51,
+      "scores": [
+        0.007864547078497708,
+        0.0
+      ]
+    },
+    "model.language_model.layers.25.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.012867603451013565,
+      "rank": 64,
+      "scores": [
+        0.012867603451013565,
+        0.0
+      ]
+    },
+    "model.language_model.layers.25.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00534106302075088,
+      "rank": 37,
+      "scores": [
+        0.00534106302075088,
+        0.0
+      ]
+    },
+    "model.language_model.layers.25.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.000383871141821146,
+      "rank": 5,
+      "scores": [
+        0.000383871141821146,
+        0.0
+      ]
+    },
+    "model.language_model.layers.25.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.004705399973317981,
+      "rank": 33,
+      "scores": [
+        0.004705399973317981,
+        0.0
+      ]
+    },
+    "model.language_model.layers.26.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.012537608854472637,
+      "rank": 62,
+      "scores": [
+        0.012537608854472637,
+        0.0
+      ]
+    },
+    "model.language_model.layers.26.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.004800555529072881,
+      "rank": 35,
+      "scores": [
+        0.004800555529072881,
+        0.0
+      ]
+    },
+    "model.language_model.layers.26.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00030178320594131947,
+      "rank": 2,
+      "scores": [
+        0.00030178320594131947,
+        0.0
+      ]
+    },
+    "model.language_model.layers.26.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.003396118409000337,
+      "rank": 26,
+      "scores": [
+        0.003396118409000337,
+        0.0
+      ]
+    },
+    "model.language_model.layers.27.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.016213661059737206,
+      "rank": 74,
+      "scores": [
+        0.016213661059737206,
+        0.0
+      ]
+    },
+    "model.language_model.layers.27.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.004136492731049657,
+      "rank": 30,
+      "scores": [
+        0.004136492731049657,
+        0.0
+      ]
+    },
+    "model.language_model.layers.27.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0002740402997005731,
+      "rank": 1,
+      "scores": [
+        0.0002740402997005731,
+        0.0
+      ]
+    },
+    "model.language_model.layers.27.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.006453725480241701,
+      "rank": 43,
+      "scores": [
+        0.006453725480241701,
+        0.0
+      ]
+    },
+    "model.language_model.layers.28.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.02108120545744896,
+      "rank": 84,
+      "scores": [
+        0.02108120545744896,
+        0.0
+      ]
+    },
+    "model.language_model.layers.28.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.003590836189687252,
+      "rank": 28,
+      "scores": [
+        0.003590836189687252,
+        0.0
+      ]
+    },
+    "model.language_model.layers.28.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00036127230850979686,
+      "rank": 3,
+      "scores": [
+        0.00036127230850979686,
+        0.0
+      ]
+    },
+    "model.language_model.layers.28.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.006461622775532305,
+      "rank": 44,
+      "scores": [
+        0.006461622775532305,
+        0.0
+      ]
+    },
+    "model.language_model.layers.29.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.01824764348566532,
+      "rank": 77,
+      "scores": [
+        0.01824764348566532,
+        0.0
+      ]
+    },
+    "model.language_model.layers.29.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0029882050585001707,
+      "rank": 23,
+      "scores": [
+        0.0029882050585001707,
+        0.0
+      ]
+    },
+    "model.language_model.layers.29.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.000460272713098675,
+      "rank": 7,
+      "scores": [
+        0.000460272713098675,
+        0.0
+      ]
+    },
+    "model.language_model.layers.29.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.006561384710948914,
+      "rank": 46,
+      "scores": [
+        0.006561384710948914,
+        0.0
+      ]
+    },
+    "model.language_model.layers.3.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.8949678540229797,
+      "rank": 192,
+      "scores": [
+        0.8949678540229797,
+        0.0
+      ]
+    },
+    "model.language_model.layers.3.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.055931756272912025,
+      "rank": 116,
+      "scores": [
+        0.055931756272912025,
+        0.0
+      ]
+    },
+    "model.language_model.layers.3.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.002178171882405877,
+      "rank": 17,
+      "scores": [
+        0.002178171882405877,
+        0.0
+      ]
+    },
+    "model.language_model.layers.3.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.012706396635621786,
+      "rank": 63,
+      "scores": [
+        0.012706396635621786,
+        0.0
+      ]
+    },
+    "model.language_model.layers.30.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.02043914422392845,
+      "rank": 81,
+      "scores": [
+        0.02043914422392845,
+        0.0
+      ]
+    },
+    "model.language_model.layers.30.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0025604600086808205,
+      "rank": 21,
+      "scores": [
+        0.0025604600086808205,
+        0.0
+      ]
+    },
+    "model.language_model.layers.30.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0003901038726326078,
+      "rank": 6,
+      "scores": [
+        0.0003901038726326078,
+        0.0
+      ]
+    },
+    "model.language_model.layers.30.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.009161938971374184,
+      "rank": 56,
+      "scores": [
+        0.009161938971374184,
+        0.0
+      ]
+    },
+    "model.language_model.layers.31.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.02170451544225216,
+      "rank": 85,
+      "scores": [
+        0.02170451544225216,
+        0.0
+      ]
+    },
+    "model.language_model.layers.31.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0024356429930776358,
+      "rank": 19,
+      "scores": [
+        0.0024356429930776358,
+        0.0
+      ]
+    },
+    "model.language_model.layers.31.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0005586844636127353,
+      "rank": 8,
+      "scores": [
+        0.0005586844636127353,
+        0.0
+      ]
+    },
+    "model.language_model.layers.31.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.006511490442790091,
+      "rank": 45,
+      "scores": [
+        0.006511490442790091,
+        0.0
+      ]
+    },
+    "model.language_model.layers.32.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.013393087312579155,
+      "rank": 66,
+      "scores": [
+        0.013393087312579155,
+        0.0
+      ]
+    },
+    "model.language_model.layers.32.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.002545307041145861,
+      "rank": 20,
+      "scores": [
+        0.002545307041145861,
+        0.0
+      ]
+    },
+    "model.language_model.layers.32.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0005827843560837209,
+      "rank": 9,
+      "scores": [
+        0.0005827843560837209,
+        0.0
+      ]
+    },
+    "model.language_model.layers.32.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.020974596147425473,
+      "rank": 82,
+      "scores": [
+        0.020974596147425473,
+        0.0
+      ]
+    },
+    "model.language_model.layers.33.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.014928684569895267,
+      "rank": 69,
+      "scores": [
+        0.014928684569895267,
+        0.0
+      ]
+    },
+    "model.language_model.layers.33.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.003402617177926004,
+      "rank": 27,
+      "scores": [
+        0.003402617177926004,
+        0.0
+      ]
+    },
+    "model.language_model.layers.33.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0006347018061205745,
+      "rank": 10,
+      "scores": [
+        0.0006347018061205745,
+        0.0
+      ]
+    },
+    "model.language_model.layers.33.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.017631515744142234,
+      "rank": 76,
+      "scores": [
+        0.017631515744142234,
+        0.0
+      ]
+    },
+    "model.language_model.layers.34.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.17137472331523895,
+      "rank": 153,
+      "scores": [
+        0.17137472331523895,
+        0.0
+      ]
+    },
+    "model.language_model.layers.34.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.01057332381606102,
+      "rank": 58,
+      "scores": [
+        0.01057332381606102,
+        0.0
+      ]
+    },
+    "model.language_model.layers.34.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0009330529137514532,
+      "rank": 11,
+      "scores": [
+        0.0009330529137514532,
+        0.0
+      ]
+    },
+    "model.language_model.layers.34.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.037514765514060855,
+      "rank": 102,
+      "scores": [
+        0.037514765514060855,
+        0.0
+      ]
+    },
+    "model.language_model.layers.35.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.015573001466691494,
+      "rank": 73,
+      "scores": [
+        0.015573001466691494,
+        0.0
+      ]
+    },
+    "model.language_model.layers.35.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.027945630252361298,
+      "rank": 93,
+      "scores": [
+        0.027945630252361298,
+        0.0
+      ]
+    },
+    "model.language_model.layers.35.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00037143242661841214,
+      "rank": 4,
+      "scores": [
+        0.00037143242661841214,
+        0.0
+      ]
+    },
+    "model.language_model.layers.35.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.021013514429796487,
+      "rank": 83,
+      "scores": [
+        0.021013514429796487,
+        0.0
+      ]
+    },
+    "model.language_model.layers.4.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 5.461874008178711,
+      "rank": 230,
+      "scores": [
+        5.461874008178711,
+        0.0
+      ]
+    },
+    "model.language_model.layers.4.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.07009445689618587,
+      "rank": 122,
+      "scores": [
+        0.07009445689618587,
+        0.0
+      ]
+    },
+    "model.language_model.layers.4.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0031844715122133493,
+      "rank": 24,
+      "scores": [
+        0.0031844715122133493,
+        0.0
+      ]
+    },
+    "model.language_model.layers.4.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.008956501493230462,
+      "rank": 53,
+      "scores": [
+        0.008956501493230462,
+        0.0
+      ]
+    },
+    "model.language_model.layers.5.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.20775829255580902,
+      "rank": 157,
+      "scores": [
+        0.20775829255580902,
+        0.0
+      ]
+    },
+    "model.language_model.layers.5.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.051766008138656616,
+      "rank": 113,
+      "scores": [
+        0.051766008138656616,
+        0.0
+      ]
+    },
+    "model.language_model.layers.5.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.002816621446982026,
+      "rank": 22,
+      "scores": [
+        0.002816621446982026,
+        0.0
+      ]
+    },
+    "model.language_model.layers.5.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.01690270798280835,
+      "rank": 75,
+      "scores": [
+        0.01690270798280835,
+        0.0
+      ]
+    },
+    "model.language_model.layers.6.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.5787484645843506,
+      "rank": 203,
+      "scores": [
+        1.5787484645843506,
+        0.0
+      ]
+    },
+    "model.language_model.layers.6.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.0352410078048706,
+      "rank": 196,
+      "scores": [
+        1.0352410078048706,
+        0.0
+      ]
+    },
+    "model.language_model.layers.6.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.007291822694242001,
+      "rank": 49,
+      "scores": [
+        0.007291822694242001,
+        0.0
+      ]
+    },
+    "model.language_model.layers.6.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.06501959916204214,
+      "rank": 118,
+      "scores": [
+        0.06501959916204214,
+        0.0
+      ]
+    },
+    "model.language_model.layers.7.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.23636798560619354,
+      "rank": 164,
+      "scores": [
+        0.23636798560619354,
+        0.0
+      ]
+    },
+    "model.language_model.layers.7.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.08054970391094685,
+      "rank": 129,
+      "scores": [
+        0.08054970391094685,
+        0.0
+      ]
+    },
+    "model.language_model.layers.7.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.004364152438938618,
+      "rank": 31,
+      "scores": [
+        0.004364152438938618,
+        0.0
+      ]
+    },
+    "model.language_model.layers.7.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.03197183087468147,
+      "rank": 96,
+      "scores": [
+        0.03197183087468147,
+        0.0
+      ]
+    },
+    "model.language_model.layers.8.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.23190367221832275,
+      "rank": 163,
+      "scores": [
+        0.23190367221832275,
+        0.0
+      ]
+    },
+    "model.language_model.layers.8.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.026155753061175346,
+      "rank": 90,
+      "scores": [
+        0.026155753061175346,
+        0.0
+      ]
+    },
+    "model.language_model.layers.8.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.00906713493168354,
+      "rank": 55,
+      "scores": [
+        0.00906713493168354,
+        0.0
+      ]
+    },
+    "model.language_model.layers.8.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.05123114679008722,
+      "rank": 112,
+      "scores": [
+        0.05123114679008722,
+        0.0
+      ]
+    },
+    "model.language_model.layers.9.mlp.down_proj.quant_recipe": {
+      "costs": [
+        6225920.0,
+        24903680.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.36004769802093506,
+      "rank": 172,
+      "scores": [
+        0.36004769802093506,
+        0.0
+      ]
+    },
+    "model.language_model.layers.9.mlp.gate_proj.quant_recipe": {
+      "costs": [
+        12451840.0,
+        49807360.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.03538758307695389,
+      "rank": 100,
+      "scores": [
+        0.03538758307695389,
+        0.0
+      ]
+    },
+    "model.language_model.layers.9.self_attn.o_proj.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.010376359336078167,
+      "rank": 57,
+      "scores": [
+        0.010376359336078167,
+        0.0
+      ]
+    },
+    "model.language_model.layers.9.self_attn.q_proj.quant_recipe": {
+      "costs": [
+        3932160.0,
+        15728640.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.06864369381219149,
+      "rank": 120,
+      "scores": [
+        0.06864369381219149,
+        0.0
+      ]
+    },
+    "model.visual.blocks.0.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 21.206403732299805,
+      "rank": 242,
+      "scores": [
+        21.206403732299805,
+        0.0
+      ]
+    },
+    "model.visual.blocks.0.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.2170369625091553,
+      "rank": 199,
+      "scores": [
+        1.2170369625091553,
+        0.0
+      ]
+    },
+    "model.visual.blocks.0.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 83.909912109375,
+      "rank": 245,
+      "scores": [
+        83.909912109375,
+        0.0
+      ]
+    },
+    "model.visual.blocks.0.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1076.794189453125,
+      "rank": 250,
+      "scores": [
+        1076.794189453125,
+        0.0
+      ]
+    },
+    "model.visual.blocks.1.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 25.77138328552246,
+      "rank": 243,
+      "scores": [
+        25.77138328552246,
+        0.0
+      ]
+    },
+    "model.visual.blocks.1.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.6903302669525146,
+      "rank": 220,
+      "scores": [
+        2.6903302669525146,
+        0.0
+      ]
+    },
+    "model.visual.blocks.1.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 13.827617645263672,
+      "rank": 240,
+      "scores": [
+        13.827617645263672,
+        0.0
+      ]
+    },
+    "model.visual.blocks.1.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 377.9032897949219,
+      "rank": 249,
+      "scores": [
+        377.9032897949219,
+        0.0
+      ]
+    },
+    "model.visual.blocks.10.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.8582471013069153,
+      "rank": 191,
+      "scores": [
+        0.8582471013069153,
+        0.0
+      ]
+    },
+    "model.visual.blocks.10.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.969454288482666,
+      "rank": 193,
+      "scores": [
+        0.969454288482666,
+        0.0
+      ]
+    },
+    "model.visual.blocks.10.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.054354190826416,
+      "rank": 210,
+      "scores": [
+        2.054354190826416,
+        0.0
+      ]
+    },
+    "model.visual.blocks.10.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 88.29837799072266,
+      "rank": 246,
+      "scores": [
+        88.29837799072266,
+        0.0
+      ]
+    },
+    "model.visual.blocks.11.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.7352550625801086,
+      "rank": 190,
+      "scores": [
+        0.7352550625801086,
+        0.0
+      ]
+    },
+    "model.visual.blocks.11.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.6576660871505737,
+      "rank": 184,
+      "scores": [
+        0.6576660871505737,
+        0.0
+      ]
+    },
+    "model.visual.blocks.11.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.0480854511260986,
+      "rank": 223,
+      "scores": [
+        3.0480854511260986,
+        0.0
+      ]
+    },
+    "model.visual.blocks.11.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 88.3090591430664,
+      "rank": 247,
+      "scores": [
+        88.3090591430664,
+        0.0
+      ]
+    },
+    "model.visual.blocks.12.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.5374032855033875,
+      "rank": 180,
+      "scores": [
+        0.5374032855033875,
+        0.0
+      ]
+    },
+    "model.visual.blocks.12.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.6761888861656189,
+      "rank": 187,
+      "scores": [
+        0.6761888861656189,
+        0.0
+      ]
+    },
+    "model.visual.blocks.12.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.6685369610786438,
+      "rank": 185,
+      "scores": [
+        0.6685369610786438,
+        0.0
+      ]
+    },
+    "model.visual.blocks.12.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.1094040870666504,
+      "rank": 224,
+      "scores": [
+        3.1094040870666504,
+        0.0
+      ]
+    },
+    "model.visual.blocks.13.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.3348180949687958,
+      "rank": 171,
+      "scores": [
+        0.3348180949687958,
+        0.0
+      ]
+    },
+    "model.visual.blocks.13.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.29306355118751526,
+      "rank": 167,
+      "scores": [
+        0.29306355118751526,
+        0.0
+      ]
+    },
+    "model.visual.blocks.13.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.7104392051696777,
+      "rank": 189,
+      "scores": [
+        0.7104392051696777,
+        0.0
+      ]
+    },
+    "model.visual.blocks.13.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.5736403465270996,
+      "rank": 202,
+      "scores": [
+        1.5736403465270996,
+        0.0
+      ]
+    },
+    "model.visual.blocks.14.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.22513271868228912,
+      "rank": 161,
+      "scores": [
+        0.22513271868228912,
+        0.0
+      ]
+    },
+    "model.visual.blocks.14.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.12784656882286072,
+      "rank": 145,
+      "scores": [
+        0.12784656882286072,
+        0.0
+      ]
+    },
+    "model.visual.blocks.14.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.5727501511573792,
+      "rank": 181,
+      "scores": [
+        0.5727501511573792,
+        0.0
+      ]
+    },
+    "model.visual.blocks.14.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.47240906953811646,
+      "rank": 177,
+      "scores": [
+        0.47240906953811646,
+        0.0
+      ]
+    },
+    "model.visual.blocks.15.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.16523422300815582,
+      "rank": 151,
+      "scores": [
+        0.16523422300815582,
+        0.0
+      ]
+    },
+    "model.visual.blocks.15.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.10179998725652695,
+      "rank": 137,
+      "scores": [
+        0.10179998725652695,
+        0.0
+      ]
+    },
+    "model.visual.blocks.15.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.6759498119354248,
+      "rank": 186,
+      "scores": [
+        0.6759498119354248,
+        0.0
+      ]
+    },
+    "model.visual.blocks.15.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.3091357946395874,
+      "rank": 170,
+      "scores": [
+        0.3091357946395874,
+        0.0
+      ]
+    },
+    "model.visual.blocks.16.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.1328807920217514,
+      "rank": 146,
+      "scores": [
+        0.1328807920217514,
+        0.0
+      ]
+    },
+    "model.visual.blocks.16.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.12497588247060776,
+      "rank": 143,
+      "scores": [
+        0.12497588247060776,
+        0.0
+      ]
+    },
+    "model.visual.blocks.16.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.0207321643829346,
+      "rank": 195,
+      "scores": [
+        1.0207321643829346,
+        0.0
+      ]
+    },
+    "model.visual.blocks.16.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.24455200135707855,
+      "rank": 165,
+      "scores": [
+        0.24455200135707855,
+        0.0
+      ]
+    },
+    "model.visual.blocks.17.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.15646708011627197,
+      "rank": 149,
+      "scores": [
+        0.15646708011627197,
+        0.0
+      ]
+    },
+    "model.visual.blocks.17.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.09690962731838226,
+      "rank": 136,
+      "scores": [
+        0.09690962731838226,
+        0.0
+      ]
+    },
+    "model.visual.blocks.17.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.6341233253479004,
+      "rank": 183,
+      "scores": [
+        0.6341233253479004,
+        0.0
+      ]
+    },
+    "model.visual.blocks.17.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.23127686977386475,
+      "rank": 162,
+      "scores": [
+        0.23127686977386475,
+        0.0
+      ]
+    },
+    "model.visual.blocks.18.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.10460981726646423,
+      "rank": 138,
+      "scores": [
+        0.10460981726646423,
+        0.0
+      ]
+    },
+    "model.visual.blocks.18.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.06886636465787888,
+      "rank": 121,
+      "scores": [
+        0.06886636465787888,
+        0.0
+      ]
+    },
+    "model.visual.blocks.18.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.7048801183700562,
+      "rank": 188,
+      "scores": [
+        0.7048801183700562,
+        0.0
+      ]
+    },
+    "model.visual.blocks.18.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.13895294070243835,
+      "rank": 147,
+      "scores": [
+        0.13895294070243835,
+        0.0
+      ]
+    },
+    "model.visual.blocks.19.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.08593754470348358,
+      "rank": 132,
+      "scores": [
+        0.08593754470348358,
+        0.0
+      ]
+    },
+    "model.visual.blocks.19.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.08872199058532715,
+      "rank": 134,
+      "scores": [
+        0.08872199058532715,
+        0.0
+      ]
+    },
+    "model.visual.blocks.19.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.9978542923927307,
+      "rank": 194,
+      "scores": [
+        0.9978542923927307,
+        0.0
+      ]
+    },
+    "model.visual.blocks.19.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.16247272491455078,
+      "rank": 150,
+      "scores": [
+        0.16247272491455078,
+        0.0
+      ]
+    },
+    "model.visual.blocks.2.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 5.78488302230835,
+      "rank": 231,
+      "scores": [
+        5.78488302230835,
+        0.0
+      ]
+    },
+    "model.visual.blocks.2.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.1199984550476074,
+      "rank": 225,
+      "scores": [
+        3.1199984550476074,
+        0.0
+      ]
+    },
+    "model.visual.blocks.2.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 7.284564018249512,
+      "rank": 237,
+      "scores": [
+        7.284564018249512,
+        0.0
+      ]
+    },
+    "model.visual.blocks.2.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 61.658912658691406,
+      "rank": 244,
+      "scores": [
+        61.658912658691406,
+        0.0
+      ]
+    },
+    "model.visual.blocks.20.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.08105102926492691,
+      "rank": 130,
+      "scores": [
+        0.08105102926492691,
+        0.0
+      ]
+    },
+    "model.visual.blocks.20.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.09345611184835434,
+      "rank": 135,
+      "scores": [
+        0.09345611184835434,
+        0.0
+      ]
+    },
+    "model.visual.blocks.20.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.43782442808151245,
+      "rank": 176,
+      "scores": [
+        0.43782442808151245,
+        0.0
+      ]
+    },
+    "model.visual.blocks.20.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.11181066185235977,
+      "rank": 140,
+      "scores": [
+        0.11181066185235977,
+        0.0
+      ]
+    },
+    "model.visual.blocks.21.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.07148544490337372,
+      "rank": 125,
+      "scores": [
+        0.07148544490337372,
+        0.0
+      ]
+    },
+    "model.visual.blocks.21.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.3860195279121399,
+      "rank": 174,
+      "scores": [
+        0.3860195279121399,
+        0.0
+      ]
+    },
+    "model.visual.blocks.21.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.4351128339767456,
+      "rank": 200,
+      "scores": [
+        1.4351128339767456,
+        0.0
+      ]
+    },
+    "model.visual.blocks.21.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.214314267039299,
+      "rank": 159,
+      "scores": [
+        0.214314267039299,
+        0.0
+      ]
+    },
+    "model.visual.blocks.22.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.04541442170739174,
+      "rank": 110,
+      "scores": [
+        0.04541442170739174,
+        0.0
+      ]
+    },
+    "model.visual.blocks.22.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.22369295358657837,
+      "rank": 160,
+      "scores": [
+        0.22369295358657837,
+        0.0
+      ]
+    },
+    "model.visual.blocks.22.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.5101132988929749,
+      "rank": 179,
+      "scores": [
+        0.5101132988929749,
+        0.0
+      ]
+    },
+    "model.visual.blocks.22.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.12640735507011414,
+      "rank": 144,
+      "scores": [
+        0.12640735507011414,
+        0.0
+      ]
+    },
+    "model.visual.blocks.23.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.026422984898090363,
+      "rank": 91,
+      "scores": [
+        0.026422984898090363,
+        0.0
+      ]
+    },
+    "model.visual.blocks.23.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.11652685701847076,
+      "rank": 142,
+      "scores": [
+        0.11652685701847076,
+        0.0
+      ]
+    },
+    "model.visual.blocks.23.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.24844598770141602,
+      "rank": 166,
+      "scores": [
+        0.24844598770141602,
+        0.0
+      ]
+    },
+    "model.visual.blocks.23.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.031865358352661,
+      "rank": 209,
+      "scores": [
+        2.031865358352661,
+        0.0
+      ]
+    },
+    "model.visual.blocks.3.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.10482120513916,
+      "rank": 212,
+      "scores": [
+        2.10482120513916,
+        0.0
+      ]
+    },
+    "model.visual.blocks.3.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.44979989528656,
+      "rank": 201,
+      "scores": [
+        1.44979989528656,
+        0.0
+      ]
+    },
+    "model.visual.blocks.3.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 6.874052047729492,
+      "rank": 234,
+      "scores": [
+        6.874052047729492,
+        0.0
+      ]
+    },
+    "model.visual.blocks.3.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 19.36947250366211,
+      "rank": 241,
+      "scores": [
+        19.36947250366211,
+        0.0
+      ]
+    },
+    "model.visual.blocks.4.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.50317120552063,
+      "rank": 218,
+      "scores": [
+        2.50317120552063,
+        0.0
+      ]
+    },
+    "model.visual.blocks.4.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.570626974105835,
+      "rank": 219,
+      "scores": [
+        2.570626974105835,
+        0.0
+      ]
+    },
+    "model.visual.blocks.4.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 7.2420125007629395,
+      "rank": 236,
+      "scores": [
+        7.2420125007629395,
+        0.0
+      ]
+    },
+    "model.visual.blocks.4.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 9.904083251953125,
+      "rank": 239,
+      "scores": [
+        9.904083251953125,
+        0.0
+      ]
+    },
+    "model.visual.blocks.5.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.2869112491607666,
+      "rank": 215,
+      "scores": [
+        2.2869112491607666,
+        0.0
+      ]
+    },
+    "model.visual.blocks.5.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.8437156677246094,
+      "rank": 228,
+      "scores": [
+        3.8437156677246094,
+        0.0
+      ]
+    },
+    "model.visual.blocks.5.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 6.743236541748047,
+      "rank": 233,
+      "scores": [
+        6.743236541748047,
+        0.0
+      ]
+    },
+    "model.visual.blocks.5.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 7.395785331726074,
+      "rank": 238,
+      "scores": [
+        7.395785331726074,
+        0.0
+      ]
+    },
+    "model.visual.blocks.6.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.289550542831421,
+      "rank": 216,
+      "scores": [
+        2.289550542831421,
+        0.0
+      ]
+    },
+    "model.visual.blocks.6.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.219698667526245,
+      "rank": 214,
+      "scores": [
+        2.219698667526245,
+        0.0
+      ]
+    },
+    "model.visual.blocks.6.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 5.208321571350098,
+      "rank": 229,
+      "scores": [
+        5.208321571350098,
+        0.0
+      ]
+    },
+    "model.visual.blocks.6.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 7.161655902862549,
+      "rank": 235,
+      "scores": [
+        7.161655902862549,
+        0.0
+      ]
+    },
+    "model.visual.blocks.7.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.9988198280334473,
+      "rank": 208,
+      "scores": [
+        1.9988198280334473,
+        0.0
+      ]
+    },
+    "model.visual.blocks.7.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.9385261535644531,
+      "rank": 207,
+      "scores": [
+        1.9385261535644531,
+        0.0
+      ]
+    },
+    "model.visual.blocks.7.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.446112871170044,
+      "rank": 226,
+      "scores": [
+        3.446112871170044,
+        0.0
+      ]
+    },
+    "model.visual.blocks.7.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 5.7882208824157715,
+      "rank": 232,
+      "scores": [
+        5.7882208824157715,
+        0.0
+      ]
+    },
+    "model.visual.blocks.8.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.793892502784729,
+      "rank": 206,
+      "scores": [
+        1.793892502784729,
+        0.0
+      ]
+    },
+    "model.visual.blocks.8.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.0883922576904297,
+      "rank": 211,
+      "scores": [
+        2.0883922576904297,
+        0.0
+      ]
+    },
+    "model.visual.blocks.8.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.536591053009033,
+      "rank": 227,
+      "scores": [
+        3.536591053009033,
+        0.0
+      ]
+    },
+    "model.visual.blocks.8.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 3.0238077640533447,
+      "rank": 222,
+      "scores": [
+        3.0238077640533447,
+        0.0
+      ]
+    },
+    "model.visual.blocks.9.attn.proj.quant_recipe": {
+      "costs": [
+        262144.0,
+        1048576.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.678210735321045,
+      "rank": 205,
+      "scores": [
+        1.678210735321045,
+        0.0
+      ]
+    },
+    "model.visual.blocks.9.attn.qkv.quant_recipe": {
+      "costs": [
+        786432.0,
+        3145728.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.0882048606872559,
+      "rank": 197,
+      "scores": [
+        1.0882048606872559,
+        0.0
+      ]
+    },
+    "model.visual.blocks.9.mlp.linear_fc1.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.2108678817749023,
+      "rank": 213,
+      "scores": [
+        2.2108678817749023,
+        0.0
+      ]
+    },
+    "model.visual.blocks.9.mlp.linear_fc2.quant_recipe": {
+      "costs": [
+        1048576.0,
+        4194304.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 2.8187434673309326,
+      "rank": 221,
+      "scores": [
+        2.8187434673309326,
+        0.0
+      ]
+    },
+    "model.visual.deepstack_merger_list.0.linear_fc1.quant_recipe": {
+      "costs": [
+        4194304.0,
+        16777216.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.08135108649730682,
+      "rank": 131,
+      "scores": [
+        0.08135108649730682,
+        0.0
+      ]
+    },
+    "model.visual.deepstack_merger_list.0.linear_fc2.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.03161826357245445,
+      "rank": 95,
+      "scores": [
+        0.03161826357245445,
+        0.0
+      ]
+    },
+    "model.visual.deepstack_merger_list.1.linear_fc1.quant_recipe": {
+      "costs": [
+        4194304.0,
+        16777216.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.2975558936595917,
+      "rank": 169,
+      "scores": [
+        0.2975558936595917,
+        0.0
+      ]
+    },
+    "model.visual.deepstack_merger_list.1.linear_fc2.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0787898600101471,
+      "rank": 127,
+      "scores": [
+        0.0787898600101471,
+        0.0
+      ]
+    },
+    "model.visual.deepstack_merger_list.2.linear_fc1.quant_recipe": {
+      "costs": [
+        4194304.0,
+        16777216.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.1814710795879364,
+      "rank": 154,
+      "scores": [
+        0.1814710795879364,
+        0.0
+      ]
+    },
+    "model.visual.deepstack_merger_list.2.linear_fc2.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.0804707258939743,
+      "rank": 128,
+      "scores": [
+        0.0804707258939743,
+        0.0
+      ]
+    },
+    "model.visual.merger.linear_fc1.quant_recipe": {
+      "costs": [
+        4194304.0,
+        16777216.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 1.6753528118133545,
+      "rank": 204,
+      "scores": [
+        1.6753528118133545,
+        0.0
+      ]
+    },
+    "model.visual.merger.linear_fc2.quant_recipe": {
+      "costs": [
+        2621440.0,
+        10485760.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 0.5796797871589661,
+      "rank": 182,
+      "scores": [
+        0.5796797871589661,
+        0.0
+      ]
+    },
+    "model.visual.patch_embed.proj.quant_recipe": {
+      "costs": [
+        393216.0,
+        1572864.0
+      ],
+      "formats": [
+        "CUSTOM_0(effective-bits: 4.0)",
+        "NONE(effective-bits: 16.0)"
+      ],
+      "importance": 244.78919982910156,
+      "rank": 248,
+      "scores": [
+        244.78919982910156,
+        0.0
+      ]
+    }
+  },
+  "layers": {
+    "lm_head": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.0.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.1.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.10.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.11.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.12.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.13.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.14.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.15.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.16.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.17.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.18.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.19.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.2.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.20.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.21.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.22.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.23.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.24.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.25.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.26.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.27.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.28.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.29.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.3.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.30.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.31.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.32.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.33.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.34.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.35.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.4.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.5.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.6.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.7.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.8.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.mlp.down_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.mlp.gate_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.mlp.up_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.self_attn.k_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.self_attn.o_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.self_attn.q_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.language_model.layers.9.self_attn.v_proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.0.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.0.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.0.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.0.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.1.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.1.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.1.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.1.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.10.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.10.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.10.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.10.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.11.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.11.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.11.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.11.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.12.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.12.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.12.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.12.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.13.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.13.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.13.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.13.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.14.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.14.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.14.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.14.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.15.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.15.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.15.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.15.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.16.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.16.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.16.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.16.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.17.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.17.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.17.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.17.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.18.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.18.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.18.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.18.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.19.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.19.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.19.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.19.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.2.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.2.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.2.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.2.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.20.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.20.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.20.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.20.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.21.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.21.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.21.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.21.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.22.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.22.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.22.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.22.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.23.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.23.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.23.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.23.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.3.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.3.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.3.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.3.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.4.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.4.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.4.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.4.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.5.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.5.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.5.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.5.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.6.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.6.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.6.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.6.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.7.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.7.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.7.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.7.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.8.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.8.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.8.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.8.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.9.attn.proj": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.9.attn.qkv": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.9.mlp.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.blocks.9.mlp.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.deepstack_merger_list.0.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.deepstack_merger_list.0.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.deepstack_merger_list.1.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.deepstack_merger_list.1.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.deepstack_merger_list.2.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.deepstack_merger_list.2.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.merger.linear_fc1": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    },
+    "model.visual.merger.linear_fc2": {
+      "module_type": "QuantLinear",
+      "quantized": true
+    }
+  },
+  "model": {
+    "id": "<ABSOLUTE_PATH>"
+  },
+  "num_quantized_layers": 357,
+  "quantization": {
+    "base_format_name": "INT4_WEIGHT_INT8_ACT_CFG",
+    "format_names": [
+      "INT4_WEIGHT_INT8_ACT_CFG"
+    ],
+    "quant_format": "int8",
+    "quant_pair": {
+      "activation": "int8",
+      "format_name": "INT4_WEIGHT_INT8_ACT_CFG",
+      "name": "wint4_aint8",
+      "weight": "int4"
+    }
+  },
+  "run_config": {
+    "composed_yaml_path": "composed-config.yaml"
+  },
+  "scheme": {
+    "auto_quantize_bits": 8.0,
+    "auto_quantize_method": "gradient",
+    "auto_quantize_score_size": 128,
+    "coverage_fraction": 1.0,
+    "coverage_mode": "full",
+    "name": "wint4_aint8_autoquant_all_layers",
+    "quant_formats": [
+      "INT4_WEIGHT_INT8_ACT_CFG"
+    ]
+  },
+  "sensitivity_ranking": [
+    {
+      "importance": 0.0002740402997005731,
+      "name": "model.language_model.layers.27.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00030178320594131947,
+      "name": "model.language_model.layers.26.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00036127230850979686,
+      "name": "model.language_model.layers.28.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00037143242661841214,
+      "name": "model.language_model.layers.35.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.000383871141821146,
+      "name": "model.language_model.layers.25.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0003901038726326078,
+      "name": "model.language_model.layers.30.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.000460272713098675,
+      "name": "model.language_model.layers.29.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0005586844636127353,
+      "name": "model.language_model.layers.31.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0005827843560837209,
+      "name": "model.language_model.layers.32.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0006347018061205745,
+      "name": "model.language_model.layers.33.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0009330529137514532,
+      "name": "model.language_model.layers.34.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0009447389747947454,
+      "name": "model.language_model.layers.24.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0009914536494761705,
+      "name": "model.language_model.layers.21.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0017891336465254426,
+      "name": "model.language_model.layers.23.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00199203216470778,
+      "name": "model.language_model.layers.22.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0021758147049695253,
+      "name": "model.language_model.layers.20.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.002178171882405877,
+      "name": "model.language_model.layers.3.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.002347084693610668,
+      "name": "lm_head.quant_recipe"
+    },
+    {
+      "importance": 0.0024356429930776358,
+      "name": "model.language_model.layers.31.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.002545307041145861,
+      "name": "model.language_model.layers.32.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0025604600086808205,
+      "name": "model.language_model.layers.30.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.002816621446982026,
+      "name": "model.language_model.layers.5.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0029882050585001707,
+      "name": "model.language_model.layers.29.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0031844715122133493,
+      "name": "model.language_model.layers.4.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.003232398070394993,
+      "name": "model.language_model.layers.1.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.003396118409000337,
+      "name": "model.language_model.layers.26.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.003402617177926004,
+      "name": "model.language_model.layers.33.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.003590836189687252,
+      "name": "model.language_model.layers.28.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0038968424778431654,
+      "name": "model.language_model.layers.0.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.004136492731049657,
+      "name": "model.language_model.layers.27.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.004364152438938618,
+      "name": "model.language_model.layers.7.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.004407969070598483,
+      "name": "model.language_model.layers.21.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.004705399973317981,
+      "name": "model.language_model.layers.25.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0047412593849003315,
+      "name": "model.language_model.layers.2.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.004800555529072881,
+      "name": "model.language_model.layers.26.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.005227872636169195,
+      "name": "model.language_model.layers.19.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00534106302075088,
+      "name": "model.language_model.layers.25.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.005381074734032154,
+      "name": "model.language_model.layers.24.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.005615741480141878,
+      "name": "model.language_model.layers.20.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.005709431832656264,
+      "name": "model.language_model.layers.22.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.005756882485002279,
+      "name": "model.language_model.layers.23.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0064457012340426445,
+      "name": "model.language_model.layers.11.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.006453725480241701,
+      "name": "model.language_model.layers.27.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.006461622775532305,
+      "name": "model.language_model.layers.28.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.006511490442790091,
+      "name": "model.language_model.layers.31.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.006561384710948914,
+      "name": "model.language_model.layers.29.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.006701341830193996,
+      "name": "model.language_model.layers.18.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.007177595980465412,
+      "name": "model.language_model.layers.20.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.007291822694242001,
+      "name": "model.language_model.layers.6.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00746340025216341,
+      "name": "model.language_model.layers.21.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.007864547078497708,
+      "name": "model.language_model.layers.24.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.008292105980217457,
+      "name": "model.language_model.layers.12.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.008956501493230462,
+      "name": "model.language_model.layers.4.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.008989226073026657,
+      "name": "model.language_model.layers.22.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.00906713493168354,
+      "name": "model.language_model.layers.8.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.009161938971374184,
+      "name": "model.language_model.layers.30.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.010376359336078167,
+      "name": "model.language_model.layers.9.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.01057332381606102,
+      "name": "model.language_model.layers.34.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.010647311806678772,
+      "name": "model.language_model.layers.23.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.01076247077435255,
+      "name": "model.language_model.layers.19.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.011182034388184547,
+      "name": "model.language_model.layers.1.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.012537608854472637,
+      "name": "model.language_model.layers.26.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.012706396635621786,
+      "name": "model.language_model.layers.3.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.012867603451013565,
+      "name": "model.language_model.layers.25.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.01302307192236185,
+      "name": "model.language_model.layers.10.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.013393087312579155,
+      "name": "model.language_model.layers.32.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.014068229822441936,
+      "name": "model.language_model.layers.0.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.014079682063311338,
+      "name": "model.language_model.layers.18.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.014928684569895267,
+      "name": "model.language_model.layers.33.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.014938637148588896,
+      "name": "model.language_model.layers.17.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.015439960174262524,
+      "name": "model.language_model.layers.23.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.015450027771294117,
+      "name": "model.language_model.layers.24.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.015573001466691494,
+      "name": "model.language_model.layers.35.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.016213661059737206,
+      "name": "model.language_model.layers.27.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.01690270798280835,
+      "name": "model.language_model.layers.5.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.017631515744142234,
+      "name": "model.language_model.layers.33.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.01824764348566532,
+      "name": "model.language_model.layers.29.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.019332800060510635,
+      "name": "model.language_model.layers.22.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.020150434225797653,
+      "name": "model.language_model.layers.17.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.02018098719418049,
+      "name": "model.language_model.layers.19.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.02043914422392845,
+      "name": "model.language_model.layers.30.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.020974596147425473,
+      "name": "model.language_model.layers.32.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.021013514429796487,
+      "name": "model.language_model.layers.35.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.02108120545744896,
+      "name": "model.language_model.layers.28.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.02170451544225216,
+      "name": "model.language_model.layers.31.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.022615822032094002,
+      "name": "model.language_model.layers.13.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.02313712053000927,
+      "name": "model.language_model.layers.14.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.024222538340836763,
+      "name": "model.language_model.layers.21.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.025583368726074696,
+      "name": "model.language_model.layers.11.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.026155753061175346,
+      "name": "model.language_model.layers.8.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.026422984898090363,
+      "name": "model.visual.blocks.23.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.026631898246705532,
+      "name": "model.language_model.layers.10.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.027945630252361298,
+      "name": "model.language_model.layers.35.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.02987766917794943,
+      "name": "model.language_model.layers.12.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.03161826357245445,
+      "name": "model.visual.deepstack_merger_list.0.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.03197183087468147,
+      "name": "model.language_model.layers.7.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0320848049595952,
+      "name": "model.language_model.layers.0.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.033202845603227615,
+      "name": "model.language_model.layers.13.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.034492289181798697,
+      "name": "model.language_model.layers.2.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.03538758307695389,
+      "name": "model.language_model.layers.9.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.03720555268228054,
+      "name": "model.language_model.layers.15.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.037514765514060855,
+      "name": "model.language_model.layers.34.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.03818748379126191,
+      "name": "model.language_model.layers.13.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.038763572461903095,
+      "name": "model.language_model.layers.14.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.03881562128663063,
+      "name": "model.language_model.layers.16.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.039991263300180435,
+      "name": "model.language_model.layers.17.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.04352512024343014,
+      "name": "model.language_model.layers.19.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.04418200068175793,
+      "name": "model.language_model.layers.11.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.04485846310853958,
+      "name": "model.language_model.layers.16.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.04541442170739174,
+      "name": "model.visual.blocks.22.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.04652780573815107,
+      "name": "model.language_model.layers.17.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.05123114679008722,
+      "name": "model.language_model.layers.8.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.051766008138656616,
+      "name": "model.language_model.layers.5.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.05516376765444875,
+      "name": "model.language_model.layers.20.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.055555413011461496,
+      "name": "model.language_model.layers.18.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.055931756272912025,
+      "name": "model.language_model.layers.3.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.057474744506180286,
+      "name": "model.language_model.layers.16.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.06501959916204214,
+      "name": "model.language_model.layers.6.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.06823174562305212,
+      "name": "model.language_model.layers.15.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.06864369381219149,
+      "name": "model.language_model.layers.9.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.06886636465787888,
+      "name": "model.visual.blocks.18.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.07009445689618587,
+      "name": "model.language_model.layers.4.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.07027094066143036,
+      "name": "model.language_model.layers.15.self_attn.o_proj.quant_recipe"
+    },
+    {
+      "importance": 0.07059744745492935,
+      "name": "model.language_model.layers.1.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.07148544490337372,
+      "name": "model.visual.blocks.21.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.07222134061157703,
+      "name": "model.language_model.layers.14.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.0787898600101471,
+      "name": "model.visual.deepstack_merger_list.1.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.0804707258939743,
+      "name": "model.visual.deepstack_merger_list.2.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.08054970391094685,
+      "name": "model.language_model.layers.7.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.08105102926492691,
+      "name": "model.visual.blocks.20.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.08135108649730682,
+      "name": "model.visual.deepstack_merger_list.0.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.08593754470348358,
+      "name": "model.visual.blocks.19.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.08759840577840805,
+      "name": "model.language_model.layers.13.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.08872199058532715,
+      "name": "model.visual.blocks.19.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.09345611184835434,
+      "name": "model.visual.blocks.20.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.09690962731838226,
+      "name": "model.visual.blocks.17.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.10179998725652695,
+      "name": "model.visual.blocks.15.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.10460981726646423,
+      "name": "model.visual.blocks.18.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.10737390071153641,
+      "name": "model.language_model.layers.10.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.11181066185235977,
+      "name": "model.visual.blocks.20.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.1118107195943594,
+      "name": "model.language_model.layers.12.self_attn.q_proj.quant_recipe"
+    },
+    {
+      "importance": 0.11652685701847076,
+      "name": "model.visual.blocks.23.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.12497588247060776,
+      "name": "model.visual.blocks.16.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.12640735507011414,
+      "name": "model.visual.blocks.22.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.12784656882286072,
+      "name": "model.visual.blocks.14.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.1328807920217514,
+      "name": "model.visual.blocks.16.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.13895294070243835,
+      "name": "model.visual.blocks.18.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.15154309570789337,
+      "name": "model.language_model.layers.18.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.15646708011627197,
+      "name": "model.visual.blocks.17.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.16247272491455078,
+      "name": "model.visual.blocks.19.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.16523422300815582,
+      "name": "model.visual.blocks.15.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.16674619913101196,
+      "name": "model.language_model.layers.0.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.17137472331523895,
+      "name": "model.language_model.layers.34.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.1814710795879364,
+      "name": "model.visual.deepstack_merger_list.2.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.19596830755472183,
+      "name": "model.language_model.layers.2.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 0.19651351869106293,
+      "name": "model.language_model.layers.15.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.20775829255580902,
+      "name": "model.language_model.layers.5.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.20844252407550812,
+      "name": "model.language_model.layers.11.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.214314267039299,
+      "name": "model.visual.blocks.21.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.22369295358657837,
+      "name": "model.visual.blocks.22.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.22513271868228912,
+      "name": "model.visual.blocks.14.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.23127686977386475,
+      "name": "model.visual.blocks.17.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.23190367221832275,
+      "name": "model.language_model.layers.8.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.23636798560619354,
+      "name": "model.language_model.layers.7.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.24455200135707855,
+      "name": "model.visual.blocks.16.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.24844598770141602,
+      "name": "model.visual.blocks.23.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.29306355118751526,
+      "name": "model.visual.blocks.13.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.293879896402359,
+      "name": "model.language_model.layers.12.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.2975558936595917,
+      "name": "model.visual.deepstack_merger_list.1.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.3091357946395874,
+      "name": "model.visual.blocks.15.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.3348180949687958,
+      "name": "model.visual.blocks.13.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.36004769802093506,
+      "name": "model.language_model.layers.9.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.3640718460083008,
+      "name": "model.language_model.layers.10.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.3860195279121399,
+      "name": "model.visual.blocks.21.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.42951712012290955,
+      "name": "model.language_model.layers.14.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.43782442808151245,
+      "name": "model.visual.blocks.20.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.47240906953811646,
+      "name": "model.visual.blocks.14.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.4744262099266052,
+      "name": "model.language_model.layers.16.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.5101132988929749,
+      "name": "model.visual.blocks.22.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.5374032855033875,
+      "name": "model.visual.blocks.12.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.5727501511573792,
+      "name": "model.visual.blocks.14.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.5796797871589661,
+      "name": "model.visual.merger.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 0.6341233253479004,
+      "name": "model.visual.blocks.17.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.6576660871505737,
+      "name": "model.visual.blocks.11.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.6685369610786438,
+      "name": "model.visual.blocks.12.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.6759498119354248,
+      "name": "model.visual.blocks.15.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.6761888861656189,
+      "name": "model.visual.blocks.12.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.7048801183700562,
+      "name": "model.visual.blocks.18.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.7104392051696777,
+      "name": "model.visual.blocks.13.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 0.7352550625801086,
+      "name": "model.visual.blocks.11.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.8582471013069153,
+      "name": "model.visual.blocks.10.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 0.8949678540229797,
+      "name": "model.language_model.layers.3.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 0.969454288482666,
+      "name": "model.visual.blocks.10.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 0.9978542923927307,
+      "name": "model.visual.blocks.19.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 1.0207321643829346,
+      "name": "model.visual.blocks.16.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 1.0352410078048706,
+      "name": "model.language_model.layers.6.mlp.gate_proj.quant_recipe"
+    },
+    {
+      "importance": 1.0882048606872559,
+      "name": "model.visual.blocks.9.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 1.109418272972107,
+      "name": "model.language_model.layers.2.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 1.2170369625091553,
+      "name": "model.visual.blocks.0.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 1.4351128339767456,
+      "name": "model.visual.blocks.21.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 1.44979989528656,
+      "name": "model.visual.blocks.3.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 1.5736403465270996,
+      "name": "model.visual.blocks.13.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 1.5787484645843506,
+      "name": "model.language_model.layers.6.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 1.6753528118133545,
+      "name": "model.visual.merger.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 1.678210735321045,
+      "name": "model.visual.blocks.9.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 1.793892502784729,
+      "name": "model.visual.blocks.8.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 1.9385261535644531,
+      "name": "model.visual.blocks.7.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 1.9988198280334473,
+      "name": "model.visual.blocks.7.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 2.031865358352661,
+      "name": "model.visual.blocks.23.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 2.054354190826416,
+      "name": "model.visual.blocks.10.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 2.0883922576904297,
+      "name": "model.visual.blocks.8.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 2.10482120513916,
+      "name": "model.visual.blocks.3.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 2.2108678817749023,
+      "name": "model.visual.blocks.9.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 2.219698667526245,
+      "name": "model.visual.blocks.6.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 2.2869112491607666,
+      "name": "model.visual.blocks.5.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 2.289550542831421,
+      "name": "model.visual.blocks.6.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 2.337589979171753,
+      "name": "model.language_model.layers.1.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 2.50317120552063,
+      "name": "model.visual.blocks.4.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 2.570626974105835,
+      "name": "model.visual.blocks.4.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 2.6903302669525146,
+      "name": "model.visual.blocks.1.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 2.8187434673309326,
+      "name": "model.visual.blocks.9.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 3.0238077640533447,
+      "name": "model.visual.blocks.8.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 3.0480854511260986,
+      "name": "model.visual.blocks.11.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 3.1094040870666504,
+      "name": "model.visual.blocks.12.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 3.1199984550476074,
+      "name": "model.visual.blocks.2.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 3.446112871170044,
+      "name": "model.visual.blocks.7.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 3.536591053009033,
+      "name": "model.visual.blocks.8.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 3.8437156677246094,
+      "name": "model.visual.blocks.5.attn.qkv.quant_recipe"
+    },
+    {
+      "importance": 5.208321571350098,
+      "name": "model.visual.blocks.6.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 5.461874008178711,
+      "name": "model.language_model.layers.4.mlp.down_proj.quant_recipe"
+    },
+    {
+      "importance": 5.78488302230835,
+      "name": "model.visual.blocks.2.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 5.7882208824157715,
+      "name": "model.visual.blocks.7.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 6.743236541748047,
+      "name": "model.visual.blocks.5.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 6.874052047729492,
+      "name": "model.visual.blocks.3.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 7.161655902862549,
+      "name": "model.visual.blocks.6.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 7.2420125007629395,
+      "name": "model.visual.blocks.4.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 7.284564018249512,
+      "name": "model.visual.blocks.2.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 7.395785331726074,
+      "name": "model.visual.blocks.5.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 9.904083251953125,
+      "name": "model.visual.blocks.4.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 13.827617645263672,
+      "name": "model.visual.blocks.1.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 19.36947250366211,
+      "name": "model.visual.blocks.3.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 21.206403732299805,
+      "name": "model.visual.blocks.0.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 25.77138328552246,
+      "name": "model.visual.blocks.1.attn.proj.quant_recipe"
+    },
+    {
+      "importance": 61.658912658691406,
+      "name": "model.visual.blocks.2.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 83.909912109375,
+      "name": "model.visual.blocks.0.mlp.linear_fc1.quant_recipe"
+    },
+    {
+      "importance": 88.29837799072266,
+      "name": "model.visual.blocks.10.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 88.3090591430664,
+      "name": "model.visual.blocks.11.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 244.78919982910156,
+      "name": "model.visual.patch_embed.proj.quant_recipe"
+    },
+    {
+      "importance": 377.9032897949219,
+      "name": "model.visual.blocks.1.mlp.linear_fc2.quant_recipe"
+    },
+    {
+      "importance": 1076.794189453125,
+      "name": "model.visual.blocks.0.mlp.linear_fc2.quant_recipe"
+    }
+  ]
+}

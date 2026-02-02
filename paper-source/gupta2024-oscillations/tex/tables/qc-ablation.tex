@@ -1,0 +1,19 @@
+\begin{table}[]
+\centering
+\caption{\em Ablation studies of different \qc{} setups, where either per-tensor or per-channel correction is performed varying whether to use \qc{} scale or shift on \yoloa{-n} trained at 4-bit on \coco{} dataset.}
+\vspace{1ex}
+\label{tab:qc-ablation}
+\begin{tabular}{lccr}
+\toprule
+\qc{} Setup                     & \qc{} Scale & \qc{} Shift & mAP  \\
+\midrule
+\multirow{3}{*}{Per-tensor}  & \cmark        & \xmark        & 22.2 \\
+                             & \xmark        & \cmark        & 22.3 \\
+                             & \cmark        & \cmark        & 22.6 \\
+                             \midrule
+\multirow{3}{*}{Per-channel} & \cmark        & \xmark        & 23.5 \\
+                             & \xmark        & \cmark        & 23.6 \\
+                             & \cellcolor{myGray} \cmark        & \cellcolor{myGray} \cmark        & \cellcolor{myGray} \textbf{23.8} \\
+\bottomrule
+\end{tabular}
+\end{table}

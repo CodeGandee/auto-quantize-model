@@ -1,0 +1,38 @@
+
+
+
+\begin{table}[h]
+\centering
+\small
+
+\caption{\em Comparison with baseline method \ie, \acrshort{LSQ}~\cite{lsq} against our proposed methods using mAP metric for semantic segmentation task on the COCO dataset. * denotes first and last layers are trained at 4-bit quantization. Our methods consistently outperforms baseline methods on both \yoloa-{n,s} variants at 3-bit and 4-bit quantization.}
+\vspace{-0.5ex}
+\setlength{\tabcolsep}{1.2pt}
+\label{tab:segment-yolo}
+% \vspace{1ex}
+\begin{tabular}{llcccc}
+\toprule
+\multirow{2}{*}{Method} & \multirow{2}{*}{\#-bit} & \multicolumn{2}{c}{Mask (mAP)}                            & \multicolumn{2}{c}{Box (mAP)}                             \\
+\cmidrule{3-6}
+                        &                         & \multicolumn{1}{l}{\yoloa-n} & \multicolumn{1}{l}{\yoloa-s} & \multicolumn{1}{l}{\yoloa-n} & \multicolumn{1}{l}{\yoloa-s} \\
+                        \midrule
+Full-Precision          & 32-bit                  & 23.4          & 31.7         & 27.6         & 37.6         \\
+\midrule
+Baseline                & \multirow{3}{*}{4-bit}  & 16.5          & 27.8         & 18.5         & 32.1         \\
+Ours (\exma)              &                         & 17.7          & 28.3         & 19.8         & 32.6         \\
+\cellcolor{myGray} Ours (\exma+\qc)           &                         &  \cellcolor{myGray} \textbf{19.5}          & \cellcolor{myGray} \textbf{29.4}         & \cellcolor{myGray} \textbf{22.3}         & \cellcolor{myGray} \textbf{33.7}         \\
+\midrule
+Baseline                & \multirow{3}{*}{3-bit}  & 12.5          & 23.9         & 14.1         & 27.1         \\
+Ours (\exma)              &                         & 13.9          & 24.7         & 15.9         & 27.8         \\
+\cellcolor{myGray} Ours (\exma+\qc)           &                         & \cellcolor{myGray} \textbf{15.8}          & \cellcolor{myGray} \textbf{25.5}         & \cellcolor{myGray} \textbf{18.1}         & \cellcolor{myGray} \textbf{29.6}         \\
+\midrule
+Baseline                & \multirow{3}{*}{4-bit*} & 15.7          & 26.0           & 17.1         & 30.0           \\
+Ours (\exma)              &                         & 16.5          & 26.7         & 17.9         & 30.4         \\
+\cellcolor{myGray} Ours (\exma+\qc)           &                         &  \cellcolor{myGray} \textbf{18.3}          & \cellcolor{myGray} \textbf{27.2}         & \cellcolor{myGray} \textbf{20.8}         & \cellcolor{myGray} \textbf{31.5}
+ 
+ \\
+\bottomrule
+\end{tabular}
+\vspace{-2ex}
+\end{table}
+

@@ -1,0 +1,236 @@
+%%%%%%%% ICML 2022 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass[nohyperref]{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+% \usepackage{subfigure}
+\usepackage{caption}
+\usepackage{booktabs} % for professional tables
+\usepackage{xcolor}
+\usepackage{csquotes}
+% For theorems and such
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage{placeins}
+\usepackage{tablefootnote}
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2022} with \usepackage[nohyperref]{icml2022} above.
+\usepackage{hyperref}
+\usepackage{url}
+
+% Specific includes for the quantization chapter
+\input{includes_quant}
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% general math commands
+
+% All our TODO comments, we should be able to comment them out before submitting
+\newcommand\idea[1]{\textcolor{teal}{\\Idea: #1}}
+
+\newcommand\tijmen[1]{\textcolor{blue}{Tijmen: #1\\}}
+\newcommand\marios[1]{\textcolor{orange}{Marios: #1\\}}
+\newcommand\markus[1]{\textcolor{purple}{Markus: #1}}
+\newcommand\yelysei[1]{\textcolor{magenta}{Yelysei: #1\\}}
+
+% Tick marks for table
+\newcommand{\good}{{\color{green}\checkmark}}
+\newcommand{\bad}{{\color{red}\ding{55}}}
+
+
+
+% Use the following line for the initial blind version submitted for review:
+% \usepackage{icml2022}
+
+% If accepted, instead use the following line for the camera-ready submission:
+% \usepackage[accepted]{icml2022}
+
+\usepackage[accepted]{icml2022}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+\usepackage[textsize=tiny]{todonotes}
+
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Overcoming Oscillations in QAT}
+
+\begin{document}
+
+\twocolumn[
+% \icmltitle{Oscillations in Quantization-Aware Training}
+\icmltitle{Overcoming Oscillations in Quantization-Aware Training}
+% Overcoming Weight Oscillations in Quantization-Aware Training
+% \icmltitle{Why Weights Oscillate in Quantization-Aware Training}
+% \icmltitle{Oscillations in Quantization-Aware Training: why they matter and how to overcome them}
+% \icmltitle{Oscillations in QAT: why they matter and how to overcome them}
+% \icmltitle{Oscillations in Quantization: why they matter and how to overcome them}
+% \icmltitle{Up or Down? Why Weights Oscillate in QAT and How to Overcome Them}
+
+% It is OKAY to include author information, even for blind
+% submissions: the style file will automatically remove it for you
+% unless you've provided the [accepted] option to the icml2022
+% package.
+
+% List of affiliations: The first argument should be a (short)
+% identifier you will use later to specify author affiliations
+% Academic affiliations should list Department, University, City, Region, Country
+% Industry affiliations should list Company, City, Region, Country
+
+% You can specify symbols, otherwise they are numbered in order.
+% Ideally, you should not use this facility. Affiliations will be numbered
+% in order of appearance and this is the preferred way.
+\icmlsetsymbol{equal}{*}
+
+\begin{icmlauthorlist}
+\icmlauthor{Markus Nagel}{equal,qualAI}
+\icmlauthor{Marios Fournarakis}{equal,qualAI}
+\icmlauthor{Yelysei Bondarenko}{qualAI}
+\icmlauthor{Tijmen Blankevoort}{qualAI}
+\end{icmlauthorlist}
+
+\icmlaffiliation{qualAI}{Qualcomm AI Research, an initiative of Qualcomm Technologies, Inc.}
+% \icmlaffiliation{qualNL}{Qualcomm Technologies Netherlands B.V.}
+
+\icmlcorrespondingauthor{Markus Nagel}{markusn@qti.qualcomm.com}
+\icmlcorrespondingauthor{Marios Fournarakis}{mfournar@qti.qualcomm.com}
+% \icmlcorrespondingauthor{Yelysei Bondarenko}{ybond@qti.qualcomm.com}
+% \icmlcorrespondingauthor{Tijmen Blankevoort}{tijmen@qti.qualcomm.com}
+
+% You may provide any keywords that you
+% find helpful for describing your paper; these are used to populate
+% the "keywords" metadata in the PDF but will not be shown in the document
+\icmlkeywords{Machine Learning, ICML}
+
+\vskip 0.3in
+]
+
+% this must go after the closing bracket ] following \twocolumn[ ...
+
+% This command actually creates the footnote in the first column
+% listing the affiliations and the copyright notice.
+% The command takes one argument, which is text to display at the start of the footnote.
+% The \icmlEqualContribution command is standard text for equal contribution.
+% Remove it (just {}) if you do not need this facility.
+
+%\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
+\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+
+\begin{abstract}
+%%%Tijmen  %%%
+% In training neural networks for quantized inference with the straight-through estimator, weights can seemingly randomly oscillate between two points. The importance of these oscillations are not understood well in the quantization literature, despite them having a very significant impact. In this paper, we delve into the phenomenon that is oscillations. We show that these lead to highly impactful problems like the wrong estimation of batch-normalization parameters, and issues during optimization. By considering several previously proposed quantization-aware-training (QAT) algorithms in the light of these oscillations, we come to new insights into how or why these methods might work. Armed with these insights, we propose a new QAT algorithm that freezes oscillating weights in-place iteratively. This new algorithm sets a new state-of-the-art on several common neural network architectures for 3 and 4 bit weight quantization.
+
+%%% Marios %%%%
+% When training neural networks for quantized inference with the straight-through estimator, we observe that quantized weights can randomly oscillate between two grid points. Whereas, these oscillations have been observed before, their importance and impact on  quantization-aware training are not well-understood or investigated. In this paper, we delve into this phenomenon of weight oscillations and conclusively show that it leads to accuracy degradation by means of wrong batch-normalization statistics and increased noise during optimization. These effects are particularly pronounced in low-bits (\textless 4-bits) quantization of efficient networks, such as \mnv{2}, \mnv{3} and EfficientNet-Lite. In the light of these oscillations, we revisit several previously proposed quantization-aware-training (QAT) algorithms and come to new insights into how or why these methods might work. Armed with these insights, we propose two new QAT algorithms to overcome the oscillations issue during training: oscillation dampening using regularization and dynamic weight freezing. These new algorithms set a new state-of-the-art on several common neural network architectures for 3 and 4-bit weight quantization.
+
+% that dynamically freezes oscillating weights in-place,  preventing their adverse during training. This new algorithm sets a new state-of-the-art on several common neural network architectures for 3 and 4-bit weight quantization.}
+
+%%% Markus %%%%
+% When training neural networks with simulated quantization, we observe that quantized weights can oscillate between two grid points. While this phenomenon is not entirely unknown, their importance and impact on quantization-aware training are not well-understood or investigated in literature. 
+% In this paper, we delve deeper into weight oscillations and show that it can lead to significant accuracy degradation by means of wrong batch-normalization statistics and increased noise during optimization. These effects are particularly pronounced in low-bits ($\leq$ 4-bits) quantization of efficient networks, such as \mnv{2}, \mnv{3} and EfficientNet-Lite.
+% In our analysis we revisit several previously proposed quantization-aware-training (QAT) algorithms and show that most of these are unable to overcome oscillations. 
+% Finally, we propose two new QAT algorithms to overcome the oscillation issues during training: oscillation dampening and dynamic weight freezing. These new algorithms set a new state-of-the-art on several efficient neural network architectures for 3 and 4-bit weight quantization.
+
+
+%%%% Tijmen %%%%
+%When training neural networks with simulated quantization, we observe that quantized weights can seemingly randomly oscillate between two grid points. The importance of this effect and its impact on quantization-aware training are not well-understood or investigated in literature. 
+% In this paper, we delve deeper into this weight oscillations and show that it can lead to a significant accuracy degradation due to wrong estimation of the batch-normalization statistics after training and increased noise during optimization. These effects are particularly pronounced in low-bits ($\leq$ 4-bits) quantization of efficient networks that have a small number of parameters per output in a layer, such as \mnv{2}, \mnv{3} and EfficientNet-Lite. In our analysis we investigate several previously proposed quantization-aware-training (QAT) algorithms with the lens of oscillations. 
+% Finally, we propose two new QAT algorithms to overcome the oscillation issues during training: oscillation dampening and dynamic weight freezing. These new algorithms set a new state-of-the-art on several efficient neural network architectures for 3 and 4-bit weight quantization.
+
+
+%%%% Combined %%%%
+When training neural networks with simulated quantization, we observe that quantized weights can, rather unexpectedly, oscillate between two grid-points. The importance of this effect and its impact on quantization-aware training (QAT) are not well-understood or investigated in literature. 
+In this paper, we delve deeper into the phenomenon of weight oscillations and show that it can lead to a significant accuracy degradation due to wrongly estimated batch-normalization statistics during inference and increased noise during training. These effects are particularly pronounced in low-bit ($\leq$ 4-bits) quantization of efficient networks with depth-wise separable layers, such as MobileNets and EfficientNets. 
+In our analysis we investigate several previously proposed QAT algorithms and show that most of these are unable to overcome oscillations. 
+Finally, we propose two novel QAT algorithms to overcome oscillations during training: \textit{oscillation dampening} and \textit{iterative weight freezing}. We demonstrate that our algorithms achieve state-of-the-art accuracy for low-bit (3 \& 4 bits) weight and activation quantization of efficient architectures, such as \mnv{2}, \mnv{3}, and \efnet{lite} on ImageNet.
+Our source code is available at~\url{https://github.com/qualcomm-ai-research/oscillations-qat}.
+% \vspace{-0.5cm}
+\end{abstract}
+
+\vspace{-0.3cm}
+
+\section{Introduction}\label{sec:introduction}
+\input{sections/01_introduction_clean}
+
+\section{Oscillations in QAT}\label{sec:motivation}
+\input{sections/02_motivation.tex}
+
+\section{Related work}\label{sec:backgroundrelated}
+\input{sections/03_related_work.tex}
+
+\section{Overcoming oscillations in QAT}\label{sec:method}
+\input{sections/04_method.tex}
+
+\section{Experiments}\label{sec:experiments}
+\input{sections/05_experiments.tex}
+
+\section{Conclusion}\label{sec:conclusion}
+\input{sections/06_conclusion.tex}
+\FloatBarrier
+
+
+% In the unusual situation where you want a paper to appear in the
+% references without citing it in the main text, use \nocite
+% \nocite{langley00}
+
+\bibliography{dirty}
+\bibliographystyle{icml2022}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\appendix
+\onecolumn
+\section{Appendix}
+\label{sec:appendix}
+\input{sections/07_appendix.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}
+
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was created
+% by Iain Murray in 2018, and modified by Alexandre Bouchard in
+% 2019 and 2021 and by Csaba Szepesvari, Gang Niu and Sivan Sabato in 2022. 
+% Previous contributors include Dan Roy, Lise Getoor and Tobias
+% Scheffer, which was slightly modified from the 2010 version by
+% Thorsten Joachims & Johannes Fuernkranz, slightly modified from the
+% 2009 version by Kiri Wagstaff and Sam Roweis's 2008 version, which is
+% slightly modified from Prasad Tadepalli's 2007 version which is a
+% lightly changed version of the previous year's version by Andrew
+% Moore, which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any, Mapping, cast
 
 import pytest
 
@@ -89,7 +90,7 @@ def test_summary_detects_nonzero_sensitivity_from_candidate_stats_dict() -> None
 
 def test_summary_requires_dataset_metadata() -> None:
     manifest: dict[str, object] = _base_manifest()
-    dataset = dict(manifest["dataset"])  # type: ignore[arg-type]
+    dataset = dict(cast(Mapping[str, Any], manifest["dataset"]))
     dataset.pop("num_calib_samples")
     manifest["dataset"] = dataset
 
@@ -122,4 +123,3 @@ def test_write_summary_files_are_deterministic(tmp_path: Path) -> None:
     parsed = json.loads(json_path.read_text(encoding="utf-8"))
     assert parsed["scenario_id"] == "lm_only/wint4_afp16"
     assert md_path.read_text(encoding="utf-8").startswith("# Tutorial Pack Scenario Summary")
-

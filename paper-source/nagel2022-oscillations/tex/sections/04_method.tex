@@ -1,0 +1,70 @@
+Now that we have established that oscillations can have a negative effect during optimization, especially for low-bit quantization, we focus on how to overcome them.
+% We have now established that oscillations can have a negative effect during optimization, especially for low-bit quantization. 
+First we introduce a metric for quantifying oscillations and then we propose two novel techniques aimed at preventing oscillations at their source during quantization-aware training.  
+
+\subsection{Quantifying Oscillations}
+\label{sec:quantifying_oscillations}
+Before we can address the oscillations, we need a way of detecting and measuring them during training. We propose calculating the frequency of oscillations over time using an exponential moving average (EMA). We can then define a minimum frequency as a threshold for oscillating weights. 
+%
+For an oscillation to occur in iteration $t$ it needs two satisfy two conditions: 
+\begin{enumerate}
+    \item The integer value of the weight needs to change, thus $\vec{w}^t_{\INT} \neq \vec{w}^{t-1}_{\INT} $ where $\vec{w}^t_{\INT} =  \text{clip} \left(\round*{\frac{\vec{w}}{\ct{s}}}, \ct{n}, \ct{p}\right)$ is the integer value of the quantized weight.
+    \item The direction of the change in the integer domain needs to be the opposite than that of its previous change, thus $o^t = \text{sign}(\Delta^t_{\INT}) \neq \text{sign}(\Delta^{\tau}_{\INT})$ where $\tau$ is the iteration of the last change in integer domain and $\Delta^t_{\INT} = \vec{w}^t_{\INT} - \vec{w}^{t-1}_{\INT}$, the direction of the change.
+\end{enumerate}
+We then track the frequency of oscillations over time using an exponential moving average (EMA):
+\begin{equation}
+    f^t = m \cdot o^t + (1-m) \cdot f^{t-1}.
+    \label{eq:track_oscillations}
+\end{equation}
+
+\subsection{Oscillation dampening}
+\label{sec:oscillations_dampening}
+When weights oscillate, they always move around the decision threshold between two quantization bins. This means that oscillating weights are always close to the edge of the quantization bin. In order to dampen the oscillatory behavior, we employ a regularization term that encourages latent weights to be close to the center of the bin rather than its edge. We define our dampening loss similar to weight decay as:
+% \begin{equation}
+%     \label{eq:loss_dampen}
+%     \tlossb_{\text{dampen}} = \norm*{s\cdot \vec{w}_{\INT} - \clip{\vec{w}}{ s \ct{n}}{s \ct{p}}}^2_F,
+%     %  \tlossb_{\text{dampen}}= \norm*{\left(s\cdot \vec{w}_{\INT} - q(\vec{w})\right) \cdot \mathbf{1}_{n \leq \vec{w}/\ct{s} \leq p}}^2_F ,
+% \end{equation}
+\begin{equation}
+    \label{eq:loss_dampen}
+    \tlossb_{\text{dampen}} = \norm*{\vecq{w} - \clip{\vec{w}}{ s \ct{n}}{s \ct{p}}}^2_F,
+    %  \tlossb_{\text{dampen}}= \norm*{\left(s\cdot \vec{w}_{\INT} - q(\vec{w})\right) \cdot \mathbf{1}_{n \leq \vec{w}/\ct{s} \leq p}}^2_F ,
+\end{equation}
+where $s$, $n$ and $p$ are the quantization parameters as defined in equation \eqref{eq:quantization_formulation}
+and $\vecq{w}$ are the bin centers. Note, as the bin centers are our optimization target, no gradients propagate back through this term.
+Our final training objective is now: $\tlossb = \tlossb_{\text{task}} + \lambda\tlossb_{\text{dampen}}$. We choose to apply our bin regularization in the latent weight domain such that the resulting gradient
+\begin{equation}
+    \frac{\partial\tlossb_{\text{dampen}}}{\partial \vec{w}} = 2 \l(\vec{w} - \vecq{w} \r ) \cdot  \mathbf{1}_{\ct{s}n \leq \vec{w} \leq \ct{s}p}
+\end{equation}
+is independent of the scale $s$ and, therefore, indirectly independent of the bit-width\footnote{A similar loss defined in integer domain ($\norm*{\vec{w}_{\INT} - \vec{w}/s}^2_F$) would lead to a scaling of gradient with $1/s^2$ and make the regularization on $\vec{w}$ dependent on the scale and bit-width.}.
+We further clip our latent weights to the range of the quantization grid, such that only weights that do not get clipped during quantization receive a regularization effect. This is important to avoid any harmful interactions with quantization scale gradient in LSQ-based range learning \citep{lsq}.  A drawback of such a regularization is that it does not only affect weights that oscillate but can also hinder the movement of weights that are not in an oscillating state.
+
+ 
+% Note, our oscillation dampening regularization loss is similar to the bin regularization loss from \citet{binreg} and \citet{qat_tinyml}. The difference with our formulation is the introduced clipping and formulation of \cite{binreg} regularizes the mean and variance instead of the $L^2$-norm of the difference. Also their formulations of the regularization got introduced for other reasons than preventing oscillations. 
+ 
+
+
+
+% * Mention difference to int domain regularization
+% * compare the gradients with EWGS (additive vs multiplicative)
+% * Mention similarity to bin regularization (Han et al. ICCV 2021). Main difference: our intention is not that the latent weight is close to 0, rather that the latent weight is not crossing over bin thresholds.
+
+
+\subsection{Iterative freezing of oscillating weights}
+\input{algorithms/freezing_algorithm}
+\label{sec:freezing_method}
+We propose another, more targeted, approach to prevent weights from oscillating by freezing them during training.
+% To have a more targeted approach in preventing weights from oscillating we introduce a weight freezing approach.
+In this method, we track the oscillations frequency per weight during training, as described in equation \eqref{eq:track_oscillations}. If the oscillation frequency of any weight exceeds a threshold $f_{\text{th}}$, that weight gets frozen until the end of training. We apply the freezing in the  integer domain, such that potential change in the scale $s$ during optimization does not lead to a different rounding. 
+
+When a weight oscillates, it does not necessarily spend an equal amount of time at both oscillating states. As we show in the toy example in section \ref{sec:oscillations}, the likelihood of a weight being in each state linearly depends on distance of that quantized state from the optimal value. As a result, the expectation of all quantized values over time will correspond to the optimal value. Once the frequency of a weight exceeds the threshold, it could be in either of the two quantized states. To freeze the weight to its more frequent state we keep a record of the previous integer values using an exponential moving average (EMA). We then assign the most frequent integer state to the frozen weight by rounding the EMA.
+
+% As we show in section \ref{sec:oscillations}, under certain assumption the likelihood of being in one state linearly depends on the distance to the optimal value and the expectation of over all quantized values therefore corresponds to the optimal value.
+% it is not always equally frequent in each of the two quantized states. As shown in section \ref{sec:motivation}, under certain assumption the likelihood of being in one state linearly depends on the distance to the optimal value and the expectation of over all quantized values therefore corresponds to the optimal value.
+% Once a weight exceeds the threshold and is frozen it could be in either of the two quantized states. In order to freeze the weight to its more frequent state, and therefore hopefully the state closer to the optimal value, we keep a record of the previous integer values using an exponential moving average (EMA). Then we can assign the more frequent integer state to the frozen weight by rounding the EMA.
+
+We summarize our proposed iterative weight freezing in algorithm \ref{alg:qat_freezing}. Note, this algorithm can be used in combination with any gradient-based optimizer and is not limited to a particular quantization formulation or gradient estimator. The idea of freezing weights on an iteration level is closely related to iterative pruning \citep{zhu2017prune}, where small weights are iteratively pruned (frozen to zero).
+
+% To make space
+% In iterative pruning, weights with magnitude smaller than a given threshold are pruned (frozen) to zero at given intervals, allowing the rest of the weight to adjust appropriately. In oscillation freezing, the unfrozen weights can also be optimized more efficiently, unaffected by the noisy oscillating weights.
+% \input{algorithms/freezing_algorithm}
