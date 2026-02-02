@@ -1,0 +1,19 @@
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | c  c }
+    \toprule
+  Method & Train Loss & Val. Acc. (\%) \\
+        \midrule
+Baseline         & 1.3566  & 69.50 \\
+\midrule
+SR (mean + std)  & 1.3547\textsuperscript{0.0053}  & 69.58\textsuperscript{0.09} \\
+SR (best)        & 1.3391  & 69.85 \\
+AdaRound  & 1.3070  & 70.12 \\
+\midrule
+Freezing & -  & 70.33 \\
+\bottomrule
+\end{tabular}
+ \caption{Ablation study on the effect of oscillations on QAT. Training loss and validation accuracy (\%) for \mnv{2} with 3-bit weight quantization. SR is stochastic rounding of oscillating weights and AdaRound the binary optimization of oscillating weights.}
+\vspace{-.1cm}
+ \label{tbl:binary_post_opt}
+\end{table}

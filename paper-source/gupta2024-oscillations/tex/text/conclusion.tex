@@ -1,0 +1,5 @@
+\vspace{2ex}
+\section{Discussion}
+\vspace{0.5ex}
+
+In this work, we perform the first study for \acrshort{QAT} on efficient real-time \yoloa{}, \yolob{} detectors and show that these networks suffer from oscillation issue. We further show that the oscillation issue does not only affect weight quantization but also activation quantization on \yolo{} models. To mitigate side-effects of oscillations due to \acrshort{STE} approximation of rounding function and per-tensor quantization, we introduce two simple techniques, namely \exma{} and \qc{}. Our proposed \acrshort{QAT} pipeline combining \exma{} and \qc{} produces a new state-of-the-art quantized \yolo{} models at low-bit precision (3-bits and 4-bits). In future work, we believe \qc{} scale and shift factors can be generalized by estimating correction factors that are weighted for specific regions in the tensors that could potentially lead to even further performance gains. 

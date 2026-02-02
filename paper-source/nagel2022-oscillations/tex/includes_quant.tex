@@ -1,0 +1,67 @@
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\BatchNorm}{BatchNorm}
+
+\newcommand\mat[1]{\mathbf{#1}}
+\newcommand\mati[2]{\mat{#1}^{(#2)}}
+\newcommand\matq[1]{\mat{\widehat{#1}}}
+\newcommand\matsq[1]{\mat{\widetilde{#1}}}
+\renewcommand\vec[1]{\mathbf{#1}}
+\newcommand\veci[2]{\vec{#1}^{(#2)}}
+\newcommand\vecq[1]{\vec{\widehat{#1}}}
+\newcommand{\clamp}{\operatornamewithlimits{clamp}}
+\newcommand\dw[0]{\Delta \! \vec{w}}
+\newcommand\dW[0]{\mathrm{\Delta} \mat{W}}
+% \newcommand\ct[1]{\text{\rmfamily\upshape #1}}
+\newcommand\ct[1]{#1}
+\renewcommand\vec[1]{\mathbf{#1}}
+\newcommand\tlossb[0]{\mathcal{L}}
+
+% # BN params
+\newcommand\bnbeta{\boldsymbol{\upbeta}}
+\newcommand\bngamma{\boldsymbol{\upgamma}}
+\newcommand\bnmu{\boldsymbol{\upmu}}
+\newcommand\bnsigma{\boldsymbol{\upsigma}}
+
+% # Architectures
+\newcommand{\rn}[1]{\text{ResNet{#1}}}
+\newcommand{\mnv}[1]{\text{MobileNetV{#1}}}
+\newcommand{\efnet}[1]{\text{EfficentNet-{#1}}}
+
+\newcommand\func[2]{\mathnormal{#1}\left(#2\right)}
+\newcommand\funcb[1]{\mathnormal{#1}}
+\newcommand\tloss[1]{\mathcal{L}\left(#1\right)}
+% \newcommand\tlossb[0]{\mathcal{L}}
+\newcommand\eop[1]{\mathop{\mathbb{E}}\left[#1\right]}
+\newcommand\eopX[2]{\mathop{\mathbb{E}_{#1}}\left[#2\right]}
+\newcommand\eopT[1]{\mathop{\mathbb{E}}_{#1}}
+\DeclarePairedDelimiter\round{\lfloor}{\rceil}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\newcommand{\eqplus}{=\mathrel{+}}
+\newcommand{\ema}{\text{EMA}}
+\newcommand{\INT}{\text{int}}
+\newcommand\clip[3]{\text{clip}\left(#1,#2,#3\right)}
+\newcommand\rounds[1]{\round{#1}_{\text{SR}}}
+\newcommand\up[1]{#1_{\uparrow}}
+\newcommand\down[1]{#1_{\downarrow}}
+%  \round{w}_{\text{SR}}
+% \newtheorem{example}{Example}
+
+% ## LaTeX shortcuts
+\renewcommand{\l}{\left}
+\renewcommand{\r}{\right}
+\renewcommand{\o}[1]{\overline{#1}}
+\newcommand{\ub}[2]{{\underbrace{#1}_{#2}}}  % extra {} to preserve spacing
+\newcommand{\ob}[2]{{\overbrace{#1}^{#2}}}  % extra {} to preserve spacing
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\wh}[1]{\widehat{#1}}
+\newcommand{\wt}[1]{\widetilde{#1}}
+
+
+% Tags to use in the text
+% \newcommand\todo[1]{{\textcolor{red}{TODO: #1}}}
+\newcommand\improve[1]{\textcolor{olive}{Improve: #1}}
+\newcommand\responsible[1]{\par\textcolor{teal}{Responsible: #1 }\par}

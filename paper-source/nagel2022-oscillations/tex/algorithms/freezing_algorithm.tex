@@ -1,0 +1,26 @@
+\begin{algorithm}[t]
+	\caption{QAT with iterative weight freezing}
+	\label{alg:qat_freezing}
+	\begin{algorithmic}[1]
+	    \STATE Init: $f^0 \gets \vec{0}, b \gets \vec{0}, \Delta^{\tau} \gets \vec{0}, \vec{w}^0_{\text{EMA(int)}} \gets \vec{w}_\INT^0$
+	    \FOR{t = 1,\dots, T}
+	        \STATE Calculate gradient $g^t = \frac{\partial\vec{\tlossb}}{\partial \vec{w}}$
+	        \STATE Optimizer update for weights $\vec{w}^t[\neg b]$ using $g^t$
+	        \STATE $\vec{w}^t_{\INT} \gets  \text{clip} \left(\round*{\frac{\vec{w}^t}{\ct{s}}}, \ct{n}, \ct{p}\right)$
+	        \STATE $\Delta^t_{\INT} \gets \vec{w}^t_{\INT} - \vec{w}^{t-1}_{\INT}$
+	        \STATE $o^t \gets (\text{sign}(\Delta^t_{\INT}) \neq \text{sign}(\Delta^{\tau}_{\INT})) \odot (\Delta^t_{\INT} \neq 0) $
+	        \STATE $f^t \gets m \cdot o^t + (1-m) \cdot f^{t-1}$
+	        \FOR{i = 1,\dots, N}
+	            \IF{$f^t_i > f_{\text{th}}$}
+	                \STATE $b_i \gets \text{True}$ %\COMMENT{Freeze weight $i$}
+	                \STATE $\vec{w}_i^{t} \gets \ct{s} \cdot \round*{\vec{w}^{t-1}_{\text{EMA(int)}_i}}$  %\COMMENT{Set weight $i$ to EMA}
+	            \ENDIF
+	        \ENDFOR
+            \STATE $\vec{w}^t_{\text{EMA(int)}} \gets m \cdot \vec{w}^{t-1} + (1-m) \cdot \vec{w}^{t-1}_{\text{EMA(int)}}$\label{lst:weigth_ema}
+	        \STATE $\Delta^{\tau}_{\INT}[o^t] \gets \Delta^t_{\INT}[o^t]$
+	            
+	       % \State TODO update delta_k
+		\ENDFOR
+	
+	\end{algorithmic} 
+\end{algorithm}

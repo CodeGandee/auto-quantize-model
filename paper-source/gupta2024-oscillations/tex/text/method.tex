@@ -1,0 +1,66 @@
+
+\section{Approach}
+\label{sec:approach}
+In this section, we first provide the notations and formulate the quantization-aware training optimization problem with learnable scale factors. Then, we introduce our two simple methods to deal with side-effects of error induced due to oscillation in network parameters during \acrshort{QAT}. 
+\vspace{-2ex}
+
+\paragraph{Problem setup.} For notational convenience, we consider a fully-connected neural network with weights ${\rmW^l\in\R^{N_l\times N_{l-1}}}$, biases $\rvb^l\in\R^{N_{l-1}}$, pre-activations $\rvh^l\in\R^{N_l}$, and post-activations $\rva^l\in\R^{N_l}$, for $l \in \alllayers$ up to $K$ layers. Then, the feed-forward dynamics of the neural network with simulated quantization can be formulated as:
+\begin{align}
+\label{eq:forward-qat}
+\rva^l = \phi(\BatchNorm(\rvh^l))\ ,\qquad \rvh^l = \widehat\rmW^l\widehat\rva^{l-1} + \rvb^l\ ,\\
+\mbox{where}\qquad \widehat\rmW^l = q(\rmW^l, s_{\rmW}^l), \qquad  \widehat\rva^{l-1} = q(\rva^{l-1}, s_{\rva}^{l-1}).\nonumber
+\end{align}
+Here $\phi: \R \to\R$ is an elementwise nonlinearity, and the input is denoted by $\rva^0=\rvx^0\in\R^N$. We denote quantized weights and activations by $\widehat\rmW^l$ and $\widehat\rva^l$ respectively and use $s_\rmW^l$, $s_\rva^{l}$ to represent their respective quantization scale factors. For simplicity of notation, we further also express network weight parameters corresponding to all the layers as $\mathcal{W}=\{\rmW^i\}_{i=1}^\ell$. Similarly, we represent the vector corresponding to all scale factors for quantization of various weight tensors as $\rvs_{\rmW} = \{s_{\rmW}^i\}_{i=1}^\ell$ and scale factors for quantization of activation tensors as $\rvs_{\rva} = \{s_{\rva}^i\}_{i=1}^\ell$. Given dataset $\calD = \{\rvx_i, \rvy_i\}_{i=1}^n$, the typical neural network optimization problem for quantization-aware training with learnable scale factors can then be formulated as:
+\begin{equation}\label{eq:qat_nn}
+    \argmin_{\mathcal{W,\rvs_{\rvw}, \rvs_{\rva}}}L(\mathcal{W}, \rvs_{\rvw}, \rvs_{\rva};\calD).
+\end{equation}
+We now explain our two simple techniques to overcome the issue of oscillating weights and scale factors and compensate for sub-optimal latent weights stuck at the quantization boundaries.
+% \vspace{-1ex}
+\subsection{Exponential Moving Average (\exma) to Smoothen effect of Oscillations}
+\label{sec:ema}
+% \vspace{-1ex}
+
+Weight averaging of multiple local minima by using multiple model checkpoints attained at cyclic learning rates with restarts, has been shown \cite{izmailov2018averaging,tarvainen2017mean} to lead to better generalization and wider minima. The idea of using weight averaging for final model inference was earliest suggested in \cite{polyak1992acceleration}. Later, the semi-supervised learning method \cite{tarvainen2017mean} and self-supervised learning methods \cite{grill2020bootstrap} utilized exponential moving average of weights to learn in a knowledge distillation manner.
+
+To overcome the oscillating weights and quantization scale factors due to \acrshort{STE} approximation, we propose exponential moving average of latent weights and scale factors for both weights and activations during the optimization. \acrshort{STE} approximation approach leads to latent weights moving around the quantization boundary which leads to constantly changing latent weight states. Exponential moving average can take into account model weights at the last several steps of training and smoothen out the oscillation behavior and come up with the best possible latent state for oscillating weights. The final quantized state inference can be done using \exma{} weights and quantization parameters instead of the latest update.  
+
+For trainable network weight parameters $\rmW_{(t)}^l$ at layer $l$, we can compute the corresponding exponentially moving average weights $\rmW_{(t)}^{\prime\,l}$ at $t$ iteration as:
+\begin{align}
+{\rmW}_{(t)}^{\prime\,l} = \alpha \cdot \rmW_{(t-1)}^{\prime\,l}  + (1 - \alpha) \cdot \rmW_{(t)}^{l} .
+\end{align}
+Similarly, we can also calculate the exponential moving average scale factors for both weights and activations as: 
+\begin{align}
+    \rvs_{\rmW\,(t)}^{\prime} &= \alpha \cdot \rvs_{\rmW\,(t-1)}^{\prime} + (1-\alpha) \cdot \rvs_{\rmW\,(t)} \\
+    \rvs_{\rva\,(t)}^{\prime} &= \alpha \cdot \rvs_{\rva\,(t-1)}^{\prime} + (1-\alpha)\cdot \rvs_{\rva\,(t)}.
+\end{align}
+
+Here, $\alpha$ is used as a decay parameter that can be tuned to account for approximately $1/(1-\alpha)$ last \acrshort{SGD} updates to achieve the \exma{} model. We keep the decay parameter $\alpha$ to be $0$ at the start of the \acrshort{QAT} procedure to enable larger updates at the start of the training. The \exma{} parameters are updated after end of every iteration of the training update and thus do not require backpropagation. It is important to note here that oscillation dampening and iterative freezing proposed in \cite{nagel2022overcoming}, are only applicable on weights but oscillation issue due to scale factors is even present in activation quantization as shown in \secref{sec:osc-qat-toy}. To overcome that issue, \exma{} on scale factors of activations can tackle it more appropriately. Furthermore, we would also highlight here that other non-trainable parameters such \gls{BN} statistics in deep neural networks already utilize exponential moving average can improve the unstable \acrshort{BN} statistics if the momentum value is chosen appropriately. Recent methods \cite{nagel2022overcoming}, suggested that \acrshort{BN} Statistics re-estimation enables improvement in the corrupted \acrshort{BN} statistics occurring due to oscillation of latent weights. We would like to mention that corrupted \acrshort{BN} statistics is not the only reason for performance degradation resulting from oscillations in \acrshort{QAT}. Nevertheless, our \exma{} models yield stable updates to both latent weight, activations, and their respective scale factors.
+
+% \vspace{-1ex}
+\subsection{Post-hoc Quantization Correction (\qc)}
+\label{sec:qat-correction}
+% \vspace{-1ex}
+
+In this section, we propose a simple correction step that can be performed in a post-hoc manner after quantization-aware training to overcome the error induced by oscillating latent weights and scale factors. As shown empirically in the \secref{sec:yolo-sideeffects}, oscillation results in the majority of latent weights hanging at the quantization boundaries. We have further shown in \secref{sec:yolo-softround} that latent weights hanging at quantization boundaries are already closer to optimality than their nearest quantization levels as the soft-rounded (based on \eqref{eq:softrounding_formulation}) \yolo{} models yield better performance than quantized ones. The oscillation of scale factors mainly happens due to ineffective quantization with a single quantization scale factor per-tensor apart from the bias of STE approximation. Intuitively, different regions in the tensor might require different scale factors for an accurate quantized approximation. 
+
+Our post-hoc correction quantization step simply transforms the pre-activations $\rvh^l\in\R^{N_l}$ of all $l$ layers using an affine function, to compensate for error induced in matrix multiplications due to oscillations during the quantization-aware training. We can now formulate the modified feed-forward dynamics of the quantized neural network for the post-hoc error correction step as:
+\begin{align}
+\label{eq:forward-qat-correction}
+ \vect{h}^l = \bngamma^l \cdot \rvh^l  + \bnbeta^l\  ,\quad \rvh^l = \widehat\rmW^l\widehat\rva^{l-1} + \rvb^l\ , \\
+ \rva^l = \phi(\BatchNorm(\vect{h}^l))\ 
+\end{align}
+Here, $\vect{h}^l$ denotes the modified pre-activations after the affine transformation in layer $l$. Also, for layer $l$ we represent the affine function with scale correction parameters $\bngamma^l\in\R^{N_l}$ and shift correction parameters $\bnbeta^l\in\R^{N_l}$. For simplicity of notation, we further express a set of all correction scale parameters with $\mathcal{G} = \{\bngamma^i\}_{i=1}^\ell$ and correction shift parameters with $\mathcal{B} = \{\bnbeta^i\}_{i=1}^\ell$. We initialize these correction parameters as identity transformation. We then optimize for these correction parameters via backpropagation starting from a pre-trained QAT model with the following objective:
+\begin{equation}\label{eq:qat-corr-nn}
+\argmin_{\mathcal{G},\mathcal{B}}L(\mathcal{W}, \mathcal{G}, \mathcal{B}, \rvs_{\rvw}, \rvs_{\rva};\calD_c).
+\end{equation}
+We train these correction parameters on a small calibration set $\calD_c$, which is also part of the training set. Notice that, for a typical convolutional layer these correction factors will have dimensions the same as the number of output channels after the convolution operation. We would like to highlight that these extra set of correction parameters can be absorbed in \acrfull{BN} trainable parameters generally succeeding a convolution layer and do not result in an extra computational load on the hardware. It is important to note that our correction step is different from the \acrshort{BN} re-estimation step \cite{nagel2022overcoming} where \acrshort{BN} statistics are re-estimated on the dataset after \acrshort{QAT}. \acrshort{BN} re-estimation cannot recover from quantization error accumulated in forward propagation of quantized neural network, unlike our post-hoc correction step. In fact, re-estimating \acrshort{BN} statistics is not required since the exponential moving average in \acrshort{BN} statistics can enable a stable state of statistics if the momentum value is chosen appropriately. Furthermore, these correction parameters can also be stored as quantization scale factors by converting per-tensor quantization to per-channel quantization. The conversion from per-tensor quantization to per-channel quantization is a natural outcome of batch normalization folding \cite{whitepaper} where batch normalization parameters are folded into the quantization scale factors of weights to get rid of \acrshort{BN} at inference. Previous work~\cite{nagel2022overcoming} on weight oscillations in \acrshort{QAT} only evaluate their quantization-aware training mechanism on per-tensor quantization but still keep the \acrshort{BN} layers intact in train mode during the training. Their main motivation for oscillation avoidance is to get rid of corrupted \acrshort{BN} statistics during the training. However, general practise~\cite{nagel2021white} to support per-tensor quantization is to fold \acrshort{BN} parameters before \acrshort{QAT}.   
+ 
+
+
+
+
+
+
+
+
+

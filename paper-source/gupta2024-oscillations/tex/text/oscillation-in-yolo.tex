@@ -1,0 +1,37 @@
+\section{Side-effects of Oscillations in \yolo}
+\label{sec:yolo-sideeffects}
+The issue of oscillating weights and activations in quantization-aware training is not just restricted to a small toy problem but occurs in practice on \acrshort{YOLO} networks \cite{yolov5, wang2022yolov7} trained for the task of object detection and semantic segmentation. This leads to a significant loss in the accuracy of quantized \acrshort{YOLO} models. In this section, we show the evidence of oscillation issue prevalent in weights and activations of quantized \acrshort{YOLO} networks and how learning a single scale factor for each tensor is the underlying cause for sub-optimal latent weights.
+% \vspace{-1ex}
+\subsection{Oscillation Issue in YOLO networks}
+\label{sec:yolo-oscillation}
+% \vspace{-1ex}
+
+
+We demonstrate the oscillation issue in \yolo networks using the latent weight distribution of $5^{th}$ layer in \yoloa-n variant \cite{yolov5} trained with 4-bit quantization on \coco dataset \cite{lin2014microsoft} using \acrfull{LSQ} \cite{lsq} with \gls{STE} approximation in \figref{fig:latent_yolo}. Most of the latent weights lie in between the quantization levels and the peaks of distribution lie on quantization thresholds rather than the quantization levels itself. Since most of the latent weights lie around quantization thresholds, they tend to keep switching their quantization state even at the end of the training as also shown in \cite{nagel2022overcoming}. Further, we plot the learnable scale factors used to quantize weights as well as activations in \figref{fig:scalefactor_wt_yolo} and \figref{fig:scalefactor_act_yolo} respectively. The quantization scale factors remain unstable even until the end of quantization-aware training. The oscillation issue does not only affect the latent weights but also affects the scale factors of both weights and activations. This leads to a sub-optimal quantization state of both weights and activations of the final QAT model. Here, we would like to highlight that previous work~\cite{nagel2022overcoming} observed the issue of oscillations in latent weights but here we show that oscillation also affects quantization scale factors corresponding to weights and activations.   
+
+\input{tables/softround-yolo}
+% \vspace{-2ex}
+\subsection{Analysis using threshold-based Soft-Rounding}
+% \vspace{-1ex}
+
+\label{sec:yolo-softround}
+Oscillation dampening~\cite{nagel2022overcoming} was introduced as one of the techniques to reduce the side-effect of oscillations. This method in essence regularizes the latent weights such that the distribution of latent weights and quantization weights overlap each other. We step away from that and look at the optimality of latent weights in their un-quantized state. For this analysis, we modify the original quantization to deduce a soft-rounding function that allows quantizing the weights closer to quantization levels and leave the latent weights around the quantization threshold in their latent state. We describe our soft-rounding function $q^*$ that can be used to softly round weights or activations using a threshold $k$ as 
+% \vspace{-2ex}
+\begin{align}
+    \label{eq:softrounding_formulation}
+    \vec{w^*} = q^*(\vec{w}; s, u, v) = \ct{s} \cdot \clip{\softround{\frac{\vec{w}}{\ct{s}}}}{\ct{u}}{\ct{v}},    
+\end{align} 
+\vspace{-2ex}
+\begin{equation}
+    \mbox{where}\quad \softround{x} = \begin{cases}
+    \round{x}  & \text{if }  |x-\round{x}| \leq k \\
+    x   & \text{otherwise. } 
+    \end{cases} \nonumber
+\end{equation}
+% \vspace{-2ex}
+
+This soft-rounding function can be used on both weights and activations to evaluate whether latent weights and activations stuck at the quantization thresholds (see \figref{fig:latent_yolo}) are already closer to their optimal state. We replace the quantization function described in \eqref{eq:quantization_formulation} with this soft-rounding function (at $k=0.45$) in all the quantized layers of pre-trained quantized \yolo{} models and evaluate the performance on \coco{} dataset and the results are presented in \tabref{tab:softround-yolo5}. Surprisingly, we found that the weights or activations in their latent state produce equivalent or better performance than the ones in the quantized state. This indicates that latent weights oscillate around the quantization boundaries partly because not all weights or activations within a tensor can be quantized with the same single scale factor as in the case of per-tensor quantization. If a single scale factor per-tensor is chosen, some weights can never reach optimality due to the limitation of per-tensor quantization.
+
+
+
+

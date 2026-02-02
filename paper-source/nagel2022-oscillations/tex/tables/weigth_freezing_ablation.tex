@@ -1,0 +1,66 @@
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | c  c c }
+    \toprule
+    %   &     \multicolumn{2}{c|}{Accuracy} &  \\
+  Method &   pre-BN & post-BN & Osc.(\%)\\
+        \midrule
+Baseline & 64.97\textsuperscript{1.23} & 69.50\textsuperscript{0.04} &  4.93 \\
+\midrule
+$f_{\text{th}}$= 0.02 & 68.13\textsuperscript{2.14}  & 69.96\textsuperscript{0.04} &   2.93 \\
+$f_{\text{th}}$= 0.015 & \textbf{69.79}\textsuperscript{0.07} & \textbf{70.13}\textsuperscript{0.05} &  1.23\\
+$f_{\text{th}}$= 0.01  &  69.12\textsuperscript{0.53} & 69.18\textsuperscript{0.47}  &   0.06 \\
+\midrule
+$f_{\text{th}}$= cos(0.04,0.015)  &  69.51\textsuperscript{0.15}  & 69.96\textsuperscript{0.03} &  2.33 \\
+$f_{\text{th}}$= cos(0.04,0.01)  &  \textbf{69.97}\textsuperscript{0.06}  & \textbf{70.33}\textsuperscript{0.07} &  0.04 \\
+% $f_{\text{th}}=\cos{(0.04,0.01)}$  &  xx\textsuperscript{x.xx}  & xx\textsuperscript{x.xx} &  xx\% \\
+\bottomrule
+\end{tabular}
+ \caption{Effect of oscillation frequency threshold ($f_{\text{th}}$) on training of \mnv{2} with 3-bit weight quantization. \textit{post-BN}: accuracy after BN re-estimation, \textit{pre-BN}: accuracy before BN re-estimation, \textit{Osc.}: percentage of oscillating weights at the end of training ($f>0.005$). We report the average of 3 seeds and the STD in the superscript.}
+ \label{tbl:weight_freezing_ablation}
+\end{table}
+
+
+
+% \begin{table}[h]
+%     \centering
+%     \begin{tabular}{ l | c  c c c }
+%     \toprule
+%     %   &     \multicolumn{2}{c|}{Accuracy} &  \\
+%   $f_{\text{th}}$ &   pre-BN & post-BN &$ \delta$ & frozen\\
+%         \midrule
+% Baseline & & & & \\
+% \midrule
+% 0.04 &67.85\textsuperscript{0.22} &  69.57\textsuperscript{0.04} & +1.72 & xx\%\\
+% 0.02 & \textbf{69.73}\textsuperscript{0.08}  &  \textbf{69.97}\textsuperscript{0.04} &  +0.24 & xx\%\\
+% 0.015 & 69.18\textsuperscript{0.53} & 69.29\textsuperscript{0.47} &  +0.11 & xx\%\\
+% 0.01  &  67.07\textsuperscript{0.00} & 67.14\textsuperscript{0.00}  &  +0.07 & xx\%\\
+% \midrule
+% $\cos\text{(0.1, 0.01)}$  &  xx\textsuperscript{x.xx}  & xx\textsuperscript{x.xx} &  +x.xx & xx\%\\
+% \bottomrule
+% \end{tabular}
+%  \caption{Effect of oscillation frequency threshold ($f_{\text{th}}$) on training of \mnv{2} with 3-bit weight quantization. \textit{post-BN}: accuracy after batch-norm statistics re-estimation, \textit{pre-BN}: accuracy before batch-norm statistics re-estimation, $\delta$: difference between post-BN and pre-BN accuracy. We present the average of 3 seeds and the STD in the superscript }
+%  \label{tbl:weight_freezing_ablation}
+% \end{table}
+
+
+% \begin{table}[h]
+%     \centering
+%     \begin{tabular}{ l | c  c  c }
+%     \toprule
+%     %   &     \multicolumn{2}{c|}{Accuracy} &  \\
+%   $f_{\text{th}}$ &   pre-BN & post-BN & frozen\\
+%         \midrule
+% Baseline & & & \\
+% \midrule
+% 0.04 &67.85\textsuperscript{0.22} &  69.57\textsuperscript{0.04} &  xx\%\\
+% 0.02 & \textbf{69.73}\textsuperscript{0.08}  &  \textbf{69.97}\textsuperscript{0.04} & xx\%\\
+% 0.015 & 69.18\textsuperscript{0.53} & 69.29\textsuperscript{0.47} &  xx\%\\
+% 0.01  &  67.07\textsuperscript{0.00} & 67.14\textsuperscript{0.00}  &  xx\%\\
+% \midrule
+% $\cos\text{(0.1, 0.01)}$  &  xx\textsuperscript{x.xx}  & xx\textsuperscript{x.xx} &  xx\%\\
+% \bottomrule
+% \end{tabular}
+%  \caption{Effect of oscillation frequency threshold ($f_{\text{th}}$) on training of \mnv{2} with 3-bit weight quantization. \textit{post-BN}: accuracy after batch-norm statistics re-estimation, \textit{pre-BN}: accuracy before batch-norm statistics re-estimation, $\delta$: difference between post-BN and pre-BN accuracy. We present the average of 3 seeds and the STD in the superscript }
+%  \label{tbl:weight_freezing_ablation}
+% \end{table}

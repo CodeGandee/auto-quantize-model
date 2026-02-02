@@ -1,0 +1,17 @@
+\begin{table}[]
+\centering
+\caption{\em Different values of decay parameter $(\alpha)$ in \exma{} for \yoloa{-n} trained at 4-bit on \coco{} dataset. Note, \exma{} is quite stable with respect to different decay parameters. }
+\vspace{1ex}
+\label{tab:diff-mom-ema}
+\begin{tabular}{cr}
+\toprule
+Decay parameter $(\alpha)$ & mAP  \\
+\midrule
+0.0              & 20.6 \\
+0.9            & 21.5 \\
+\cellcolor{myGray} 0.99           & \cellcolor{myGray}\textbf{22.1} \\
+\cellcolor{myGray} 0.999          & \cellcolor{myGray} \textbf{22.1} \\
+\cellcolor{myGray} 0.9999         & \cellcolor{myGray} \textbf{22.1} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,254 @@
+\begin{thebibliography}{38}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Banner et~al.(2019)Banner, Nahshan, and Soudry]{bannerposttraining}
+Banner, R., Nahshan, Y., and Soudry, D.
+\newblock Post training 4-bit quantization of convolutional networks for
+  rapid-deployment.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeuRIPS)}, 2019.
+
+\bibitem[Bengio et~al.(2013)Bengio, L{\'e}onard, and
+  Courville]{bengio2013estimating}
+Bengio, Y., L{\'e}onard, N., and Courville, A.
+\newblock Estimating or propagating gradients through stochastic neurons for
+  conditional computation.
+\newblock \emph{arXiv preprint arXiv:1308.3432}, 2013.
+
+\bibitem[Bhalgat et~al.(2020)Bhalgat, Lee, Nagel, Blankevoort, and Kwak]{lsq+}
+Bhalgat, Y., Lee, J., Nagel, M., Blankevoort, T., and Kwak, N.
+\newblock Lsq+: Improving low-bit quantization through learnable offsets and
+  better initialization.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR) Workshops}, 2020.
+
+\bibitem[Cai et~al.(2017)Cai, He, Sun, and Vasconcelos]{guassian_quant}
+Cai, Z., He, X., Sun, J., and Vasconcelos, N.
+\newblock Deep learning with low precision by half-wave gaussian quantization.
+\newblock In \emph{Conference on Computer Vision and Pattern Recognition
+  (CVPR)}, 2017.
+
+\bibitem[Chai(2021)]{qat_tinyml}
+Chai, S.~M.
+\newblock Quantization-guided training for compact tiny{\{}ml{\}} models.
+\newblock In \emph{Research Symposium on Tiny Machine Learning}, 2021.
+
+\bibitem[Chen et~al.(2019)Chen, Wang, and Pan]{metaquant}
+Chen, S., Wang, W., and Pan, S.~J.
+\newblock Metaquant: Learning to quantize by learning to penetrate
+  non-differentiable quantization.
+\newblock In \emph{Neural Information Processing Systems (NeuRIPS)}, 2019.
+
+\bibitem[Chmiel et~al.(2022)Chmiel, Banner, Hoffer, Yaacov, and
+  Soudry]{chmiel2022luq}
+Chmiel, B., Banner, R., Hoffer, E., Yaacov, H.~B., and Soudry, D.
+\newblock Logarithmic unbiased quantization: Practical 4-bit training in deep
+  learning.
+\newblock \emph{arXiv preprint arXiv:2112.10769}, 2022.
+
+\bibitem[Choi et~al.(2018)Choi, Wang, Venkataramani, Chuang, Srinivasan, and
+  Gopalakrishnan]{pact2018}
+Choi, J., Wang, Z., Venkataramani, S., Chuang, P.~I., Srinivasan, V., and
+  Gopalakrishnan, K.
+\newblock {PACT:} parameterized clipping activation for quantized neural
+  networks.
+\newblock \emph{arXiv preprint arxiv:805.06085}, 2018.
+
+\bibitem[Défossez et~al.(2021)Défossez, Adi, and Synnaeve]{diffq}
+Défossez, A., Adi, Y., and Synnaeve, G.
+\newblock Differentiable model compression via pseudo quantization noise.
+\newblock \emph{arXiv preprint arXiv:2104.09987}, 2021.
+
+\bibitem[Esser et~al.(2020)Esser, McKinstry, Bablani, Appuswamy, and
+  Modha]{lsq}
+Esser, S.~K., McKinstry, J.~L., Bablani, D., Appuswamy, R., and Modha, D.~S.
+\newblock Learned step size quantization.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2020.
+
+\bibitem[Fan et~al.(2021)Fan, Stock, Graham, Grave, Gribonval, Jegou, and
+  Joulin]{fan2021extreme}
+Fan, A., Stock, P., Graham, B., Grave, E., Gribonval, R., Jegou, H., and
+  Joulin, A.
+\newblock Training with quantization noise for extreme model compression.
+\newblock In \emph{International Conference on Learning Repersentations
+  (ICLR)}, 2021.
+
+\bibitem[Gong et~al.(2019)Gong, Liu, Jiang, Li, Hu, Lin, Yu, and Yan]{DSQ}
+Gong, R., Liu, X., Jiang, S., Li, T., Hu, P., Lin, J., Yu, F., and Yan, J.
+\newblock Differentiable soft quantization: Bridging full-precision and low-bit
+  neural networks.
+\newblock \emph{International Conference on Computer Vision (ICCV)}, 2019.
+
+\bibitem[Gupta et~al.(2015)Gupta, Agrawal, Gopalakrishnan, and
+  Narayanan]{Gupta2015}
+Gupta, S., Agrawal, A., Gopalakrishnan, K., and Narayanan, P.
+\newblock Deep learning with limited numerical precision.
+\newblock In \emph{International Conference on Machine Learning, (ICML)}, 2015.
+
+\bibitem[Han et~al.(2021)Han, Li, Liu, Tian, and Shan]{binreg}
+Han, T., Li, D., Liu, J., Tian, L., and Shan, Y.
+\newblock Improving low-precision network quantization via bin regularization.
+\newblock In \emph{International Conference on Computer Vision (ICCV)}, 2021.
+
+\bibitem[Helwegen et~al.(2019)Helwegen, Widdicombe, Geiger, Liu, Cheng, and
+  Nusselder]{helwegen2019latent}
+Helwegen, K., Widdicombe, J., Geiger, L., Liu, Z., Cheng, K.-T., and Nusselder,
+  R.
+\newblock Latent weights do not exist: Rethinking binarized neural network
+  optimization.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeuRIPS)}, 2019.
+
+\bibitem[Hinton(2012)]{hinton2012ste}
+Hinton, G.
+\newblock Neural networks for machine learning, lectures 15b.
+\newblock 2012.
+
+\bibitem[{Horowitz}(2014)]{horowitz}
+{Horowitz}, M.
+\newblock 1.1 computing's energy problem (and what we can do about it).
+\newblock In \emph{2014 IEEE International Solid-State Circuits Conference
+  Digest of Technical Papers (ISSCC)}, pp.\  10--14, 2014.
+
+\bibitem[Ioffe \& Szegedy(2015)Ioffe and Szegedy]{batchnorm}
+Ioffe, S. and Szegedy, C.
+\newblock Batch normalization: Accelerating deep network training by reducing
+  internal covariate shift.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2015.
+
+\bibitem[J.~Lee(2021)]{EWGS}
+J.~Lee, D.~Kim, B.~H.
+\newblock Network quantization with element-wise gradient scaling.
+\newblock In \emph{Conference on Computer Vision and Pattern Recognition
+  (CVPR)}, 2021.
+
+\bibitem[Jain et~al.(2019)Jain, Gural, Wu, and Dick]{tqt}
+Jain, S.~R., Gural, A., Wu, M., and Dick, C.
+\newblock Trained uniform quantization for accurate and efficient neural
+  network inference on fixed-point hardware.
+\newblock \emph{arxiv preprint arxiv:1903.08066}, 2019.
+
+\bibitem[Kim et~al.(2020)Kim, Yoo, and Kwak]{PBGS}
+Kim, J., Yoo, K., and Kwak, N.
+\newblock Position-based scaled gradient for model quantization and pruning.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeuRIPS)}, 2020.
+
+\bibitem[Kirkpatrick et~al.(1983)Kirkpatrick, Gelatt, and
+  Vecchi]{Kirkpatrick1983SimulatedAnnealing}
+Kirkpatrick, S., Gelatt, C., and Vecchi, M.
+\newblock Optimization by simulated annealing.
+\newblock \emph{Science (New York, N.Y.)}, 220:\penalty0 671--80, 06 1983.
+
+\bibitem[{Krishnamoorthi}(2018)]{krishnamoorthi}
+{Krishnamoorthi}, R.
+\newblock {Quantizing deep convolutional networks for efficient inference: A
+  whitepaper}.
+\newblock \emph{arXiv preprint arXiv:1806.08342}, 2018.
+
+\bibitem[Louizos et~al.(2019)Louizos, Reisser, Blankevoort, Gavves, and
+  Welling]{louizos2018relaxed}
+Louizos, C., Reisser, M., Blankevoort, T., Gavves, E., and Welling, M.
+\newblock Relaxed quantization for discretized neural networks.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2019.
+
+\bibitem[Nagel et~al.(2019)Nagel, van Baalen, Blankevoort, and Welling]{dfq}
+Nagel, M., van Baalen, M., Blankevoort, T., and Welling, M.
+\newblock Data-free quantization through weight equalization and bias
+  correction.
+\newblock In \emph{International Conference on Computer Vision (ICCV)}, 2019.
+
+\bibitem[Nagel et~al.(2020)Nagel, Amjad, Van~Baalen, Louizos, and
+  Blankevoort]{adaround}
+Nagel, M., Amjad, R.~A., Van~Baalen, M., Louizos, C., and Blankevoort, T.
+\newblock Up or down? {A}daptive rounding for post-training quantization.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2020.
+
+\bibitem[Nagel et~al.(2021)Nagel, Fournarakis, Amjad, Bondarenko, van Baalen,
+  and Blankevoort]{whitepaper}
+Nagel, M., Fournarakis, M., Amjad, R.~A., Bondarenko, Y., van Baalen, M., and
+  Blankevoort, T.
+\newblock A white paper on neural network quantization.
+\newblock \emph{arXiv preprint arXiv:2106.08295}, 2021.
+
+\bibitem[Nahshan et~al.(2020)Nahshan, Chmiel, Baskin, Zheltonozhskii, Banner,
+  Bronstein, and Mendelson]{nahshan2020lapq}
+Nahshan, Y., Chmiel, B., Baskin, C., Zheltonozhskii, E., Banner, R., Bronstein,
+  A.~M., and Mendelson, A.
+\newblock Loss aware post-training quantization.
+\newblock \emph{arXiv preprint arXiv:1911.07190}, 2020.
+
+\bibitem[Nguyen et~al.(2020)Nguyen, Alexandridis, and
+  Mouchtaris]{qat_abs_cosine}
+Nguyen, H.~D., Alexandridis, A., and Mouchtaris, A.
+\newblock Quantization aware training with absolute-cosine regularization for
+  automatic speech recognition.
+\newblock In \emph{Interspeech}, 2020.
+
+\bibitem[Park \& Yoo(2020)Park and Yoo]{profit}
+Park, E. and Yoo, S.
+\newblock {PROFIT:} {A} novel training method for sub-4-bit mobilenet models.
+\newblock In \emph{European Conference on Computer Vision (ECCV)}, 2020.
+
+\bibitem[Pervez et~al.(2020)Pervez, Cohen, and Gavves]{pervez2020lowbl}
+Pervez, A., Cohen, T., and Gavves, E.
+\newblock Low bias low variance gradient estimates for hierarchical boolean
+  stochastic networks.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2020.
+
+\bibitem[Peters \& Welling(2018)Peters and Welling]{peters2018probabilistic}
+Peters, J. W.~T. and Welling, M.
+\newblock Probabilistic binary neural networks.
+\newblock \emph{arXiv preprint arXiv:1809.03368}, 2018.
+
+\bibitem[Russakovsky et~al.(2015)Russakovsky, Deng, Su, Krause, Satheesh, Ma,
+  Huang, Karpathy, Khosla, Bernstein, Berg, and Fei-Fei]{imagenet}
+Russakovsky, O., Deng, J., Su, H., Krause, J., Satheesh, S., Ma, S., Huang, Z.,
+  Karpathy, A., Khosla, A., Bernstein, M., Berg, A.~C., and Fei-Fei, L.
+\newblock {ImageNet Large Scale Visual Recognition Challenge}.
+\newblock \emph{International Journal of Computer Vision (IJCV)}, 2015.
+
+\bibitem[Uhlich et~al.(2020)Uhlich, Mauch, Cardinaux, Yoshiyama, Garcia,
+  Tiedemann, Kemp, and Nakamura]{differentiablequantization}
+Uhlich, S., Mauch, L., Cardinaux, F., Yoshiyama, K., Garcia, J.~A., Tiedemann,
+  S., Kemp, T., and Nakamura, A.
+\newblock Mixed precision dnns: All you need is a good parametrization.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2020.
+
+\bibitem[Yang et~al.(2019)Yang, Shen, Xing, Tian, Li, Deng, Huang, and
+  Hua]{quantization_nets}
+Yang, J., Shen, X., Xing, J., Tian, X., Li, H., Deng, B., Huang, J., and Hua,
+  X.-s.
+\newblock Quantization networks.
+\newblock In \emph{Conference on Computer Vision and Pattern Recognition
+  (CVPR)}, 2019.
+
+\bibitem[Yin et~al.(2019)Yin, Lyu, Zhang, Osher, Qi, and
+  Xin]{understanding_STE}
+Yin, P., Lyu, J., Zhang, S., Osher, S.~J., Qi, Y., and Xin, J.
+\newblock Understanding straight-through estimator in training activation
+  quantized neural nets.
+\newblock In \emph{International Conference on Learning Representations(
+  ICLR)}, 2019.
+
+\bibitem[Zhou et~al.(2016)Zhou, Ni, Zhou, Wen, Wu, and Zou]{dorefa}
+Zhou, S., Ni, Z., Zhou, X., Wen, H., Wu, Y., and Zou, Y.
+\newblock Dorefa-net: Training low bitwidth convolutional neural networks with
+  low bitwidth gradients.
+\newblock \emph{arXiv preprint arXiv:1606.06160}, 2016.
+
+\bibitem[Zhu \& Gupta(2018)Zhu and Gupta]{zhu2017prune}
+Zhu, M. and Gupta, S.
+\newblock To prune, or not to prune: exploring the efficacy of pruning for
+  model compression.
+\newblock In \emph{International Conference on Learning Representations,
+  {ICLR}, Workshop Track Proceedings}, 2018.
+
+\end{thebibliography}

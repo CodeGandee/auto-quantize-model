@@ -1,0 +1,34 @@
+\begin{table}[t]
+    \centering
+    \begin{tabular}{ l | l | r r}
+    \toprule
+        % Network   &   Layer &   $\max_i{D^{(i)}_{\text{KL}}}$& $
+        % \eopX{i}{{D}^{(i)}_{\text{KL}}}$ \\
+                Network   &   Layer &   $\max{D_{\text{KL}}}$& $
+        \eop{D_{\text{KL}}}$ \\
+        \midrule
+
+        \rn{18} & layer1.0.conv1 &  0.0059 &	0.0002 \\
+        \rn{18} & layer1.0.conv2 &  0.0130 &	0.0014 \\
+        \rn{18} & layer3.0.conv1 &  0.0006 & 0.0001 \\
+        \midrule
+        
+        \mnv{2} & conv3.0 (PW)  &  0.7858 &   0.0292 \\
+        \mnv{2} & conv3.1 (DW)  &  55.3782 &	1.25464 \\
+        \mnv{2} & conv3.2 (PW) &  0.0065 &	0.0012 \\
+        % \mnv{2} & PWConv3.0  &  0.7858 &   0.0292 \\
+        % \mnv{2} & DWConv3.1  &  55.3782 &	1.25464 \\
+        % \mnv{2} & PSConv3.2  &  0.00651 &	0.00121 \\
+        \midrule
+        \mnv{2} & conv10.0 (PW) &  0.0037	& 0.0004 \\
+        \mnv{2} & conv10.1 (DW) &  27.2618 & 0.2900\\
+        \mnv{2} & conv10.2 (PW)  &  0.0267 &	0.0034\\
+        % \mnv{2} & DSConv4  &  0.7858 &   0.0292 \\
+        % \mnv{2} & PWConv4  &  0.0024 &   0.0005\\
+        % \mnv{2} & DSConv10 &  2.4497 &   0.0626 \\
+        % \mnv{2} & PWConv10 &  0.0059 &  0.0010 \\
+\bottomrule
+\end{tabular}
+ \caption{Discrepancy between estimated and actual population statistics of batch-normalization following convolutional layers in \rn{18} and \mnv{2} with weights quantized to 3 bits. We report the maximum and mean KL-divergence across the output channels of each layer. DS: depth-wise separable, PW: point-wise.}\vspace{-.1cm}
+ \label{tbl:bn_stats_diff}
+\end{table}

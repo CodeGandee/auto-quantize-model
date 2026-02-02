@@ -1,0 +1,30 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+
+
+
+
+\begin{table*}[]
+\centering
+\small
+\caption{\em Our quantization-aware training performance using mAP metric for object detection task on the \coco dataset. * denotes first and last layers are trained at 4-bit quantization.}
+\label{tab:yolo-qat-ours}
+\vspace{-1ex}
+
+\begin{tabular}{llcrrr|zzz}
+\toprule
+\multirow{2}{*}{Network} & \multirow{2}{*}{\# Params} & \multirow{2}{*}{FP} &  \multicolumn{3}{c|}{Ours (\exma)}                                                                 & \multicolumn{3}{z}{Ours (\exma + \qc)}                                                      \\
+\cmidrule{4-9}
+                                  &                                     &                                          & \multicolumn{1}{c}{4-bit} & \multicolumn{1}{c}{3-bit} & \multicolumn{1}{c|}{4-bit*} & \multicolumn{1}{z}{4-bit} & \multicolumn{1}{z}{3-bit} & \multicolumn{1}{z}{4-bit*} \\
+                                  \midrule
+\yoloa-n    & 1.87M                      & 28.0                & 22.1                      & 16.3                      & 16.5                        & \textbf{23.8}         & \textbf{18.2}         & \textbf{20.4}        \\
+\yoloa-s    & 7.23M                      & 37.4                & 33.1                      & 28.5                      & 25.6                        & \textbf{34.0}         & \textbf{30.2}         & \textbf{32.0}        \\
+\yoloa-m    & 21.2M                      & 45.2                & 42.1                      & 38.5                      & 38.5                        & \textbf{42.8}         & \textbf{40.0}         & \textbf{40.1}        \\
+\yoloa-l    & 46.6M                      & 49.0                & 45.9                      & 43.1                      & 38.0                        & \textbf{46.6}         & \textbf{44.0}         & \textbf{43.6}        \\
+\yoloa-x    & 86.7M                      & 50.7                & 47.8                      & 45.9                      & 40.6                        & \textbf{47.9}         & \textbf{46.8}         & \textbf{45.2}        \\
+\yolob-tiny & 6.23M                      & 37.5                & 34.6                      & 30.3                      & 32.8                        & \textbf{35.2}         & \textbf{31.0}         & \textbf{34.3}        \\
+\yolob      & 37.6M                      & 51.2                & 48.7                      & 46.2                      & 46.3                        & \textbf{48.9}         & \textbf{46.8}         & \textbf{47.6}        \\
+\bottomrule
+\end{tabular}
+% \vspace{-4ex}
+\end{table*}

@@ -1,0 +1,42 @@
+Quantization is one of the most successful methods for optimizing neural networks for efficient inference and on-device execution. By compressing weights and activations from the regular 32-bit floating point format down to 8-bit integers, we can reduce the memory footprint of neural networks by a factor of 4 and their computational cost by a factor of 16 \citep{whitepaper, horowitz}. 
+
+Exploiting the inherent resilience of neural networks to random perturbations, researchers in recent years have shown that neural networks can be quantized to at least 8-bits with minimal drops in accuracy \citep{}. These efficient quantized networks are achieved by either a simple post-processing step frequently referred to as \textit{post-training quantization} (PTQ), or by training networks with quantization-simulation operations in the loop, referred to as \textit{quantization-aware training} (QAT, \citet{krishnamoorthi}). 
+%While PTQ techniques are faster to implement and only require access to a small calibration dataset, they are generally only competitive in the 8-bit quantization regime. When, mov
+%\citep{adaround, jacob2018cvpr, bannerposttraining, nahshan2020lapq}
+Generally PTQ gives decent results without a lot of re-training, but quantization-aware training always gives better performance.
+Many studies have come out recently that show that many networks are resilient even to 4-bit quantization of the weights and activations, both in the PTQ and QAT settings \cite{adaround, brecq, lsq}, leading to an additional 2-4 times speed-up.
+In this paper we focus on ``oscillations'' of the weights that occur during quantization-aware training. This is a little-known, and under-investigated phenomenon in the optimization of quantized neural networks, with large consequences for the network during and after optimization. During the commonly used QAT procedures based on the \textit{straight-through estimator} (STE, \citet{bengio2013estimating, hinton2012ste}), weights seemingly randomly oscillate around decision thresholds, leading to detrimental noise during the optimization process. 
+
+% %%% Marios %%% 
+% A symptom of these weight oscillations is that they can corrupt the estimated inference statistics of the batch-normalization layer collected during training, leading to poor quantized inference accuracy. We find that this effect is particularly pronounced in low-bit quantization of efficient networks with depth-wise separable layers, such as \mnv{2} and \mvn{3}-Small and can be addressed effectively by re-estimating the batch-normalization statistics after training, \citep{louizos2018relaxed, peters2018probabilistic}.
+
+% While batch-norm re-estimation overcomes a significant symptom of the oscillations, it does not tackle the problem itself. We dive into a survey of competing methods in the literature that claim improved QAT performance and show that most of cannot overcome oscillations. We then propose two novel algorithms to reduce oscillations, oscillation \textit{dampening} and iterative \textit{freezing} of oscillating weights. 
+
+and we reach higher accuracy by reducing the associated noise during optimization: oscillation \textit{dampening} and iterative \textit{freezing} of oscillating weights. We 
+iteratively freeze oscillation weights during training.
+
+% The added noise induced by oscillation affects the optimization process leading to sub-optimal solutions.
+
+
+
+% We identify two major issues that are caused by the oscillations. First, we show that these oscillations can corrupt the estimated inference statistics of the  batch-normalization layer collected during training, leading to poor inference accuracy. To the best of our knowledge, this problem has not been addressed in the literature before but has a significant impact on final network performance. The second problem occurs during optimization itself, where the oscillations induce additional noise to the network leading to training instability. We dive into a survey of competing methods in the literature that claim improved QAT performance and shed new light on these methods through the lens of reducing the oscillatory behavior during training. We discuss how these previously proposed methods might or might not work and how they differ from one another in a way that has not been considered before.
+
+
+% Tijmen. %%%%
+We will show in-depth several of the problems that occur with oscillations. The first problem we address is that the batch-normalization parameters calculated during training are oft wrong for validation. This is a problem that has not been explicitly addressed in the literature to our knowledge, but has a significant impact on final network performance. The second problem occurs during optimization itself, where the oscillations add extra unnecessary noise to the network during training. We dive into a survey of common methods in the literature that claim to improve QAT, and shed a new light on these methods with the lens of reducing the oscillatory behavior during training. We discuss how these previously proposed methods might or might not work and how they differ from one another, in a way that has not been considered before.
+
+
+% %%% Marios %%% 
+% \marios{We finally propose two sets of solutions to the oscillation problem.}
+% Our paper also provides two solutions. The incorrect batch-normalization parameters can easily be fixed by re-estimating the parameters after training. A simple and cheap fix, but one with a very significant impact that can be easily overlooked. The second solution is for improving QAT. We propose freezing the oscillating weights during training in an interative fashion over the course of training, similar to an iterative pruning strategy. This freezing procedure significantly improves performance for many common networks with 3 or 4 bit weights and activations. Indeed, based on the insights around oscillations, we set a new state-of-the-art for low-bit QAT .
+
+
+%* Intro to quantization, why it is important.
+%* Focus on QAT methods, say several works question the defacto standard with STE
+%* Mention our claims of the paper
+%\begin{enumerate}
+%    \item Claim 1: Oscillation happens during QAT (in toy example and for real NNs)
+%    \item Claim 2: STE alternatives can not prevent this
+%    \item Claim 3: Show effects of oscillation (BN stats are wrong, harms reaching local minima)
+%    \item Claim 4: We introduce a method to prevent oscillation, show SOTA results
+%\end{enumerate}

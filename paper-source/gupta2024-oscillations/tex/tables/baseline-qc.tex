@@ -1,0 +1,34 @@
+\begin{table}[h]
+
+\centering
+% \vspace{-5ex}
+\caption{\em Comparison between \acrshort{LSQ}~\cite{lsq}, Oscillation dampening~\cite{nagel2022overcoming}, and our proposed method after performing our \qc{} for quantization-aware training using mAP metric for object detection task on the \coco dataset.}
+\vspace{1ex}
+\label{tab:baseline-qc}
+\begin{tabular}{lclccc}
+\toprule
+Method                                 & Ours (\qc{}) & \#-bit                 & \yoloa{-n} & \yoloa{-s} & \yolob{-tiny} \\
+\midrule
+Full-Precision                         & -         & 32-bit                 & 28.0      & 37.4    & 37.5       \\
+\midrule
+\multirow{2}{*}{\acrshort{LSQ}~\cite{lsq}}                   & \xmark         & \multirow{6}{*}{4-bit} & 20.6    & 32.4    & 32.9       \\
+                                       & \cmark         &                        & 22.6    & 33.3    & 34.1       \\
+                                       \cmidrule{4-6}
+\multirow{2}{*}{Osc. Dampening~\cite{nagel2022overcoming}} & \xmark         &                        & 21.5    & 32.9    & 33.5       \\
+                                       & \cmark         &                        & 23.1    & 33.4    & 34.3       \\
+                                       \cmidrule{4-6}
+\multirow{2}{*}{Ours (\exma)}            & \xmark         &                        & 22.1    & 33.1    & 34.6       \\
+                                       & \cmark         &                        &  \cellcolor{myGray} \textbf{23.8}    & \cellcolor{myGray} \textbf{34.0}      & \cellcolor{myGray} \textbf{35.2}       \\
+\midrule
+\multirow{2}{*}{\acrshort{LSQ}~\cite{lsq}}                   & \xmark         & \multirow{6}{*}{3-bit} & 15.2    & 27.2    & 28.4       \\
+                                       & \cmark         &                        & 17.1    & 29.4    & 30.2       \\
+\cmidrule{4-6}
+\multirow{2}{*}{Osc. Dampening~\cite{nagel2022overcoming}} & \xmark         &                        & 16.4    & 27.5    & 29.2       \\
+                                       & \cmark         &                        & 17.9    & 29.6    & 30.5       \\
+                                       \cmidrule{4-6}
+
+\multirow{2}{*}{Ours (\exma)}            & \xmark         &                        & 16.4    & 28.5    & 30.3       \\
+                                       & \cmark         &                        & \cellcolor{myGray} \textbf{18.2}    & \cellcolor{myGray} \textbf{30.2}    & \cellcolor{myGray} \textbf{31.0}   \\
+\bottomrule
+\end{tabular}
+\end{table}
