@@ -281,19 +281,19 @@ Note: 表中所有 low-bit 均指 low-bit integer (INT) quantization（不是 lo
     > “To address the issue of activation value imbalance, we propose… UH activation quantization.”  
     > — qyolo-2023, UH Activation Quantization
   - Key figures:
-    - `![Activation histogram imbalance (from qyolo-2023, Fig. 1)](figures/qyolo_fig1_hist.png)`
+    - ![Activation histogram imbalance (from qyolo-2023, Fig. 1)](figures/qyolo_fig1_hist.png)
 - **STE oscillations（low-bit QAT instability）**：weights 会在 quantization thresholds 周围来回跳变，把额外的 optimization noise 注入训练过程；在 4 bits 及更低时尤其致命。
   - Evidence:
     > “Weights seemingly randomly oscillate around decision thresholds, leading to detrimental noise during the optimization process.”  
     > — nagel2022-oscillations, Introduction
   - Key figures:
-    - `![Training oscillation example (from nagel2022-oscillations)](figures/nagel_mnv2_training_oscillation.png)`
+    - ![Training oscillation example (from nagel2022-oscillations)](figures/nagel_mnv2_training_oscillation.png)
 - **Scale/step parameter instability（not just weights）**：learned quantization scale factors 可能在训练后期仍不稳定，导致最终 quantized state 处于 sub-optimal。
   - Evidence:
     > “Quantization scale factors remain unstable even until the end of quantization-aware training.”  
     > — gupta2024-oscillations, Sec. “Oscillation Issue in YOLO networks”
   - Key figures:
-    - `![Oscillation in YOLO latent weights (from gupta2024-oscillations, Fig. 2a)](figures/gupta_fig2a_latent_weight_dist.png)`
+    - ![Oscillation in YOLO latent weights (from gupta2024-oscillations, Fig. 2a)](figures/gupta_fig2a_latent_weight_dist.png)
 - **Sensitive layers 仍需要 exceptions（input/output, first/last, parts of head）**：无论 PTQ 还是 QAT，常见做法都是对这些 layers 保留更高 precision，以避免 AP 大幅下降。
   - Evidence:
     > “The input and output layers… are more sensitive to the loss of accuracy.”  

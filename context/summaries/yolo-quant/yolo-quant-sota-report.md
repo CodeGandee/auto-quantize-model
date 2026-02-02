@@ -281,19 +281,19 @@ Note: all low-bit entries in tables refer to low-bit integer (INT) quantization 
     > “To address the issue of activation value imbalance, we propose… UH activation quantization.”  
     > — qyolo-2023, UH Activation Quantization
   - Key figures:
-    - `![Activation histogram imbalance (from qyolo-2023, Fig. 1)](figures/qyolo_fig1_hist.png)`
+    - ![Activation histogram imbalance (from qyolo-2023, Fig. 1)](figures/qyolo_fig1_hist.png)
 - **STE oscillations drive low-bit QAT instability**: weights can bounce around quantization thresholds, injecting optimization noise and harming convergence; this becomes critical at 4 bits and below.
   - Evidence:
     > “Weights seemingly randomly oscillate around decision thresholds, leading to detrimental noise during the optimization process.”  
     > — nagel2022-oscillations, Introduction
   - Key figures:
-    - `![Training oscillation example (from nagel2022-oscillations)](figures/nagel_mnv2_training_oscillation.png)`
+    - ![Training oscillation example (from nagel2022-oscillations)](figures/nagel_mnv2_training_oscillation.png)
 - **Scale/step parameter instability (not just weights) matters for YOLO**: learned quantization scale factors can remain unstable late into training, leaving a sub-optimal final quantized state.
   - Evidence:
     > “Quantization scale factors remain unstable even until the end of quantization-aware training.”  
     > — gupta2024-oscillations, Sec. “Oscillation Issue in YOLO networks”
   - Key figures:
-    - `![Oscillation in YOLO latent weights (from gupta2024-oscillations, Fig. 2a)](figures/gupta_fig2a_latent_weight_dist.png)`
+    - ![Oscillation in YOLO latent weights (from gupta2024-oscillations, Fig. 2a)](figures/gupta_fig2a_latent_weight_dist.png)
 - **Sensitive layers (input/output, first/last, parts of head) still need exceptions**: both PTQ and QAT commonly preserve higher precision for these layers to avoid large AP drops.
   - Evidence:
     > “The input and output layers… are more sensitive to the loss of accuracy.”  
